@@ -1,4 +1,4 @@
-Abaixo segue a estrutura atual do meu projeto e meus arquivos. Queremos converter o projeto para um que utiliza no back NodeJS, PostgreSQL, Supabase, e alguma tecnologia que substitua adequadamento o Java nesse contexto para as classes já criadas: estas irei em seguida lhe passar para que faça a conversão para a nova linguagem adequada. Por favor, foque em fazer uma estrutura otimizada e intuitiva. 
+Solicitei ao ChatGPT que convertesse a estrutura do Back que havíamos feito até então (fornecendo um texto com a estrutura da branch master) para um projeto que utiliz NodeJS, PostgreSQL, Supabase. Como fizemos apenas o básico em Java, e ainda vamos fazer todo o roteamento (escolhemos NodeJS) acho que vale mais a pena converter o que fizemos em Java para Typescript. A estrutura passada foi a seguinte: 
 
 ```plaintext
 back/
