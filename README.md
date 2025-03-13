@@ -1,4 +1,6 @@
-Abaixo segue a estrutura atual do meu projeto e meus arquivos. Queremos converter o projeto para um que utiliza no back NodeJS, PostgreSQL, Supabase, e alguma tecnologia que substitua adequadamento o Java nesse contexto para as classes já criadas: estas irei em seguida lhe passar para que faça a conversão para a nova linguagem adequada. Por favor, foque em fazer uma estrutura otimizada e intuitiva. back/
+Abaixo segue a estrutura atual do meu projeto e meus arquivos. Queremos converter o projeto para um que utiliza no back NodeJS, PostgreSQL, Supabase, e alguma tecnologia que substitua adequadamento o Java nesse contexto para as classes já criadas: estas irei em seguida lhe passar para que faça a conversão para a nova linguagem adequada. Por favor, foque em fazer uma estrutura otimizada e intuitiva. 
+
+back/
 ├── .gradle/
 │   ├── 8.8/
 │   │   └── ...
