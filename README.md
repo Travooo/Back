@@ -62,11 +62,13 @@ back/
 ├── gradlew.bat
 ├── README.md
 ├── settings.gradle
+```
 
 O ChatGPT disse:
 Ótimo! Para converter seu backend de Java para Node.js utilizando PostgreSQL e Supabase, podemos seguir a seguinte estrutura otimizada:
 📂 Nova Estrutura do Backend em Node.js
 
+```plaintext
 back/
 ├── src/
 │   ├── config/            # Configuração do banco e variáveis
@@ -95,5 +97,6 @@ back/
 ├── .gitignore
 ├── package.json           # Dependências do projeto
 ├── README.md
+```
 
 Com essa estrutura, fica mais organizado e modular. Agora, me envie as classes Java que deseja converter para que eu possa criar os modelos adequados em Node.js. 🚀
