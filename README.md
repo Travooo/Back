@@ -1,4 +1,9 @@
-Solicitei ao ChatGPT que convertesse a estrutura do Back que havíamos feito até então (fornecendo um texto com a estrutura da branch master) para um projeto que utiliza NodeJS, PostgreSQL, Supabase. Como fizemos apenas o básico em Java, e ainda vamos fazer todo o roteamento (escolhemos NodeJS) acho que vale mais a pena converter o que fizemos em Java para Typescript. A estrutura passada foi a seguinte: 
+# 📌 Backend com Node.js, TypeScript, PostgreSQL e Supabase
+
+Este projeto é a conversão da estrutura original desenvolvida em Java (branch master) para **Node.js** com **JavaScript**, utilizando **PostgreSQL** hospedado no **Supabase**. 
+
+
+## 📁 Estrutura do Projeto
 
 ```plaintext
 back/
@@ -30,3 +35,65 @@ back/
 ├── package.json                 # Arquivo de dependências e scripts do Node.js (gerenciado pelo npm)
 ├── README.md                    # Documento com informações sobre o projeto
 ```
+
+## 🚀 Instalação e Configuração
+
+### 📌 Pré-requisitos
+- **Node.js** instalado ([Baixar aqui](https://nodejs.org/))
+- **PostgreSQL** configurado ([Supabase](https://supabase.com/) recomendado)
+- **Git** instalado ([Baixar aqui](https://git-scm.com/))
+
+### 📥 Clonando o repositório
+```bash
+git clone https://github.com/Travooo/Back.git
+cd Back
+```
+
+### 📦 Instalando dependências
+```bash
+npm install
+```
+
+### 🛠️ Configuração do Banco de Dados
+1. **Criar um banco no Supabase** e copiar a string de conexão (PostgreSQL).
+2. Criar um arquivo `.env` na raiz do projeto escrevendo nele:
+```plaintext
+DATABASE_URL="postgres://user:password@host:port/database"
+JWT_SECRET="sua-chave-secreta"
+PORT=3000
+```
+
+### 🏗️ Compilando o projeto (TypeScript para JavaScript)
+```bash
+npm run build
+```
+
+### 🏃 Rodando o servidor
+```bash
+npm run dev  # Executa com Nodemon (recarrega automaticamente)
+npm start    # Executa o servidor em produção
+```
+
+## 📡 Rotas da API
+| Método  | Rota              | Descrição |
+|---------|------------------|------------|
+| `POST`  | `/usuarios`      | Criar usuário |
+| `GET`   | `/usuarios/:id`  | Buscar usuário por ID |
+| `POST`  | `/agendamentos`  | Criar agendamento |
+| `GET`   | `/agendamentos`  | Listar agendamentos |
+
+## 🧪 Testes
+Para rodar os testes:
+```bash
+npm test
+```
+
+## 🚀 Contribuição
+1. Fork este repositório
+2. Crie uma branch (`git checkout -b minha-feature`)
+3. Faça commit das mudanças (`git commit -m 'Minha nova feature'`)
+4. Envie para o repositório (`git push origin minha-feature`)
+5. Abra um Pull Request 😃
+
+---
+📌 **Projeto atualizado para TypeScript e Supabase!** 🚀
