@@ -1,39 +1,53 @@
 # 📌 Backend com Node.js, JavaScript, PostgreSQL e Supabase
 
-Este projeto é a conversão da estrutura original desenvolvida em Java (branch master) para **Node.js** com **JavaScript**, utilizando **PostgreSQL** hospedado no **Supabase**. 
+Este projeto é a conversão da estrutura original desenvolvida em Java para **Node.js**, utilizando **JavaScript** e **PostgreSQL** hospedado no **Supabase**. Ele segue uma arquitetura **MVC (Model-View-Controller)** com separação clara entre **modelos de dados**, **serviços**, **rotas** e **controladores**, garantindo modularidade e escalabilidade.
 
 
 ## 📁 Estrutura do Projeto
 
 ```plaintext
 back/
-├── src/                         # Código-fonte do projeto
+├── src/                      # Código-fonte do projeto
 │   ├── config/                  # Configurações gerais e variáveis de ambiente
-│   │   ├── supabase.js          # Configuração do Supabase (serviço de banco de dados)
-│   │   ├── database.js          # Configuração do banco de dados (conexão, modelo de dados)
-│   ├── controllers/             # Lógica de controle das rotas
-│   │   ├── agendamentoController.js  
-│   │   ├── usuarioController.js     
-│   ├── models/                  # Modelos de dados (equivalente às classes Java)
-│   │   ├── Agendamento.js       
+│   │   ├── supabase.js             # Configuração do Supabase (serviço de banco de dados)
+│   ├── models/                  # Modelos de dados (representam tabelas do banco)
+│   │   ├── Agendamento.js          
 │   │   ├── Usuario.js           
-│   ├── routes/                  # Definição de rotas da aplicação
-│   │   ├── agendamentos.js      
-│   │   ├── usuarios.js          
+│   │   ├── Pagamento.js         
+│   │   ├── Notificacoes.js     
+│   │   ├── Planos.js           
+│   │   ├── UsuarioOrganizacao.js 
 │   ├── services/                # Camada de lógica de negócios (serviços)
 │   │   ├── agendamentoService.js   
 │   │   ├── usuarioService.js      
-│   ├── middlewares/             # Middlewares utilizados nas rotas (ex: autenticação, logs)
-│   │   ├── authMiddleware.js    # Middleware de autenticação (para validar tokens, etc.)
-│   ├── app.js                   # Configuração principal do app, incluindo middlewares e rotas
-│   ├── server.js                # Inicialização do servidor, como configurar o Express, por exemplo
-├── tests/                       # Testes unitários para os módulos
+│   │   ├── pagamentoService.js   
+│   │   ├── notificacoesService.js   
+│   │   ├── planosService.js   
+│   │   ├── usuarioOrganizacaoService.js   
+│   ├── controllers/             # Camada de lógica de controle das rotas
+│   │   ├── agendamentoController.js  
+│   │   ├── usuarioController.js  
+│   │   ├── pagamentoController.js  
+│   │   ├── notificacoesController.js  
+│   │   ├── planosController.js  
+│   │   ├── usuarioOrganizacaoController.js  
+│   ├── routes/                  # Camada de definição de rotas da aplicação
+│   │   ├── agendamentos.js      
+│   │   ├── usuarios.js          
+│   │   ├── pagamentos.js       
+│   │   ├── notificacoes.js       
+│   │   ├── planos.js       
+│   │   ├── usuarioOrganizacao.js       
+│   ├── middlewares/             # Middlewares utilizados nas rotas
+│   │   ├── authMiddleware.js       # Middleware de autenticação (possívelmente JWT)
+│   ├── app.js                   # Configuração principal do app, incluindo middlewares e 
+│   ├── server.js                # Inicialização do servidor (possívelmente Express)
+├── tests/                    # Testes unitários para os módulos
 │   ├── agendamento.test.js      
 │   ├── usuario.test.js          
-├── .env                         # Arquivo de variáveis de ambiente (ex: senhas, tokens, configurações)
-├── .gitignore                   # Arquivo de configuração para ignorar arquivos no Git (como node_modules, .env, etc.)
-├── package.json                 # Arquivo de dependências e scripts do Node.js (gerenciado pelo npm)
-├── README.md                    # Documento com informações sobre o projeto
+├── .env                      # Arquivo de variáveis de ambiente (ex: senhas, tokens, configurações)
+├── package.json              # Arquivo de dependências e scripts do Node.js (gerenciado pelo npm)
+├── README.md                 
 ```
 
 ## 🚀 Instalação e Configuração
