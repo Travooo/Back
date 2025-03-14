@@ -1,4 +1,4 @@
-Solicitei ao ChatGPT que convertesse a estrutura do Back que havíamos feito até então (fornecendo um texto com a estrutura da branch master) para um projeto que utiliz NodeJS, PostgreSQL, Supabase. Como fizemos apenas o básico em Java, e ainda vamos fazer todo o roteamento (escolhemos NodeJS) acho que vale mais a pena converter o que fizemos em Java para Typescript. A estrutura passada foi a seguinte: 
+Solicitei ao ChatGPT que convertesse a estrutura do Back que havíamos feito até então (fornecendo um texto com a estrutura da branch master) para um projeto que utiliza NodeJS, PostgreSQL, Supabase. Como fizemos apenas o básico em Java, e ainda vamos fazer todo o roteamento (escolhemos NodeJS) acho que vale mais a pena converter o que fizemos em Java para Typescript. A estrutura passada foi a seguinte: 
 
 ```plaintext
 back/
