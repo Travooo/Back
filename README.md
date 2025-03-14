@@ -1,4 +1,4 @@
-# 📌 Backend com Node.js, TypeScript, PostgreSQL e Supabase
+# 📌 Backend com Node.js, JavaScript, PostgreSQL e Supabase
 
 Este projeto é a conversão da estrutura original desenvolvida em Java (branch master) para **Node.js** com **JavaScript**, utilizando **PostgreSQL** hospedado no **Supabase**. 
 
