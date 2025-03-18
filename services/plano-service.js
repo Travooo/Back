@@ -1,29 +1,31 @@
-const Plano = require('../models/Plano');
+// TODO: Revisar este arquivo - gerado por IA. Há coisas que podem estar misturadas. Verificar lógica, otimização e estilo.
+
+const Plano = require("../models/Plano");
 
 class PlanoService {
-    static async createPlano(data) {
-        const { error, data: result } = await Plano.insert(data);
-        if (error) throw error;
-        return result;
-    }
+  static async createPlano(data) {
+    const { error, data: result } = await Plano.insert(data);
+    if (error) throw error;
+    return result;
+  }
 
-    static async getPlanoById(id) {
-        const { error, data } = await Plano.getById(id);
-        if (error) throw error;
-        return data;
-    }
+  static async getPlanoById(id) {
+    const { error, data } = await Plano.getById(id);
+    if (error) throw error;
+    return data;
+  }
 
-    static async getAllPlano() {
-        const { error, data } = await Plano.getAll();
-        if (error) throw error;
-        return data;
-    }
+  static async getAllPlano() {
+    const { error, data } = await Plano.getAll();
+    if (error) throw error;
+    return data;
+  }
 
-    static async deletePlano(id) {
-        const { error } = await Plano.delete(id);
-        if (error) throw error;
-        return { message: 'Plano removido com sucesso' };
-    }
+  static async deletePlano(id) {
+    const { error } = await Plano.delete(id);
+    if (error) throw error;
+    return { message: "Plano removido com sucesso" };
+  }
 }
 
 module.exports = PlanoService;
