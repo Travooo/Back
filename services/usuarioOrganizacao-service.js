@@ -1,4 +1,5 @@
-const UsuarioOrganizacao = require('../models/UsuarioOrganizacao');
+const UsuarioOrganizacao = require('../model/UsuarioOrganizacao');
+const supabase = require('../config/db');
 
 class UsuarioOrganizacaoService {
     static async createUsuarioOrganizacao(data) {

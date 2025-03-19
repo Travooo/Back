@@ -1,4 +1,5 @@
-const supabase = require('../config/supabaseClient');
+const Anexo = require('../model/Anexo');
+const supabase = require('../config/db');
 
 class AnexoService {
     static async criarAnexo(estabelecimento, arquivo, nome_arquivo, tipo_arquivo) {

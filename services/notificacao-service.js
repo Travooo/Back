@@ -1,4 +1,5 @@
 const Notificacoes = require('../models/Notificacoes');
+const supabase = require('../config/db');
 
 class NotificacoesService {
     static async createNotificacao(data) {

@@ -1,4 +1,5 @@
-const Plano = require('../models/Plano');
+const Plano = require('../model/Planos');
+const supabase = require('../config/db');
 
 class PlanoService {
     static async createPlano(data) {

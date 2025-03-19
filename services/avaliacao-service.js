@@ -1,4 +1,5 @@
-const supabase = require('../config/supabaseClient');
+const Avaliacao = require('../model/Avaliacao');
+const supabase = require('../config/db');
 
 class AvaliacaoService {
     static async criar(avaliacao) {

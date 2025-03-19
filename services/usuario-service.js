@@ -1,4 +1,5 @@
-const Usuario = require('../models/Usuario');
+const Usuario = require('../model/Usuario');
+const supabase = require('../config/db');
 
 class UsuarioService {
     static async createUsuario(data) {
@@ -8,13 +9,13 @@ class UsuarioService {
     }
 
     static async getUsuarioById(id) {
-        const { error, data } = await Usuario.getById(id);
+        const { error, data } = await supabase.from('usuario').select(id)
         if (error) throw error;
         return data;
     }
 
     static async getAllUsuarios() {
-        const { error, data } = await Usuario.getAll();
+        const { error, data } = await supabase.from('usuario').select('*');
         if (error) throw error;
         return data;
     }

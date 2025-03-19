@@ -1,4 +1,5 @@
-const supabase = require('../config/supabaseClient');
+const Evento = require('../model/Evento');
+const supabase = require('../config/db');
 
 class EventoService {
     static async criar(evento) {

@@ -1,4 +1,5 @@
-const LocalVisitado = require('../models/LocalVisitado');
+const LocalVisitado = require('../model/LocalVisitado');
+const supabase = require('../config/db');
 
 class LocalVisitadoService {
     static async createLocalVisitado(data) {

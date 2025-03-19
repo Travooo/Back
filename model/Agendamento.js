@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabase = createClient(process.env.URL, process.env.APIKEY);
 
 class Agendamento {
     constructor(id_agendamento = null, id_estabelecimento, id_usuario, horario, mesa = null) {

@@ -1,4 +1,5 @@
-const Pagamento = require('../models/Pagamento');
+const Pagamento = require('../model/Pagamento');
+const supabase = require('../config/db');
 
 class PagamentoService {
     static async createPagamento(data) {

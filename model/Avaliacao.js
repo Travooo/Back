@@ -1,5 +1,5 @@
 const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabase = createClient(process.env.URL, process.env.APIKEY);
 
 class Avaliacao {
     constructor(id_avaliacao = null, id_estabelecimento, id_usuario, comentario = null, numero_estrelas) {
