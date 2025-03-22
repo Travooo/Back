@@ -1,43 +1,73 @@
-// TODO: Revisar este arquivo - gerado por IA. Há coisas que podem estar misturadas. Verificar lógica, otimização e estilo.
-
 const { createClient } = require("@supabase/supabase-js");
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
+const UsuarioOrganizacao = require("../models/Usuario");
 
 class UsuarioOrganizacaoService {
-  static async create(usuarioOrganizacao) {
-    return await supabase
+  static async create(user_data) {
+    const usuario = new UsuarioOrganizacao(user_data);
+    const { data, error } = await supabase
       .from("usuario_organizacao")
-      .insert([usuarioOrganizacao])
+      .insert([UsuarioOrganizacao])
       .select();
+    //*SELECT() retorna os dados inseridos (útil para validação)*/
+    return { data, error };
   }
 
-  static async getById(id) {
+  static async get_by_id(id) {
     return await supabase
       .from("usuario_organizacao")
-      .select("*")
-      .eq("id_usuario_organizacao", id)
+      .select(
+        "id, cnpj, nome_fantasia, email, nome_fantasia, cnpj, telefone"
+        // .select("*") traria também a senha.
+      )
+      .eq("id", id)
       .single();
+    //*SINGLE() assegura apenas um retorno*
   }
 
-  static async getAll() {
-    return await supabase.from("usuario_organizacao").select("*");
+  static async get_all() {
+    return await supabase
+      .from("usuario_organizacao")
+      .select(
+        "id, cnpj, nome_fantasia, created_at, email, telefone, razao_social"
+      );
+    // .select("*") traria também a senha.
   }
 
   static async update(id, updates) {
-    return await supabase
+    let validUpdates = {};
+
+    // Filtrar apenas os campos válidos, removendo valores nulos ou vazios:
+    Object.keys(updates).forEach((key) => {
+      if (updates[key] && updates[key].toString().trim() !== "") {
+        validUpdates[key] = updates[key];
+      }
+    });
+
+    // Caso não seja implementada a verificação no front:
+    if (Object.keys(validUpdates).length === 0) {
+      throw new Error("Nenhuma alteração válida detectada.");
+    }
+
+    const { data, error } = await supabase
       .from("usuario_organizacao")
-      .update(updates)
-      .eq("id_usuario_organizacao", id);
+      .update(validUpdates)
+      .eq("id", id)
+      .select();
+    //*SELECT() retorna os dados inseridos (útil para validação)*/
+
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0)
+      throw new Error("Usuário não encontrado ou não atualizado.");
+
+    return data;
   }
 
   static async delete(id) {
-    return await supabase
-      .from("usuario_organizacao")
-      .delete()
-      .eq("id_usuario_organizacao", id);
+    return await supabase.from("usuario_organizacao").delete().eq("id", id);
   }
 }
 

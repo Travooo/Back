@@ -3,7 +3,6 @@ const UsuarioService = require("../services/usuario-service");
 class UsuarioController {
   static async create(req, res) {
     const {
-      admin,
       email,
       senha,
       nome_usuario,
@@ -11,6 +10,7 @@ class UsuarioController {
       sobre,
       foto_perfil,
       data_nascimento,
+      admin,
     } = req.body;
 
     if (!email || !senha || !nome_usuario || !nome_completo) {
@@ -21,7 +21,6 @@ class UsuarioController {
     }
 
     const usuario = {
-      admin,
       email,
       senha,
       nome_usuario,
@@ -29,6 +28,7 @@ class UsuarioController {
       sobre,
       foto_perfil,
       data_nascimento,
+      admin,
     };
 
     const { data, error } = await UsuarioService.create(usuario);

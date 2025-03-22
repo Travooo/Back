@@ -3,6 +3,7 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
+const Usuario = require("../model/Usuario");
 
 class UsuarioService {
   static async create(user_data) {
@@ -11,7 +12,7 @@ class UsuarioService {
       .from("usuario")
       .insert([usuario])
       .select();
-    //*SELECT() returns inserted data (useful for validation)*/
+    //*SELECT() retorna os dados inseridos (útil para validação)*/
     return { data, error };
   }
 
@@ -19,17 +20,17 @@ class UsuarioService {
     return await supabase
       .from("usuario")
       .select(
-        "id_usuario, admin, email, nome_usuario, nome_completo, sobre, foto_perfil, data_nascimento"
+        "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at"
         // .select("*") traria também a senha.
       )
-      .eq("id_usuario", id)
+      .eq("id", id)
       .single();
-    //*SINGLE() ensures only one return*
+    //*SINGLE() assegura apenas um retorno*
   }
 
   static async get_all() {
     return await supabase.from("usuario").select(
-      "id_usuario, admin, email, nome_usuario, nome_completo, sobre, foto_perfil, data_nascimento"
+      "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at"
       // .select("*") traria também a senha.
     );
   }
@@ -37,13 +38,14 @@ class UsuarioService {
   static async update(id, updates) {
     let validUpdates = {};
 
-    // Filtrar apenas os campos válidos, removendo valores nulos ou vazios
+    // Filtrar apenas os campos válidos, removendo valores nulos ou vazios:
     Object.keys(updates).forEach((key) => {
       if (updates[key] && updates[key].toString().trim() !== "") {
         validUpdates[key] = updates[key];
       }
     });
 
+    // Caso não seja implementada a verificação no front:
     if (Object.keys(validUpdates).length === 0) {
       throw new Error("Nenhuma alteração válida detectada.");
     }
@@ -51,7 +53,7 @@ class UsuarioService {
     const { data, error } = await supabase
       .from("usuario")
       .update(validUpdates)
-      .eq("id_usuario", id)
+      .eq("id", id)
       .select();
 
     if (error) throw new Error(error.message);
@@ -62,7 +64,7 @@ class UsuarioService {
   }
 
   static async delete(id) {
-    return await supabase.from("usuario").delete().eq("id_usuario", id);
+    return await supabase.from("usuario").delete().eq("id", id);
   }
 }
 
