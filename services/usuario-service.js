@@ -20,7 +20,7 @@ class UsuarioService {
     return await supabase
       .from("usuario")
       .select(
-        "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at"
+        "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano"
         // .select("*") traria também a senha.
       )
       .eq("id", id)
@@ -30,7 +30,7 @@ class UsuarioService {
 
   static async get_all() {
     return await supabase.from("usuario").select(
-      "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at"
+      "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano"
       // .select("*") traria também a senha.
     );
   }

@@ -14,7 +14,8 @@ class Usuario {
     nome_completo,
     sobre,
     foto_perfil,
-    data_nascimento
+    data_nascimento,
+    tipo_plano = null
   ) {
     this.id_usuario = id_usuario;
     this.admin = admin;
@@ -25,6 +26,9 @@ class Usuario {
     this.sobre = sobre;
     this.foto_perfil = foto_perfil;
     this.data_nascimento = data_nascimento;
+    this.tipo_plano = tipo_plano;
+    // Definir o plano 1 por padrão se tipo_plano for null:
+    this.tipo_plano = tipo_plano || 1;
   }
 }
 
