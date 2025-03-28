@@ -37,3 +37,40 @@ A estrutura segue os princípios de **separação de responsabilidades**, onde c
 ## config
 
 **- RESPONSABILIDADE:** Armazena configurações e variáveis de ambiente do projeto, como configurações do banco de dado e tokens de API.
+
+## Possíveis novas funcionalidades para implementar:
+
+**\*ENTIDADE PAGAMENTO**
+_"Listagem filtrada":_ filtrar pagamentos por status, usuário, período...
+**Exemplo de rota:**
+/pagamentos?status=pendente&id_usuario=123
+router.get("/", PagamentoController.get_filtered);
+**Caso de uso:**
+Buscar pagamentos pendentes de um usuário específico.  
+ _"Pagamento por intervalo de datas":_ Listar pagamentos dentro de um período específico.
+**Exemplo de rota:**
+/pagamentos/periodo?inicio=2024-03-01&fim=2024-03-31
+router.get("/periodo", PagamentoController.get_by_period);
+**Caso de uso:**
+Exibir pagamentos feitos em um mês específico.
+_"Reembolso de pagamento":_
+Atualizar o status para "reembolsado" e gravar a data do reembolso.
+**Exemplo de rota:**
+/pagamentos/:id/reembolso
+router.post("/:id/reembolso", PagamentoController.process_refund);
+**Caso de uso:**
+Um usuário solicitou reembolso de um pagamento.
+_"Webhook de atualização (para integrações externas)":_
+Receber notificações de atualização de status de um pagamento.
+**Exemplo de rota:**
+/pagamentos/webhook
+router.post("/webhook", PagamentoController.payment_webhook);
+**Caso de uso:**
+Atualizar status automaticamente quando um gateway de pagamento confirma uma transação.
+_"Métodos de pagamento disponíveis":_
+Retornar uma lista de métodos suportados (ex.: cartão, Pix, boleto).
+**Exemplo de rota:**
+/pagamentos/metodos
+router.get("/metodos", PagamentoController.get_payment_methods);
+**Caso de uso:**
+Exibir opções na interface do usuário antes do pagamento.
