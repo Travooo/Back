@@ -1,7 +1,6 @@
 # 📌 Backend com Node.js, JavaScript, PostgreSQL e Supabase
 
-Este projeto **Node.js** utiliza **JavaScript** e **PostgreSQL** hospedado no **Supabase**. Ele segue uma arquitetura **MVC (Model-View-Controller)** com separação clara entre **modelos de dados**, **serviços**, **rotas** e **controladores**, garantindo modularidade e escalabilidade.
-A utilização dos modelos de dados será revisada e sua necessidade verificada conforme o andamento do projeto.
+Este projeto **Node.js** utiliza **JavaScript** e **PostgreSQL** hospedado no **Supabase**. Ele segue uma arquitetura **MVC (Model-View-Controller)** com separação clara entre **serviços**, **rotas** e **controladores**, garantindo modularidade e escalabilidade.
 
 ### 📦 Instalando dependências
 
@@ -16,23 +15,41 @@ http://localhost:3001/test-supabase
 
 ### 📁 Estrutura
 
-A estrutura segue os princípios de **separação de responsabilidades**, onde cada pasta tem uma função clara no processo de desenvolvimento. Abaixo está a explicação de cada uma:
+A estrutura segue os princípios de **separação de responsabilidades**, onde cada pasta tem uma função no processo de desenvolvimento. Abaixo está a explicação de cada uma:
 
-## services
+## Services
 
-**- RESPONSABILIDADE:** Encapsulam a lógica de interação com o Supabase e regras de negócio, como validação de dados. São responsáveis por buscar ou manipular dados do banco e retorná-los de forma adequada para os controladores.
+Encapsulam a lógica de interação com o Supabase e regras de negócio, como validação de dados. São responsáveis por buscar ou manipular dados do banco e retorná-los de forma adequada para os controladores.
 
-## controller
+## Controllers
 
-**- RESPONSABILIDADE:** Centraliza a lógica de requisição organizando e separando as funções de cada requisição HTTP. Inclui tratamento de erros detalhados, com mensagens padronizadas, permitindo respostas HTTP mais granulares.
+Centralizam a lógica de requisição, organizando e separando as funções de cada requisição HTTP. Incluem tratamento de erros detalhados permitindo respostas HTTP mais granulares.
 
-## routes
+## Routes
 
-**- RESPONSABILIDADE:** Contém as definições de todas as rotas da aplicação. Ele serve como o ponto de entrada para as requisições HTTP e direciona as requisições para os controladores apropriados.
+Contém as definições de todas as rotas da aplicação. Ele serve como o ponto de entrada para as requisições HTTP e direciona as requisições para os controladores apropriados.
 
-## models
+## Models
 
-**- RESPONSABILIDADE:** Representar a estrutura dos dados para validação. Não é necessário, mas pode ser útil caso desejamos criar regras de negócio para validação antes de uma inserção. Essa lógica pode também ser abstraída para o banco. Está sendo implementada ambas, comentando como seria em JSON puro, para verificação posterior.
+Os models representam a estrutura dos dados e podem ser utilizados para validação de atributos. No entanto, não são obrigatórios no projeto. Eles podem ser úteis para:
+
+- Validação de atributos nos próprios construtores (embora isso possa ser tratado no service).
+- Definição de valores padrão para atributos opcionais (embora isso possa ser tratado no service ou pelo banco).
+
+### ⚠️ Sobre o Supabase:
+
+O Supabase parece aceitar apenas inserções em formato JSON, não diretamente via classes. Isso significa que, recebendo a requisição em JSON do front, ao usar models, precisaríamos convertê-los novamente para JSON antes do insert, o que pode não justificar sua manutenção no projeto.
+
+### Implementação atual:
+
+O código nos services contém ambas as abordagens (com e sem models). A versão usando apenas JSON está comentada para facilitar a decisão final.
+
+### Próximos passos:
+
+Se for decidido remover os models, antes da exclusão devemos:
+
+- ✅ Verificar quais validações de atributos eles possuem;
+- ✅ Mover essas validações para os respectivos services, caso ainda não estejam lá.
 
 ## middleware
 
