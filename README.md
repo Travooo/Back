@@ -78,3 +78,34 @@ Retornar uma lista de métodos suportados (ex.: cartão, Pix, boleto).
 router.get("/metodos", PagamentoController.get_payment_methods);
 **Caso de uso:**
 Exibir opções na interface do usuário antes do pagamento.
+
+## Métodos Estáticos Assíncronos x Métodos de Instância Assíncronos:
+
+_Método estático:_ Não depende de uma instância da classe. Ou seja, você chama o método diretamente na classe sem precisar criar uma instância da classe.
+
+```javascript
+class Exemplo {
+  static async fetchData() {
+    let response = await fetch("https://api.example.com/data");
+    let data = await response.json();
+    return data;
+  }
+}
+// Chama diretamente na classe, sem criar uma instância:
+Exemplo.fetchData().then((data) => console.log(data));
+```
+
+_Método de instância:_ Depende de uma instância da classe. Você precisa criar um objeto para chamar esse método.
+
+```javascript
+class Exemplo {
+  async fetchData() {
+    let response = await fetch("https://api.example.com/data");
+    let data = await response.json();
+    return data;
+  }
+}
+// Aqui, você precisa criar uma instância da classe:
+const exemplo = new Exemplo();
+exemplo.fetchData().then((data) => console.log(data));
+```
