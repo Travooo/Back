@@ -18,6 +18,10 @@ http://localhost:3001/test-supabase
 
 A estrutura segue os princípios de **separação de responsabilidades**, onde cada pasta tem uma função clara no processo de desenvolvimento. Abaixo está a explicação de cada uma:
 
+## services
+
+**- RESPONSABILIDADE:** Encapsulam a lógica de interação com o Supabase e regras de negócio, como validação de dados. São responsáveis por buscar ou manipular dados do banco e retorná-los de forma adequada para os controladores.
+
 ## controller
 
 **- RESPONSABILIDADE:** Centraliza a lógica de requisição organizando e separando as funções de cada requisição HTTP. Inclui tratamento de erros detalhados, com mensagens padronizadas, permitindo respostas HTTP mais granulares.
@@ -26,9 +30,9 @@ A estrutura segue os princípios de **separação de responsabilidades**, onde c
 
 **- RESPONSABILIDADE:** Contém as definições de todas as rotas da aplicação. Ele serve como o ponto de entrada para as requisições HTTP e direciona as requisições para os controladores apropriados.
 
-## services
+## models
 
-**- RESPONSABILIDADE:** Encapsulam a lógica de interação com o Supabase e regras de negócio, como validação de dados. São responsáveis por buscar ou manipular dados do banco e retorná-los de forma adequada para os controladores.
+**- RESPONSABILIDADE:** Representar a estrutura dos dados para validação. Não é necessário, mas pode ser útil caso desejamos criar regras de negócio para validação antes de uma inserção. Essa lógica pode também ser abstraída para o banco. Está sendo implementada ambas, comentando como seria em JSON puro, para verificação posterior.
 
 ## middleware
 
@@ -43,11 +47,11 @@ A estrutura segue os princípios de **separação de responsabilidades**, onde c
 **\*ENTIDADE PAGAMENTO**
 _"Listagem filtrada":_ filtrar pagamentos por status, usuário, período...
 **Exemplo de rota:**
-/pagamentos?status=pendente&id_usuario=123
+/pagamentos?status=pendente&id*usuario=123
 router.get("/", PagamentoController.get_filtered);
 **Caso de uso:**
 Buscar pagamentos pendentes de um usuário específico.  
- _"Pagamento por intervalo de datas":_ Listar pagamentos dentro de um período específico.
+ *"Pagamento por intervalo de datas":_ Listar pagamentos dentro de um período específico.
 **Exemplo de rota:**
 /pagamentos/periodo?inicio=2024-03-01&fim=2024-03-31
 router.get("/periodo", PagamentoController.get_by_period);
@@ -67,7 +71,7 @@ Receber notificações de atualização de status de um pagamento.
 router.post("/webhook", PagamentoController.payment_webhook);
 **Caso de uso:**
 Atualizar status automaticamente quando um gateway de pagamento confirma uma transação.
-_"Métodos de pagamento disponíveis":_
+_"Métodos de pagamento disponíveis":\_
 Retornar uma lista de métodos suportados (ex.: cartão, Pix, boleto).
 **Exemplo de rota:**
 /pagamentos/metodos
