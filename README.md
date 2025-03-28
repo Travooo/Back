@@ -44,44 +44,83 @@ A estrutura segue os princípios de **separação de responsabilidades**, onde c
 
 ## Possíveis novas funcionalidades para implementar:
 
-**\*ENTIDADE PAGAMENTO**
-_"Listagem filtrada":_ filtrar pagamentos por status, usuário, período...
+### **ENTIDADE PAGAMENTO**
+
+#### _"Listagem filtrada"_:
+
+Filtrar pagamentos por status, usuário, período...
+
 **Exemplo de rota:**
+
+```javascript
 /pagamentos?status=pendente&id*usuario=123
 router.get("/", PagamentoController.get_filtered);
+```
+
 **Caso de uso:**
-Buscar pagamentos pendentes de um usuário específico.  
- *"Pagamento por intervalo de datas":_ Listar pagamentos dentro de um período específico.
+Buscar pagamentos pendentes de um usuário específico.
+
+#### **Pagamento por intervalo de datas**
+
+Listar pagamentos dentro de um período específico.
+
 **Exemplo de rota:**
+
+```javascript
 /pagamentos/periodo?inicio=2024-03-01&fim=2024-03-31
 router.get("/periodo", PagamentoController.get_by_period);
+```
+
 **Caso de uso:**
 Exibir pagamentos feitos em um mês específico.
-_"Reembolso de pagamento":_
+
+### **Reembolso de pagamento:**
+
 Atualizar o status para "reembolsado" e gravar a data do reembolso.
+
 **Exemplo de rota:**
+
+```javascript
 /pagamentos/:id/reembolso
 router.post("/:id/reembolso", PagamentoController.process_refund);
+```
+
 **Caso de uso:**
 Um usuário solicitou reembolso de um pagamento.
-_"Webhook de atualização (para integrações externas)":_
+
+### **Webhook de atualização (para integrações externas):**
+
 Receber notificações de atualização de status de um pagamento.
+
 **Exemplo de rota:**
+
+```javascript
 /pagamentos/webhook
-router.post("/webhook", PagamentoController.payment_webhook);
+router.post("/webhook", PagamentoController.payment*webhook);
+```
+
 **Caso de uso:**
 Atualizar status automaticamente quando um gateway de pagamento confirma uma transação.
-_"Métodos de pagamento disponíveis":\_
+
+#### **Métodos de pagamento disponíveis:**
+
 Retornar uma lista de métodos suportados (ex.: cartão, Pix, boleto).
+
 **Exemplo de rota:**
+
+```javascript
 /pagamentos/metodos
 router.get("/metodos", PagamentoController.get_payment_methods);
+```
+
 **Caso de uso:**
 Exibir opções na interface do usuário antes do pagamento.
 
 ## Métodos Estáticos Assíncronos x Métodos de Instância Assíncronos:
 
-_Método estático:_ Não depende de uma instância da classe. Ou seja, você chama o método diretamente na classe sem precisar criar uma instância da classe.
+#### _Método estático:_
+
+Não depende de uma instância da classe. Ou seja, você chama o método diretamente na classe sem precisar criar uma instância da classe.
 
 ```javascript
 class Exemplo {
@@ -95,7 +134,9 @@ class Exemplo {
 Exemplo.fetchData().then((data) => console.log(data));
 ```
 
-_Método de instância:_ Depende de uma instância da classe. Você precisa criar um objeto para chamar esse método.
+#### _Método de instância:_
+
+Depende de uma instância da classe. Você precisa criar um objeto para chamar esse método.
 
 ```javascript
 class Exemplo {
