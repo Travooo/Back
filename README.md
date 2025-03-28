@@ -51,19 +51,19 @@ Se for decidido remover os models, antes da exclusão devemos:
 - ✅ Verificar quais validações de atributos eles possuem;
 - ✅ Mover essas validações para os respectivos services, caso ainda não estejam lá.
 
-## middleware
+## Middleware
 
-**- RESPONSABILIDADE:** Contém funções que podem ser executadas entre a requisição e a resposta, como verificação de autenticação.
+Contém funções que podem ser executadas entre a requisição e a resposta, como verificação de autenticação.
 
-## config
+## Config
 
-**- RESPONSABILIDADE:** Armazena configurações e variáveis de ambiente do projeto, como configurações do banco de dado e tokens de API.
+Armazena configurações e variáveis de ambiente do projeto, como configurações do banco de dado e tokens de API.
 
 ## Possíveis novas funcionalidades para implementar:
 
-### **ENTIDADE PAGAMENTO**
+### **Entidade PAGAMENTO**
 
-#### _"Listagem filtrada"_:
+#### "Listagem filtrada":
 
 Filtrar pagamentos por status, usuário, período...
 
@@ -77,7 +77,7 @@ router.get("/", PagamentoController.get_filtered);
 **Caso de uso:**
 Buscar pagamentos pendentes de um usuário específico.
 
-#### **Pagamento por intervalo de datas**
+#### "Pagamento por intervalo de datas"
 
 Listar pagamentos dentro de um período específico.
 
@@ -91,7 +91,7 @@ router.get("/periodo", PagamentoController.get_by_period);
 **Caso de uso:**
 Exibir pagamentos feitos em um mês específico.
 
-### **Reembolso de pagamento:**
+### "Reembolso de pagamento:"
 
 Atualizar o status para "reembolsado" e gravar a data do reembolso.
 
@@ -105,7 +105,7 @@ router.post("/:id/reembolso", PagamentoController.process_refund);
 **Caso de uso:**
 Um usuário solicitou reembolso de um pagamento.
 
-### **Webhook de atualização (para integrações externas):**
+### "Webhook de atualização (para integrações externas):"
 
 Receber notificações de atualização de status de um pagamento.
 
@@ -119,7 +119,7 @@ router.post("/webhook", PagamentoController.payment*webhook);
 **Caso de uso:**
 Atualizar status automaticamente quando um gateway de pagamento confirma uma transação.
 
-#### **Métodos de pagamento disponíveis:**
+#### "Métodos de pagamento disponíveis:"
 
 Retornar uma lista de métodos suportados (ex.: cartão, Pix, boleto).
 
@@ -135,7 +135,7 @@ Exibir opções na interface do usuário antes do pagamento.
 
 ## Métodos Estáticos Assíncronos x Métodos de Instância Assíncronos:
 
-#### _Método estático:_
+#### Método estático:
 
 Não depende de uma instância da classe. Ou seja, você chama o método diretamente na classe sem precisar criar uma instância da classe.
 
@@ -151,7 +151,7 @@ class Exemplo {
 Exemplo.fetchData().then((data) => console.log(data));
 ```
 
-#### _Método de instância:_
+#### Método de instância:
 
 Depende de uma instância da classe. Você precisa criar um objeto para chamar esse método.
 
