@@ -1,46 +1,23 @@
-// TODO: Revisar este arquivo - gerado por IA. Há coisas que podem estar misturadas. Verificar lógica, otimização e estilo.
-
 const express = require("express");
-const PagamentoService = require("../services/pagamento-service");
+const PagamentoController = require("../controllers/pagamento-controller");
 const router = express.Router();
 
-router.post("/", async (req, res) => {
-  try {
-    const data = req.body;
-    const result = await PagamentoService.createPagamento(data);
-    res.status(201).json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Criar um novo pagamento
+router.post("/", PagamentoController.create);
 
-router.get("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await PagamentoService.getPagamentoById(id);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Obter um pagamento por ID
+router.get("/:id", PagamentoController.get_by_id);
 
-router.get("/", async (req, res) => {
-  try {
-    const result = await PagamentoService.getAllPagamentos();
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Obter todos os pagamentos
+router.get("/", PagamentoController.get_all);
 
-router.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const result = await PagamentoService.deletePagamento(id);
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// Obter status de um pagamento por ID
+router.get("/:id/status", PagamentoController.get_status);
+
+// Atualizar status de um pagamento
+router.put("/:id/status", PagamentoController.update_status);
+
+// Deletar um pagamento por ID
+router.delete("/:id", PagamentoController.delete);
 
 module.exports = router;

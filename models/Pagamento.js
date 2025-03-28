@@ -1,30 +1,20 @@
-// TODO: Revisar este arquivo - gerado por IA. Há coisas que podem estar misturadas. Verificar lógica, otimização e estilo.
-
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
-
 class Pagamento {
-    constructor(id_pagamento = null, tipo_pagamento, id_usuario) {
-        this.id_pagamento = id_pagamento;
-        this.tipo_pagamento = tipo_pagamento;
-        this.id_usuario = id_usuario;
+  constructor(id_usuario, valor, metodo_pagamento, status) {
+    if (!id_usuario || !valor || !metodo_pagamento || !status) {
+      throw new Error("Campos obrigatórios ausentes ou inválidos.");
     }
-
-    static async insert(pagamento) {
-        return await supabase.from('pagamento').insert([pagamento]).select();
+    if (typeof valor !== "number" || valor <= 0) {
+      throw new Error("O valor do pagamento deve ser um número positivo.");
     }
-
-    static async getById(id) {
-        return await supabase.from('pagamento').select('*').eq('id_pagamento', id).single();
+    const statusPermitidos = ["pendente", "pago", "cancelado"];
+    if (!statusPermitidos.includes(status)) {
+      throw new Error("Status inválido.");
     }
-
-    static async getAll() {
-        return await supabase.from('pagamento').select('*');
-    }
-
-    static async delete(id) {
-        return await supabase.from('pagamento').delete().eq('id_pagamento', id);
-    }
+    this.id_usuario = id_usuario;
+    this.valor = valor;
+    this.metodo_pagamento = metodo_pagamento;
+    this.status = status;
+  }
 }
 
 module.exports = Pagamento;
