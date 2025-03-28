@@ -12,10 +12,10 @@ class PagamentoService {
       // CASO COM MODELS:
       //==================
       const pagamento = new Pagamento(
-        payment_data.id_usuario,
         payment_data.valor,
         payment_data.metodo_pagamento,
-        payment_data.status
+        payment_data.status,
+        payment_data.id_usuario
       );
       //==================
       // CASO SEM MODELS:
@@ -63,8 +63,7 @@ class PagamentoService {
   }
 
   static async update_status(id, new_status) {
-    // VALIDAR STATUS
-    const statusPermitidos = ["pendente", "pago", "cancelado", "estornado"];
+    // VALIDAR STATUS:
     if (!statusPermitidos.includes(new_status)) {
       throw new Error("Status inválido.");
     }
