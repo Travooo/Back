@@ -10,7 +10,8 @@ class Usuario {
     data_nascimento,
     // Validar se por padrão "admin" será false.
     admin = false,
-    tipo_plano = null
+    tipo_plano = 1
+    // Atribui o valor "1" (plano gratuito/usuário comum) a "tipo_plano".
   ) {
     if (
       !email ||
@@ -35,13 +36,7 @@ class Usuario {
     this.sobre = sobre;
     this.data_nascimento = data_nascimento;
     this.admin = admin;
-    this.tipo_plano = tipo_plano || 1;
-    // Atribui o valor de 1 ao tipo de plano do usuário caso seja null ou indefinido.
-    // Exemplo:
-    // 1 - Plano Gratuito (usuário comum)
-    // 2 - Plano Pago Básico
-    // 3 - Plano Pago Avançado
-    // E assim por diante, dependendo da configuração da tabela de planos.
+    this.tipo_plano = tipo_plano;
   }
   validarEmail(email) {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
