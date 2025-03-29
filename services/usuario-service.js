@@ -41,7 +41,19 @@ class UsuarioService {
       //}
       const { data, error } = await supabase
         .from("usuarios")
-        .insert([usuario])
+        .insert([
+          {
+            email: usuario.email,
+            senha: usuario.senha,
+            nome_usuario: usuario.nome_usuario,
+            nome_completo: usuario.nome_completo,
+            foto_perfil: usuario.foto_perfil,
+            sobre: usuario.sobre,
+            data_nascimento: usuario.data_nascimento,
+            admin: usuario.admin,
+            tipo_plano: usuario.tipo_plano,
+          },
+        ])
         .select();
       //*SELECT() retorna os dados inseridos (útil para validação)*/
       if (error) throw new Error(error.message);
@@ -56,7 +68,7 @@ class UsuarioService {
       const { data, error } = await supabase
         .from("usuarios")
         .select(
-          "id, email, senha, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano"
+          "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano"
           // .select("*") traria também a senha.
         )
         .eq("id", id)
@@ -74,7 +86,7 @@ class UsuarioService {
       const { data, error } = await supabase
         .from("usuarios")
         .select(
-          "id, email, senha, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano"
+          "id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano"
         );
       if (error) throw new Error(error.message);
       return data;

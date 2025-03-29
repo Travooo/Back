@@ -20,8 +20,7 @@ class UsuarioController {
     try {
       const { data, error } = await UsuarioService.get_by_id(req.params.id);
       if (error) return res.status(400).json({ error: error.message });
-      if (!data)
-        return res.status(404).json({ error: "Usuário não encontrado." });
+      if (!data) return res.status(404).json({ error: error.message });
       // 404 Not Found: Indica que o recurso solicitado não foi encontrado no servidor.
       // Pode ser um endpoint inexistente ou ID inválido.
       return res.status(200).json(data);
