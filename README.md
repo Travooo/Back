@@ -137,7 +137,7 @@ Os models representam a estrutura dos dados. Podem ser úteis para:
 - Validação de atributos nos próprios construtores. Os construtores dos Models possuem condicionais responsáveis por validar atributos.
 - Definição de valores padrão para atributos opcionais (abstraindo lógica do banco).
 
-No Supabase não é possível fazer INSERT passando um objeto literal como parâmetro. O Supabase aceita inserções apenas em formato JSON. Por isso como demonstrado em 'UsuarioService.create()' o back está configurado para receber os dados do body das requisições do front em JSON, e os atributos do JSON, o _service_ tenta instanciar um modelo ('Usuario'). Se o objeto conseguir ser instanciado sem erro, logo os dados estão validados e apenas então são inseridos no banco, em JSON.
+No Supabase não é possível fazer INSERT passando um objeto literal como parâmetro. O Supabase aceita inserções apenas em formato JSON. Por isso como demonstrado em 'UsuarioService.create()' o back está configurado para receber os dados do body das requisições do front em JSON. Com os atributos do JSON, o _service_ tenta instanciar um modelo ('Usuario'). Se o objeto conseguir ser instanciado sem erro, logo os dados estão validados e apenas então são inseridos no banco, em JSON.
 Essa abordagem encapsula a lógica de validação e inserção de dados e facilita a manutenção do código.
 
 ## Middleware
