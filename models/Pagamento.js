@@ -1,6 +1,6 @@
 class Pagamento {
-  constructor(valor, metodo_pagamento, status, id_usuario) {
-    if (!id_usuario || !valor || !metodo_pagamento || !status) {
+  constructor(valor, metodo_pagamento, status = "pendente", id_usuario) {
+    if (!valor || !metodo_pagamento || !status || !id_usuario) {
       throw new Error("Campos obrigatórios ausentes ou inválidos.");
     }
     if (typeof valor !== "number" || valor <= 0) {

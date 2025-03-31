@@ -27,7 +27,15 @@ Centralizam a lógica de requisição, organizando e separando as funções de c
 
 ## Routes
 
-Contém as definições de todas as rotas da aplicação. Ele serve como o ponto de entrada para as requisições HTTP e direciona as requisições para os controladores apropriados.
+Contém as definições de todas as rotas da aplicação. serve como o ponto de entrada para as requisições HTTP e direciona as requisições para os controladores apropriados.
+
+Quando uma requisição POST/usuarios chegar, o Express executa `UsuarioController.create(req, res)`:
+
+```javascript
+router.post("/", UsuarioController.create);
+```
+
+_Ou seja, as rotas "conectam" URLs a funções que realmente tratam a requisição._
 
 ## Models
 

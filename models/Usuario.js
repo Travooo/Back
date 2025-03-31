@@ -20,10 +20,10 @@ class Usuario {
       !nome_completo ||
       !data_nascimento
     ) {
-      throw new Error("Campos obrigatórios ausentes.");
+      throw new Error("Campos obrigatorios ausentes.");
     }
     if (!this.validarEmail(email)) {
-      throw new Error("E-mail inválido.");
+      throw new Error("Email invalido.");
     }
     if (senha.length < 6) {
       throw new Error("A senha deve ter pelo menos 6 caracteres.");
@@ -42,7 +42,7 @@ class Usuario {
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return regex.test(email);
     // A regex está boa mas não cobre casos mais específicos.
-    // Para um sistema mais robusto, usar bibliotecas como Validator.
+    // Para um sistema mais robusto, há bibliotecas como Validator.
   }
 }
 
