@@ -1,6 +1,6 @@
 # 📌 Backend com Node.js, JavaScript, PostgreSQL e Supabase
 
-Este projeto **Node.js** utiliza **JavaScript** e **PostgreSQL** hospedado no **Supabase**. Ele segue uma arquitetura **MVC (Model-View-Controller)** com separação clara entre **serviços**, **rotas** e **controladores**, garantindo modularidade e escalabilidade.
+Este projeto **Node.js** utiliza **JavaScript** e **PostgreSQL** hospedado no **Supabase**. Ele segue uma arquitetura **MVC (Model-View-Controller)** com separação clara entre **modelos de dados\*, **serviços**, **rotas** e **controladores\*\*, garantindo modularidade e escalabilidade.
 
 ### 📦 Instalando dependências
 
@@ -15,49 +15,129 @@ http://localhost:3001/test-supabase
 
 ### 📁 Estrutura
 
-A estrutura segue os princípios de **separação de responsabilidades**, onde cada pasta tem uma função no processo de desenvolvimento. Abaixo está a explicação de cada uma:
+A estrutura segue os princípios de **separação de responsabilidades**. Abaixo, seguem explicações na ordem que o sistema é executado.
 
-## Services
+## Server.js
 
-Encapsulam a lógica de interação com o Supabase e regras de negócio, como validação de dados. São responsáveis por buscar ou manipular dados do banco e retorná-los de forma adequada para os controladores.
+O arquivo 'server.js' é o ponto de entrada do servidor da aplicação, configurando e inicializando a aplicação _Express_ e realizando a conexão com o _Supabase_. Para ver sua configuração completa, acessar o arquivo. Abaixo, explico como ele inicia as interações com o back.
+Em 'server.js' são criadas as rotas da aplicação:
+
+# Importação e uso da rota "/usuarios":
+
+```javascript
+const caminho_usuario_router = require("./routes/usuarioRouter");
+app.use("/usuarios", caminho_usuario_router);
+```
+
+São criadas as rotas associando seus routers (que precisam ser importados) ao Express, permitindo assim o roteamento das requisições para os roteadores corretos.
+
+## Routers
+
+São os arquivos que contêm as definições das rotas da aplicação. Usando o _express_ criam _routers_ definindo rotas com suas respectivas ações.
+Exemplo de 'usuarioRouter.js' com rotas básicas de CRUD:
+
+```javascript
+const UsuarioController = require("../controllers/UsuarioController");
+const express = require("express");
+const usuarioRouter = express.Router();
+
+usuarioRouter.post("/", UsuarioController.create);
+usuarioRouter.get("/", UsuarioController.get_all);
+usuarioRouter.get("/:id", UsuarioController.get_by_id);
+usuarioRouter.put("/:id", UsuarioController.update);
+usuarioRouter.delete("/:id", UsuarioController.delete);
+
+module.exports = usuarioRouter;
+```
+
+Usando o _express_ cram _routers_ definindo rotas com suas respectivas ações. Essas _ações_ se iniciam pela chamada do respectivo método do _controller_.
+Ou seja, as rotas criam URLs "conectando-as" com as respectivas funções que realmente tratam a requisição.
 
 ## Controllers
 
-Centralizam a lógica de requisição, organizando e separando as funções de cada requisição HTTP. Incluem tratamento de erros detalhados permitindo respostas HTTP mais granulares.
-
-## Routes
-
-Contém as definições de todas as rotas da aplicação. serve como o ponto de entrada para as requisições HTTP e direciona as requisições para os controladores apropriados.
-
-Quando uma requisição POST/usuarios chegar, o Express executa `UsuarioController.create(req, res)`:
+Organizam e separam as funções de cada requisição HTTP, centralizando a lógica de requisição.
+Incluem tratamento de erros com respostas HTTP detalhadas para os casos de requisição bem e mal-sucedida. permitindo respostas HTTP mais granulares.
+Servem como o ponto de entrada para as requisições HTTP e as direciona para os controladores apropriados.
+Como vimos em usuarioRouter, quando uma requisição `usuarioRouter.post("/", UsuarioController.create);` chegar, o Express executa `UsuarioController.create(req, res)`.
+Exemplo com o método 'UsuarioController.create()':
 
 ```javascript
-router.post("/", UsuarioController.create);
+const UsuarioService = require("../services/UsuarioService");
+
+class UsuarioController {
+  static async create(req, res) {
+    try {
+      const new_user_data = await UsuarioService.create(req.body);
+      return res.status(201).json(new_user_data);
+      // 201 Created: Indica que um novo recurso foi criado com sucesso, mas não há conteúdo a ser retornado na resposta.
+    } catch (error) {
+      console.error("Erro ao criar usuário:");
+      return res.status(400).json({ error: error.message });
+      // 400 Bad Request: Indica que a requisição do cliente é inválida.
+      // Geralmente por falta de parâmetros obrigatórios ou formato incorreto.
+    }
+  }
+}
+module.exports = UsuarioController;
 ```
 
-_Ou seja, as rotas "conectam" URLs a funções que realmente tratam a requisição._
+Essencialmente os métodos dos controladores tentam executar o método respectivo do service prevenindo crashs e tratando erros.
+
+## Services
+
+Encapsulam a lógica de interação com o Supabase e regras de negócio necessárias.
+Responsáveis por interagir com o banco e por trazer os dados/feedbacks retornados da forma adequada aos controllers.
+
+Exemplo com o método 'UsuarioService.create()':
+
+```javascript
+class UsuarioService {
+  static async create(user_data_json) {
+    // Aqui, a própria instanciação valida a integridade do objeto:
+    try {
+      const usuario = new Usuario(
+        user_data_json.email,
+        user_data_json.senha,
+        user_data_json.nome_usuario,
+        user_data_json.nome_completo,
+        user_data_json.foto_perfil,
+        user_data_json.sobre,
+        user_data_json.data_nascimento,
+        user_data_json.admin,
+        user_data_json.tipo_plano
+      );
+      // Inserção no Supabase: passa os atributos do objeto em JSON:
+      const { data, error } = await supabase
+        .from("usuarios")
+        .insert({
+          email: usuario.email,
+          senha: usuario.senha,
+          nome_usuario: usuario.nome_usuario,
+          nome_completo: usuario.nome_completo,
+          foto_perfil: usuario.foto_perfil,
+          sobre: usuario.sobre,
+          data_nascimento: usuario.data_nascimento,
+          admin: usuario.admin,
+          tipo_plano: usuario.tipo_plano,
+        })
+        .single()
+        .select();
+      if (error) throw new Error(error.message);
+      return data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
+```
 
 ## Models
 
-Os models representam a estrutura dos dados e podem ser utilizados para validação de atributos. No entanto, não são obrigatórios no projeto. Eles podem ser úteis para:
+Os models representam a estrutura dos dados. Podem ser úteis para:
 
-- Validação de atributos nos próprios construtores (embora isso possa ser tratado no service).
-- Definição de valores padrão para atributos opcionais (embora isso possa ser tratado no service ou pelo banco).
-
-### ⚠️ Sobre o Supabase:
-
-O Supabase parece aceitar apenas inserções em formato JSON, não diretamente via classes. Isso significa que, recebendo a requisição em JSON do front, ao usar models, precisaríamos convertê-los novamente para JSON antes do insert, o que pode não justificar sua manutenção no projeto.
-
-### Implementação atual:
-
-O código nos services contém ambas as abordagens (com e sem models). A versão usando apenas JSON está comentada para facilitar a decisão final.
-
-### Próximos passos:
-
-Se for decidido remover os models, antes da exclusão devemos:
-
-- ✅ Verificar quais validações de atributos eles possuem;
-- ✅ Mover essas validações para os respectivos services, caso ainda não estejam lá.
+- Validação de atributos nos próprios construtores. Os construtores dos Models possuem condicionais responsáveis por validar atributos.
+- Definição de valores padrão para atributos opcionais (abstraindo lógica do banco).
+  No Supabase não é possível fazer INSERT passando um objeto literal como parâmetro. O Supabase aceita inserções apenas em formato JSON. Por isso como demonstrado em 'UsuarioService.create()' o back está configurado para receber os dados do body das requisições do front em JSON, e os atributos do JSON, o _service_ tenta instanciar um modelo ('Usuario'). Se o objeto conseguir ser instanciado sem erro, logo os dados estão validados e apenas então são inseridos no banco, em JSON.
+  Essa abordagem encapsula a lógica de validação e inserção de dados e facilita a manutenção do código.
 
 ## Middleware
 
@@ -69,7 +149,7 @@ Armazena configurações e variáveis de ambiente do projeto, como configuraçõ
 
 ## Possíveis novas funcionalidades para implementar:
 
-### **Entidade PAGAMENTO**
+Utilizar esse espaço para anotas novas funções que podem ser necessárias:
 
 #### "Listagem filtrada":
 
