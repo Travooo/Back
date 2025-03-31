@@ -13,11 +13,9 @@ node index.js
 http://localhost:3001/test-supabase
 ```
 
-### 📁 Estrutura
-
 A estrutura segue os princípios de **separação de responsabilidades**. Abaixo, seguem explicações na ordem que o sistema é executado.
 
-#### Server.js
+### Server.js
 
 O arquivo 'server.js' é o ponto de entrada do servidor da aplicação, configurando e inicializando a aplicação _Express_ e realizando a conexão com o _Supabase_. Para ver sua configuração completa, acessar o arquivo. Abaixo, explico como ele inicia as interações com o back.
 Em 'server.js' são criadas as rotas da aplicação:
@@ -31,7 +29,7 @@ app.use("/usuarios", caminho_usuario_router);
 
 São criadas as rotas associando seus routers (que precisam ser importados) ao Express, permitindo assim o roteamento das requisições para os roteadores corretos.
 
-#### Routers
+### Routers
 
 São os arquivos que contêm as definições das rotas da aplicação. Usando o _express_ criam _routers_ definindo rotas com suas respectivas ações.
 ##### Exemplo de 'usuarioRouter.js' com rotas básicas de CRUD:
@@ -53,7 +51,7 @@ module.exports = usuarioRouter;
 Usando o _express_ cram _routers_ definindo rotas com suas respectivas ações. Essas _ações_ se iniciam pela chamada do respectivo método do _controller_.
 Ou seja, as rotas criam URLs "conectando-as" com as respectivas funções que realmente tratam a requisição.
 
-#### Controllers
+### Controllers
 
 Organizam e separam as funções de cada requisição HTTP, centralizando a lógica de requisição.
 Incluem tratamento de erros com respostas HTTP detalhadas para os casos de requisição bem e mal-sucedida. permitindo respostas HTTP mais granulares.
@@ -83,7 +81,7 @@ module.exports = UsuarioController;
 
 Essencialmente os métodos dos controladores tentam executar o método respectivo do service prevenindo crashs e tratando erros.
 
-#### Services
+### Services
 
 Encapsulam a lógica de interação com o Supabase e regras de negócio necessárias.
 Responsáveis por interagir com o banco e por trazer os dados/feedbacks retornados da forma adequada aos controllers.
@@ -130,7 +128,7 @@ class UsuarioService {
   }
 ```
 
-#### Models
+### Models
 
 Os models representam a estrutura dos dados. Podem ser úteis para:
 
@@ -140,11 +138,11 @@ Os models representam a estrutura dos dados. Podem ser úteis para:
 No Supabase não é possível fazer INSERT passando um objeto literal como parâmetro. O Supabase aceita inserções apenas em formato JSON. Por isso como demonstrado em 'UsuarioService.create()' o back está configurado para receber os dados do body das requisições do front em JSON. Com os atributos do JSON, o _service_ tenta instanciar um modelo ('Usuario'). Se o objeto conseguir ser instanciado sem erro, logo os dados estão validados e apenas então são inseridos no banco, em JSON.
 Essa abordagem encapsula a lógica de validação e inserção de dados e facilita a manutenção do código.
 
-#### Middleware
+### Middleware
 
 Contém funções que podem ser executadas entre a requisição e a resposta, como verificação de autenticação.
 
-#### Config
+### Config
 
 Armazena configurações e variáveis de ambiente do projeto, como configurações do banco de dado e tokens de API.
 
