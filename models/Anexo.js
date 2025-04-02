@@ -6,7 +6,7 @@ class Anexo {
     if (!(anexo instanceof Buffer)) {
       throw new Error("Atributo 'anexo' inválido.");
     }
-    if (!(typeof estabelecimento_id !== "number") || estabelecimento_id <= 0) {
+    if (!Number.isInteger(estabelecimento_id) || estabelecimento_id <= 0) {
       throw new Error("Atributo 'estabelecimento_id' inválido.");
     }
     this.anexo = anexo;

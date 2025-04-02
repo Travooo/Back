@@ -1,12 +1,12 @@
 class Cupom {
   constructor(estabelecimento_id, usuario_id, descricao) {
     if (!estabelecimento_id || !usuario_id || !descricao) {
-      throw new Erros("Campos obrigatórios ausentes ou inválidos.");
+      throw new Error("Campos obrigatórios ausentes ou inválidos.");
     }
-    if (typeof estabelecimento_id !== "number") {
+    if (!Number.isInteger(estabelecimento_id) || estabelecimento_id <= 0) {
       throw new Error("Atributo 'estabelecimento_id' inválido.");
     }
-    if (typeof usuario_id !== "number") {
+    if (!Number.isInteger(usuario_id) || usuario_id <= 0) {
       throw new Error("Atributo 'usuario_id' inválido.");
     }
     if (typeof descricao !== "string") {

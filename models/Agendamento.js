@@ -10,9 +10,7 @@ class Agendamento {
       throw new Error("Atributo 'usuario_id' inválido.");
     }
     if (!(horario instanceof Date) || isNaN(horario.getTime())) {
-      throw new Error(
-        "Atributo 'horario' deve ser um objeto date válido no formato ISO ('2025-04-10T15:30:00Z')"
-      );
+      throw new Error("Atributo 'horario' deve ser um objeto Date.");
     }
     if (detalhes !== null && typeof detalhes !== "string") {
       throw new Error("Atributo 'detalhes' deve ser uma string ou null.");

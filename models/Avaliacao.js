@@ -9,10 +9,10 @@ class Avaliacao {
     if (!estabelecimento_id || !usuario_id || !numero_estrelas) {
       throw new Error("Campos obrigatórios ausentes ou inválidos.");
     }
-    if (typeof usuario_id !== "number" || valor <= 0) {
+    if (!Number.isInteger(usuario_id) || usuario_id <= 0) {
       throw new Error("Atributo 'usuario_id' inválido.");
     }
-    if (typeof estabelecimento_id !== "number" || valor <= 0) {
+    if (!Number.isInteger(estabelecimento_id) || estabelecimento_id <= 0) {
       throw new Error("Atributo 'estabelecimento_id' inválido.");
     }
     if (comentario !== null && typeof comentario !== "string") {
@@ -22,7 +22,10 @@ class Avaliacao {
     if (!numerosPermitidos.includes(numero_estrelas)) {
       throw new Error("Atributo 'numero_estrelas' deve ser 1, 2, 3, 4 ou 5.");
     }
-    if (data_comentario !== null && !(data_comentario instanceof Date)) {
+    if (
+      (data_comentario !== null && !(data_comentario instanceof Date)) ||
+      (data_comentario instanceof Date && isNaN(data_comentario.getTime()))
+    ) {
       throw new Error(
         "Atributo 'data_comentario' deve ser um objeto Date ou null."
       );
