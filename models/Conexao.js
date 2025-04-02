@@ -1,5 +1,8 @@
 class Conexao {
   constructor(usuario1_id, usuario2_id, data_conexao) {
+    if (!usuario1_id || !usuario2_id || data_conexao) {
+      throw new Error("Campos obrigatórios ausentes ou inválidos.");
+    }
     if (typeof usuario1_id !== "number") {
       throw new Error("Atributo 'usuario1_id' inválido.");
     }
