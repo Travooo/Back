@@ -8,7 +8,6 @@ class Agendamento {
     }
     if (!Number.isInteger(usuario_id) || usuario_id <= 0) {
       throw new Error("Atributo 'usuario_id' inválido.");
-      git;
     }
     if (!(horario instanceof Date) || isNaN(horario.getTime())) {
       throw new Error(
