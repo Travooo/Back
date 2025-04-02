@@ -1,9 +1,17 @@
 class Favorito {
-    constructor(id_favorito = null, id_usuario, id_estabelecimento) {
-        this.id_favorito = id_favorito;
-        this.id_usuario = id_usuario;
-        this.id_estabelecimento = id_estabelecimento;
+  constructor(usuario_id, estabelecimento_id) {
+    if (!usuario_id || !estabelecimento_id) {
+      throw new Error("Campos obrigatórios ausentes ou inválidos.");
     }
+    if (!(typeof usuario_id !== "number") || usuario_id <= 0) {
+      throw new Error("Campos 'usuario_id' inválido.");
+    }
+    if (!(typeof estabelecimento_id !== "number") || estabelecimento_id <= 0) {
+      throw new Error("Campos 'usuario_id' inválido.");
+    }
+    this.usuario_id = usuario_id;
+    this.estabelecimento_id = estabelecimento_id;
+  }
 }
 
 module.exports = Favorito;
