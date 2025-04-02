@@ -1,8 +1,18 @@
 class Conexao {
-  constructor(id_conexao = null, id_usuario1, id_usuario2, data_conexao) {
-    this.id_conexao = id_conexao;
-    this.id_usuario1 = id_usuario1;
-    this.id_usuario2 = id_usuario2;
+  constructor(usuario1_id, usuario2_id, data_conexao) {
+    if (typeof usuario1_id !== "number") {
+      throw new Error("Atributo 'usuario1_id' inválido.");
+    }
+    if (typeof usuario2_id !== "number") {
+      throw new Error("Atributo 'usuario2_id' inválido.");
+    }
+    if (!(data_conexao instanceof Date)) {
+      throw new Error(
+        "Atributo 'data_conexao' deve ser um objeto Date ou null."
+      );
+    }
+    this.id_usuario1 = usuario1_id;
+    this.id_usuario2 = usuario2_id;
     this.data_conexao = data_conexao;
   }
 }
