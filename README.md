@@ -9,6 +9,8 @@ npm install
 npm init -y
 npm install express cors dotenv
 npm install @supabase/supabase-js pg
+npm install validator
+npm install bcrypt
 node index.js
 http://localhost:3001/test-supabase
 ```
@@ -32,6 +34,7 @@ São criadas as rotas associando seus routers (que precisam ser importados) ao E
 ### Routers
 
 São os arquivos que contêm as definições das rotas da aplicação. Usando o _express_ criam _routers_ definindo rotas com suas respectivas ações.
+
 ##### Exemplo de 'usuarioRouter.js' com rotas básicas de CRUD:
 
 ```javascript
@@ -57,6 +60,7 @@ Organizam e separam as funções de cada requisição HTTP, centralizando a lóg
 Incluem tratamento de erros com respostas HTTP detalhadas para os casos de requisição bem e mal-sucedida. permitindo respostas HTTP mais granulares.
 Servem como o ponto de entrada para as requisições HTTP e as direciona para os controladores apropriados.
 Como vimos em usuarioRouter, quando uma requisição `usuarioRouter.post("/", UsuarioController.create);` chegar, o Express executa `UsuarioController.create(req, res)`.
+
 ##### Exemplo com o método 'UsuarioController.create()':
 
 ```javascript
