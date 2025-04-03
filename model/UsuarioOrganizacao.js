@@ -1,9 +1,3 @@
-const { createClient } = require("@supabase/supabase-js");
-const supabase = createClient(
-  process.env.URL,
-  process.env.APIKEY
-);
-
 class UsuarioOrganizacao {
   constructor(
     id_usuario_organizacao = null,
