@@ -1,17 +1,16 @@
+const validator = require("validator");
+
 class Usuario {
   constructor(
     email,
     senha,
-    // Necessário implementar hashing da senha antes do armazenamento.
     nome_usuario,
     nome_completo,
     foto_perfil = null,
     sobre = null,
     data_nascimento,
-    // Validar se por padrão "admin" será false.
     admin = false,
     tipo_plano = 1
-    // Atribui o valor "1" (plano gratuito/usuário comum) a "tipo_plano".
   ) {
     if (
       !email ||
@@ -20,13 +19,40 @@ class Usuario {
       !nome_completo ||
       !data_nascimento
     ) {
-      throw new Error("Campos obrigatorios ausentes.");
+      throw new Error("Campos obrigatórios inválidos ou ausentes.");
     }
-    if (!this.validarEmail(email)) {
-      throw new Error("Email invalido.");
+    if (typeof email !== "string" || !validator.isEmail(email)) {
+      throw new Error("Atributo 'e-mail' inválido.");
+    }
+    if (typeof senha !== "string") {
+      throw new Error("Atributo 'senha' inválido.");
     }
     if (senha.length < 6) {
-      throw new Error("A senha deve ter pelo menos 6 caracteres.");
+      throw new Error("Atributo 'senha' deve ter pelo menos 6 caracteres.");
+    }
+    if (typeof nome_usuario !== "string") {
+      throw new Error("Atributo 'nome_usuario' inválido.");
+    }
+    if (typeof nome_completo !== "string") {
+      throw new Error("Atributo 'nome_completo' inválido.");
+    }
+    if (foto_perfil && !(foto_perfil instanceof Buffer)) {
+      throw new Error("Atributo 'foto_perfil' inválido.");
+    }
+    if (sobre && !(typeof sobre !== "string")) {
+      throw new Error("Atributo 'sobre' inválido.");
+    }
+    if (
+      !(data_nascimento instanceof Date || isNaN(data_nascimento.getTime()))
+    ) {
+      throw new Error("Atributo 'data_nascimento' deve ser um objeto Date.");
+    }
+    if (typeof admin !== "boolean") {
+      throw new Error("Atributo 'admin' inválido.");
+    }
+    const tiposPlanos = [1, 2, 3];
+    if (!Number.isInteger(tipo_plano) || !tiposPlanos.includes(tipo_plano)) {
+      throw new Error("Campos 'tipo_plano' inválido.");
     }
     this.email = email;
     this.senha = senha;
@@ -37,12 +63,6 @@ class Usuario {
     this.data_nascimento = data_nascimento;
     this.admin = admin;
     this.tipo_plano = tipo_plano;
-  }
-  validarEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-    // A regex está boa mas não cobre casos mais específicos.
-    // Para um sistema mais robusto, há bibliotecas como Validator.
   }
 }
 
