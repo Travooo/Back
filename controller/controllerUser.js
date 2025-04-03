@@ -1,6 +1,4 @@
-const dotenv = require('dotenv').config();
-const supabase = require('../config/db');
-const usuarioService = require('../services/usuario-service')
+const usuarioService = require('../services/usuario_service')
 
 const getUsuarios = async (req, res) => {
     try {
