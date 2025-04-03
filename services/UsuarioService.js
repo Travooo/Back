@@ -19,7 +19,7 @@ class UsuarioService {
         user_data_json.nome_completo,
         user_data_json.foto_perfil,
         user_data_json.sobre,
-        user_data_json.data_nascimento,
+        new Date(user_data_json.data_nascimento),
         user_data_json.admin,
         user_data_json.tipo_plano
       );
