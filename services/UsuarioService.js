@@ -81,7 +81,7 @@ class UsuarioService {
   }
 
   static async update(id, updates) {
-    // Hash da senha antes da inserção
+    // Hash da senha antes da inserção:
     if (updates.senha) {
       const salt = await bcrypt.genSalt(10);
       updates.senha = await bcrypt.hash(updates.senha, salt);
