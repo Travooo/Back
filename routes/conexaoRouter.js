@@ -1,4 +1,5 @@
 const ConexaoController = require("../controllers/ConexaoController");
+const express = require("express");
 const conexaoRouter = express.Router();
 
 conexaoRouter.post("/", ConexaoController.create);

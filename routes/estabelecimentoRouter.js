@@ -1,4 +1,5 @@
 const EstabelecimentoController = require("../controllers/EstabelecimentoController");
+const express = require("express");
 const estabelecimentoRouter = express.Router();
 
 estabelecimentoRouter.post("/", EstabelecimentoController.create);

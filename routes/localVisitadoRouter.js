@@ -1,4 +1,5 @@
 const LocalVisitadoController = require("../controllers/LocalVisitadoController");
+const express = require("express");
 const localVisitadoRouter = express.Router();
 
 localVisitadoRouter.post("/", LocalVisitadoController.create);

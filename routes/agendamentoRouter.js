@@ -1,4 +1,5 @@
 const AgendamentoController = require("../controllers/AgendamentoController");
+const express = require("express");
 const agendamentoRouter = express.Router();
 
 agendamentoRouter.post("/", AgendamentoController.create);

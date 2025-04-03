@@ -1,4 +1,5 @@
 const FavoritoController = require("../controllers/FavoritoController");
+const express = require("express");
 const favoritoRouter = express.Router();
 
 favoritoRouter.post("/", FavoritoController.create);

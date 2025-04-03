@@ -1,4 +1,5 @@
 const PagamentoController = require("../controllers/pagamentoController");
+const express = require("express");
 const pagamentoRouter = express.Router();
 
 pagamentoRouter.post("/", PagamentoController.create);

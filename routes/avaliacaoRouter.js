@@ -1,4 +1,5 @@
 const AvaliacaoController = require("../controllers/AvaliacaoController");
+const express = require("express");
 const avaliacaoRouter = express.Router();
 
 avaliacaoRouter.post("/", AvaliacaoController.create);

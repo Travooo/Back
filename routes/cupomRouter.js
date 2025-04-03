@@ -1,4 +1,5 @@
 const CupomController = require("../controllers/CupomController");
+const express = require("express");
 const cupomRouter = express.Router();
 
 cupomRouter.post("/", CupomController.create);
