@@ -1,4 +1,5 @@
 const OrganizacaoController = require("../controllers/OrganizacaoController");
+const express = require("express");
 const organizacaoRouter = express.Router();
 
 organizacaoRouter.post("/", OrganizacaoController.create);

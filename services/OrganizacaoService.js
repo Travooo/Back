@@ -1,68 +1,108 @@
+require("dotenv").config();
+const { createClient } = require("@supabase/supabase-js");
+const bcrypt = require("bcrypt");
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 const Organizacao = require("../models/Organizacao");
 
 class OrganizacaoService {
   static async create(user_data) {
-    const usuario = new UsuarioOrganizacao(user_data);
-    const { data, error } = await supabase
-      .from("usuario_organizacao")
-      .insert([UsuarioOrganizacao])
-      .select();
-    //*SELECT() retorna os dados inseridos (útil para validação)*/
-    return { data, error };
+    // Aqui, a própria instanciação valida a integridade do objeto:
+    try {
+      const organizacao = new Organizacao(
+        user_data.cnpj,
+        user_data.nome_fantasia,
+        user_data.email,
+        user_data.telefone,
+        user_data.razao_social,
+        user_data.senha
+      );
+      // =============
+      // Sem modelo de dados/classes:
+      // ➔ { email, senha, nome_Organizacao, nome_completo, foto_perfil, sobre, data_nascimento, admin, tipo_plano } =  data;
+      // ➔ const Organizacao = { email, senha, nome_Organizacao, nome_completo, foto_perfil, sobre, data_nascimento, admin, tipo_plano };
+      // ➔ if (!email || !senha || !nome_Organizacao || !nome_completo || !data_nascimento) throw new Error("Campos obrigatórios ausentes.");
+      // =============
+
+      // Hash da senha antes da inserção:
+      const salt = await bcrypt.genSalt(10);
+      organizacao.senha = await bcrypt.hash(organizacao.senha, salt);
+
+      // Inserção no Supabase: passa os atributos do objeto em JSON:
+      const { data, error } = await supabase
+        .from("organizacoes")
+        .insert({
+          cnpj: organizacao.cnpj,
+          nome_fantasia: organizacao.nome_fantasia,
+          email: organizacao.email,
+          telefone: organizacao.telefone,
+          razao_social: organizacao.razao_social,
+          senha: organizacao.senha,
+        })
+        .single()
+        .select();
+      if (error) throw new Error(error.message);
+      return data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
   }
 
   static async get_by_id(id) {
-    return await supabase
-      .from("usuario_organizacao")
-      .select(
-        "id, cnpj, nome_fantasia, email, nome_fantasia, cnpj, telefone"
-        // .select("*") traria também a senha.
-      )
+    const { data, error } = await supabase
+      .from("organizacoes")
+      .select("cnpj, nome_fantasia, email, telefone, razao_social")
       .eq("id", id)
       .single();
-    //*SINGLE() assegura apenas um retorno*
+    if (error) return Error(error.message);
+    return data;
   }
 
   static async get_all() {
-    return await supabase
-      .from("usuario_organizacao")
-      .select(
-        "id, cnpj, nome_fantasia, created_at, email, telefone, razao_social"
-      );
-    // .select("*") traria também a senha.
+    const { data, error } = await supabase
+      .from("organizacoes")
+      .select("cnpj, nome_fantasia, email, telefone, razao_social");
+    if (error) throw new Error(error.message);
+    return data;
   }
 
   static async update(id, updates) {
-    let validUpdates = {};
+    // Hash da senha antes da inserção:
+    if (updates.senha) {
+      const salt = await bcrypt.genSalt(10);
+      updates.senha = await bcrypt.hash(updates.senha, salt);
+    }
 
     // Filtrar apenas os campos válidos, removendo valores nulos ou vazios:
-    Object.keys(updates).forEach((key) => {
-      if (updates[key] && updates[key].toString().trim() !== "") {
-        validUpdates[key] = updates[key];
-      }
-    });
-
-    // Caso não seja implementada a verificação no front:
+    const validUpdates = Object.fromEntries(
+      Object.entries(updates).filter(
+        ([_, value]) => value && value.toString().trim() !== ""
+      )
+    );
     if (Object.keys(validUpdates).length === 0) {
       throw new Error("Nenhuma alteração válida detectada.");
     }
-
     const { data, error } = await supabase
-      .from("usuario_organizacao")
+      .from("organizacoes")
       .update(validUpdates)
       .eq("id", id)
       .select();
-    //*SELECT() retorna os dados inseridos (útil para validação)*/
-
-    if (error) throw new Error(error.message);
+    if (error) return Error(error.message);
     if (!data || data.length === 0)
-      throw new Error("Usuário não encontrado ou não atualizado.");
-
+      throw new Error("Organização não encontrada ou não atualizada.");
     return data;
   }
 
   static async delete(id) {
-    return await supabase.from("usuario_organizacao").delete().eq("id", id);
+    const { data, error } = await supabase
+      .from("organizacoes")
+      .delete()
+      .eq("id", id);
+    if (error) return Error(error.message);
+    return data;
   }
 }
 
