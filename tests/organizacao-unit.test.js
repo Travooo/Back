@@ -1,19 +1,18 @@
-const Usuario = require("../models/Usuario");
+const Organizacao = require("../models/Organizacao");
 
-const testesUnidadeUsuario = () => {
+const testesUnidadeOrganizacao = () => {
   try {
     console.log();
     console.log(
-      "Testando: Falha ao criar uma instância de usuário com email inválido"
+      "Testando: Falha ao criar uma instância de organização com email inválido"
     );
-    new Usuario(
+    new Organizacao(
+      "01415862000148",
+      "Empresa",
       "email_invalido",
-      "123456",
-      "userTester",
-      "Testador User",
-      null,
-      null,
-      "2002-06-20"
+      "51999999999",
+      "Empresa Ltda",
+      "senha123"
     );
   } catch (error) {
     console.log(`Erro: ${error.message}`);
@@ -24,14 +23,13 @@ const testesUnidadeUsuario = () => {
     console.log(
       "Testando: Falha ao instanciar um usuário sem campos obrigatórios"
     );
-    new Usuario(
-      "email_invalido",
-      "123456",
+    new Organizacao(
       null,
       null,
-      null,
-      null,
-      "2002-06-20"
+      "empresa@email.com",
+      "51999999999",
+      "Empresa Ltda",
+      "senha123"
     );
   } catch (error) {
     console.log(`Erro: ${error.message}`);
@@ -42,18 +40,17 @@ const testesUnidadeUsuario = () => {
     console.log(
       "Testando: Falha ao instanciar um usuário com senha menor que 6 caracteres"
     );
-    new Usuario(
-      "email@valido.com",
-      "12345",
-      "userTester",
-      "Testador User",
-      null,
-      null,
-      "2002-06-20"
+    new Organizacao(
+      "01415862000148",
+      "Empresa",
+      "empresa@email.com",
+      "51999999999",
+      "Empresa Ltda",
+      "senha"
     );
   } catch (error) {
     console.log(`Erro: ${error.message}`);
   }
 };
 
-testesUnidadeUsuario();
+testesUnidadeOrganizacao();
