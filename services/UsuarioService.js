@@ -9,23 +9,23 @@ const supabase = createClient(
 const Usuario = require("../models/Usuario");
 
 class UsuarioService {
-  static async create(user_data_json) {
+  static async create(user_data) {
     // Aqui, a própria instanciação valida a integridade do objeto:
     try {
       const usuario = new Usuario(
-        user_data_json.email,
-        user_data_json.senha,
-        user_data_json.nome_usuario,
-        user_data_json.nome_completo,
-        user_data_json.foto_perfil,
-        user_data_json.sobre,
-        new Date(user_data_json.data_nascimento),
-        user_data_json.admin,
-        user_data_json.tipo_plano
+        user_data.email,
+        user_data.senha,
+        user_data.nome_usuario,
+        user_data.nome_completo,
+        user_data.foto_perfil,
+        user_data.sobre,
+        new Date(user_data.data_nascimento),
+        user_data.admin,
+        user_data.tipo_plano
       );
       // =============
-      // Sem modelo de dados/classes, mapearia user_data_json para validar os values:
-      // ➔ { email, senha, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, tipo_plano } =  user_data_json;
+      // Sem modelo de dados/classes, mapearia user_data para validar os values:
+      // ➔ { email, senha, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, tipo_plano } =  user_data;
       // ➔ const usuario = { email, senha, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, tipo_plano };
       // ➔ if (!email || !senha || !nome_usuario || !nome_completo || !data_nascimento) throw new Error("Campos obrigatórios ausentes.");
       // =============
