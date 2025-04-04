@@ -2,53 +2,34 @@ const Conexao = require('../model/Conexao');
 const supabase = require('../config/db');
 
 class ConexaoService {
-    static async criar(conexao) {
-        const { data, error } = await supabase
-            .from('conexao')
-            .insert([{ 
-                id_usuario1: conexao.id_usuario1,
-                id_usuario2: conexao.id_usuario2,
-                data_conexao: conexao.data_conexao
-            }])
-            .select();
+    static async createConexao(data) {
+        const { error, data: result } = await supabase.from('conexoes').insert([data]);
+        if (error) throw error;
+        return result;
+    }
+
+    static async getConexaoById(id) {
+        const { error, data } = await supabase.from('conexoes').select("*").eq('id', id).single();
         if (error) throw error;
         return data;
     }
 
-    static async buscarPorId(id) {
-        const { data, error } = await supabase
-            .from('conexao')
-            .select()
-            .eq('id_conexao', id)
-            .single();
+    static async getAllConexao() {
+        const { error, data } = await supabase.from('conexoes').select('*');
         if (error) throw error;
         return data;
     }
 
-    static async listarTodos() {
-        const { data, error } = await supabase.from('conexao').select();
+    static async updateConexao(id, updates) {
+        const { error } = await supabase.from('conexoes').update(updates).eq('id', id);
         if (error) throw error;
-        return data;
+        return { message: 'Conexão atualizada com sucesso' };
     }
 
-    static async atualizar(id, conexao) {
-        const { data, error } = await supabase
-            .from('conexao')
-            .update({
-                id_usuario1: conexao.id_usuario1,
-                id_usuario2: conexao.id_usuario2,
-                data_conexao: conexao.data_conexao
-            })
-            .eq('id_conexao', id)
-            .select();
+    static async deleteConexao(id) {
+        const { error } = await supabase.from('conexoes').delete().eq('id', id);
         if (error) throw error;
-        return data;
-    }
-
-    static async deletar(id) {
-        const { error } = await supabase.from('conexao').delete().eq('id_conexao', id);
-        if (error) throw error;
-        return { message: 'Conexão removida com sucesso.' };
+        return { message: 'Conexão removida com sucesso' };
     }
 }
 
