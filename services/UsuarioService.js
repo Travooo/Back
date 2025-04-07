@@ -8,17 +8,10 @@ const { validateNomeUsuario, validateNomeCompleto, validateFotoPerfilBase64, val
 
 class UsuarioService {
   static async create(user_data) {
-    // Aqui, a própria instanciação valida a integridade do objeto:
     try {
       const usuario = new Usuario(user_data.email, user_data.senha, user_data.nome_usuario, user_data.nome_completo, user_data.foto_perfil, user_data.sobre, user_data.data_nascimento, user_data.admin, user_data.tipo_plano);
-      // =============
-      // Hash da senha:
-      // Hash é um valor gerado a partir de uma string, projetado para ser irreversível.
-      // Um exemplo de sua aplicação é no login: a senha recebida é criptografada e deve coincidir com também criptografado valor salvo no banco.
-      // Salt: valor extra salvo com o hash. O fator de custo (geralmente 10 a 12 rounds) define quantas vezes o hash é processado, tornando-o lento de propósito para aumentar a segurança contra ataques por tentativa.
       const salt = await bcrypt.genSalt(10);
       usuario.senha = await bcrypt.hash(usuario.senha, salt);
-      // Inserção no Supabase passa os atributos do objeto em JSON:
       const { data, error } = await supabase
         .from('usuarios')
         .insert({
@@ -55,7 +48,6 @@ class UsuarioService {
 
   static async update(id, updates) {
     if (!updates || typeof updates !== 'object') throw new Error('Atualizações inválidas ou não fornecidas.');
-
     const validados = {};
     if ('email' in updates) validados.email = validateEmail(updates.email);
     if ('senha' in updates) {
