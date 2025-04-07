@@ -1,4 +1,4 @@
-const UsuarioService = require("../services/UsuarioService");
+const UsuarioService = require('../services/UsuarioService');
 
 class UsuarioController {
   static async create(req, res) {
@@ -7,7 +7,7 @@ class UsuarioController {
       return res.status(201).json(new_user_data);
       // 201 Created: Indica que um novo recurso foi criado com sucesso, mas não há conteúdo a ser retornado na resposta.
     } catch (error) {
-      console.error("Erro ao criar usuário:");
+      console.error('Erro ao criar usuário:');
       return res.status(400).json({ error: error.message });
       // 400 Bad Request: Indica que a requisição do cliente é inválida.
       // Geralmente por falta de parâmetros obrigatórios ou formato incorreto.
@@ -39,7 +39,8 @@ class UsuarioController {
 
   static async update(req, res) {
     try {
-      const data = await UsuarioService.update(req.params.id, req.body.updates);
+      const data = await UsuarioService.update(req.params.id, req.body);
+      console.log('Retorno do service:', data);
       return res.status(200).json(data);
     } catch (error) {
       return res.status(400).json({ error: error.message });
