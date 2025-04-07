@@ -1,6 +1,6 @@
 class Usuario {
   constructor(
-    id_usuario = null,
+    id = null,
     admin,
     email,
     senha,
@@ -9,9 +9,10 @@ class Usuario {
     sobre,
     foto_perfil,
     data_nascimento,
+    created_at,
     tipo_plano
   ) {
-    this.id_usuario = id_usuario;
+    this.id = id;
     this.admin = admin;
     this.email = email;
     this.senha = senha;
@@ -20,6 +21,7 @@ class Usuario {
     this.sobre = sobre;
     this.foto_perfil = foto_perfil;
     this.data_nascimento = data_nascimento;
+    this.created_at = created_at;
     this.tipo_plano = tipo_plano;
   }
 }

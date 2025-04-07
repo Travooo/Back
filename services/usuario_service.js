@@ -1,4 +1,3 @@
-const Usuario = require('../model/Usuario');
 const supabase = require('../config/db');
 
 class UsuarioService {

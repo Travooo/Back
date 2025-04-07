@@ -1,16 +1,22 @@
 class UsuarioOrganizacao {
   constructor(
-    id_usuario_organizacao = null,
-    id_usuario,
+    id = null,
     cnpj,
     nome_fantasia,
-    endereco
+    created_at,
+    email,
+    telefone,
+    razao_social,
+    senha
   ) {
-    this.id_usuario_organizacao = id_usuario_organizacao;
-    this.id_usuario = id_usuario;
+    this.id = id;
     this.cnpj = cnpj;
     this.nome_fantasia = nome_fantasia;
-    this.endereco = endereco;
+    this.created_at = created_at;
+    this.email = email;
+    this.telefone = telefone;
+    this.razao_social = razao_social;
+    this.senha = senha;
   }
 }
 
