@@ -2,57 +2,34 @@ const Evento = require('../model/Evento');
 const supabase = require('../config/db');
 
 class EventoService {
-    static async criar(evento) {
-        const { data, error } = await supabase
-            .from('evento')
-            .insert([{ 
-                id_usuario: evento.id_usuario,
-                id_usuario_organizacao: evento.id_usuario_organizacao,
-                nome: evento.nome,
-                data: evento.data,
-                descricao: evento.descricao
-            }])
-            .select();
+    static async createEvento(data) {
+        const { error, data: result } = await supabase.from('eventos').insert([data]);
+        if (error) throw error;
+        return result;
+    }
+
+    static async getEventoById(id) {
+        const { error, data } = await supabase.from('eventos').select("*").eq('id', id).single();
         if (error) throw error;
         return data;
     }
 
-    static async buscarPorId(id) {
-        const { data, error } = await supabase
-            .from('evento')
-            .select()
-            .eq('id_evento', id)
-            .single();
+    static async getAllEventos() {
+        const { error, data } = await supabase.from('eventos').select('*');
         if (error) throw error;
         return data;
     }
 
-    static async listarTodos() {
-        const { data, error } = await supabase.from('evento').select();
+    static async updateEvento(id, updates) {
+        const { error } = await supabase.from('eventos').update(updates).eq('id', id);
         if (error) throw error;
-        return data;
+        return { message: 'Evento atualizado com sucesso' };
     }
 
-    static async atualizar(id, evento) {
-        const { data, error } = await supabase
-            .from('evento')
-            .update({
-                id_usuario: evento.id_usuario,
-                id_usuario_organizacao: evento.id_usuario_organizacao,
-                nome: evento.nome,
-                data: evento.data,
-                descricao: evento.descricao
-            })
-            .eq('id_evento', id)
-            .select();
+    static async deleteEvento(id) {
+        const { error } = await supabase.from('eventos').delete().eq('id', id);
         if (error) throw error;
-        return data;
-    }
-
-    static async deletar(id) {
-        const { error } = await supabase.from('evento').delete().eq('id_evento', id);
-        if (error) throw error;
-        return { message: 'Evento removido com sucesso.' };
+        return { message: 'Evento removido com sucesso' };
     }
 }
 

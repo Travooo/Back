@@ -2,38 +2,34 @@ const Favorito = require('../model/Favorito');
 const supabase = require('../config/db');
 
 class FavoritoService {
-    static async criar(favorito) {
-        const { data, error } = await supabase
-            .from('favorito')
-            .insert([{ 
-                id_usuario: favorito.id_usuario,
-                id_estabelecimento: favorito.id_estabelecimento
-            }])
-            .select();
+    static async createFavorito(data) {
+        const { error, data: result } = await supabase.from('favoritos').insert([data]);
+        if (error) throw error;
+        return result;
+    }
+
+    static async getFavoritoById(id) {
+        const { error, data } = await supabase.from('favoritos').select("*").eq('id', id).single();
         if (error) throw error;
         return data;
     }
 
-    static async buscarPorId(id) {
-        const { data, error } = await supabase
-            .from('favorito')
-            .select()
-            .eq('id_favorito', id)
-            .single();
+    static async getAllFavoritos() {
+        const { error, data } = await supabase.from('favoritos').select('*');
         if (error) throw error;
         return data;
     }
 
-    static async listarTodos() {
-        const { data, error } = await supabase.from('favorito').select();
+    static async updateFavorito(id, updates) {
+        const { error } = await supabase.from('favoritos').update(updates).eq('id', id);
         if (error) throw error;
-        return data;
+        return { message: 'Favorito atualizado com sucesso' };
     }
 
-    static async deletar(id) {
-        const { error } = await supabase.from('favorito').delete().eq('id_favorito', id);
+    static async deleteFavorito(id) {
+        const { error } = await supabase.from('favoritos').delete().eq('id', id);
         if (error) throw error;
-        return { message: 'Favorito removido com sucesso.' };
+        return { message: 'Favorito removido com sucesso' };
     }
 }
 

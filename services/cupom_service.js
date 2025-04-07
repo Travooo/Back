@@ -2,54 +2,34 @@ const Cupom = require('../model/Cupom');
 const supabase = require('../config/db');
 
 class CupomService {
-    static async criar(cupom) {
-        const { data, error } = await supabase
-            .from('cupom')
-            .insert([{ 
-                id_estabelecimento: cupom.id_estabelecimento,
-                id_usuario: cupom.id_usuario,
-                descricao: cupom.descricao
-            }])
-            .select();
+    static async createCupom(data) {
+        const { error, data: result } = await supabase.from('cupons').insert([data]);
+        if (error) throw error;
+        return result;
+    }
+
+    static async getCupomById(id) {
+        const { error, data } = await supabase.from('cupons').select("*").eq('id', id).single();
         if (error) throw error;
         return data;
     }
 
-    static async buscarPorId(id) {
-        const { data, error } = await supabase
-            .from('cupom')
-            .select()
-            .eq('id_cupom', id)
-            .single();
+    static async getAllCupons() {
+        const { error, data } = await supabase.from('cupons').select('*');
         if (error) throw error;
         return data;
     }
 
-    static async listarTodos() {
-        const { data, error } = await supabase.from('cupom').select();
+    static async updateCupom(id, updates) {
+        const { error } = await supabase.from('cupons').update(updates).eq('id', id);
         if (error) throw error;
-        return data;
+        return { message: 'Cupom atualizado com sucesso' };
     }
 
-    static async atualizar(id, cupom) {
-        const { data, error } = await supabase
-            .from('cupom')
-            .update({
-                id_estabelecimento: cupom.id_estabelecimento,
-                id_usuario: cupom.id_usuario,
-                descricao: cupom.descricao
-            })
-            .eq('id_cupom', id)
-            .select();
+    static async deleteCupom(id) {
+        const { error } = await supabase.from('cupons').delete().eq('id', id);
         if (error) throw error;
-        return data;
-    }
-
-    static async deletar(id) {
-        const { error } = await supabase.from('cupom').delete().eq('id_cupom', id);
-        if (error) throw error;
-        return { message: 'Cupom removido com sucesso.' };
+        return { message: 'Cupom removido com sucesso' };
     }
 }
-
 module.exports = CupomService;
