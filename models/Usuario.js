@@ -1,4 +1,4 @@
-const { validateNomeUsuario, validateNomeCompleto, validateFotoPerfilBase64, validateEmail, validateSenha, validateSobre, tryParseBoolean, tryParseInt, tryParseDate } = require('../utilities/parseSafe');
+const { validateNomeUsuario, validateNomeCompleto, validateFotoPerfilBase64, validateEmail, validateSenha, validateSobre, validateAdmin, validatePlano, validateDate } = require('../utils/validators');
 
 class Usuario {
   constructor(email, senha, nome_usuario, nome_completo, foto_perfil = null, sobre = null, data_nascimento, admin, tipo_plano) {
@@ -12,9 +12,9 @@ class Usuario {
     if (sobre !== null && sobre !== undefined) {
       this.sobre = validateSobre(sobre);
     }
-    this.data_nascimento = tryParseDate(data_nascimento);
-    this.admin = tryParseBoolean(admin);
-    this.tipo_plano = tryParseInt(tipo_plano);
+    this.data_nascimento = validateDate(data_nascimento);
+    this.admin = validateAdmin(admin);
+    this.tipo_plano = validatePlano(tipo_plano);
   }
 }
 

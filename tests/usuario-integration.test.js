@@ -3,7 +3,7 @@ const app = require('../app');
 
 let usuarioCriadoId;
 
-describe('Testes de Integração - Usuario Router', () => {
+describe('Testes de Integração - Usuario', () => {
   test('Deve criar um usuário via API', async () => {
     const new_user = {
       email: 'usuario.teste@email.com',

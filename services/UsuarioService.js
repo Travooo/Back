@@ -1,10 +1,10 @@
 require('dotenv').config();
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-
 const bcrypt = require('bcrypt');
 const Usuario = require('../models/Usuario');
-const { validateNomeUsuario, validateNomeCompleto, validateFotoPerfilBase64, validateEmail, validateSenha, validateSobre, tryParseBoolean, tryParseInt, tryParseDate } = require('../utilities/parseSafe');
+const { validateNomeUsuario, validateNomeCompleto, validateFotoPerfilBase64, validateId, validateEmail, validateSenha, validateSobre, validateAdmin, validatePlano } = require('../utils/validators');
+
+const { createClient } = require('@supabase/supabase-js');
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 class UsuarioService {
   static async create(user_data) {
@@ -35,7 +35,8 @@ class UsuarioService {
   }
 
   static async get_by_id(id) {
-    const { data, error } = await supabase.from('usuarios').select('id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano').eq('id', id).single();
+    const usuariodId = validateId(id);
+    const { data, error } = await supabase.from('usuarios').select('id, email, nome_usuario, nome_completo, foto_perfil, sobre, data_nascimento, admin, created_at, tipo_plano').eq('id', usuariodId).single();
     if (error) return Error(error.message);
     return data;
   }
@@ -47,6 +48,7 @@ class UsuarioService {
   }
 
   static async update(id, updates) {
+    const usuariodId = validateId(id);
     if (!updates || typeof updates !== 'object') throw new Error('Atualizações inválidas ou não fornecidas.');
     const validados = {};
     if ('email' in updates) validados.email = validateEmail(updates.email);
@@ -58,18 +60,19 @@ class UsuarioService {
     if ('nome_completo' in updates) validados.nome_completo = validateNomeCompleto(updates.nome_completo);
     if ('foto_perfil' in updates) validados.foto_perfil = validateFotoPerfilBase64(updates.foto_perfil);
     if ('sobre' in updates) validados.sobre = validateSobre(updates.sobre);
-    if ('data_nascimento' in updates) validados.data_nascimento = tryParseDate(updates.data_nascimento);
-    if ('admin' in updates) validados.admin = tryParseBoolean(updates.admin);
-    if ('tipo_plano' in updates) validados.tipo_plano = tryParseInt(updates.tipo_plano);
+    if ('data_nascimento' in updates) validados.data_nascimento = validateDate(updates.data_nascimento);
+    if ('admin' in updates) validados.admin = validateAdmin(updates.admin);
+    if ('tipo_plano' in updates) validados.tipo_plano = validatePlano(updates.tipo_plano);
     if (Object.keys(validados).length === 0) throw new Error('Nenhuma alteração válida detectada.');
-    const { data, error } = await supabase.from('usuarios').update(validados).eq('id', id).select();
+    const { data, error } = await supabase.from('usuarios').update(validados).eq('id', usuariodId).select();
     if (error) return Error(error.message);
     if (!data || data.length === 0) throw new Error('Usuário não encontrado ou não atualizado.');
     return data;
   }
 
   static async delete(id) {
-    const { data, error } = await supabase.from('usuarios').delete().eq('id', id);
+    const usuariodId = validateId(id);
+    const { data, error } = await supabase.from('usuarios').delete().eq('id', usuariodId);
     if (error) return Error(error.message);
     return data;
   }

@@ -3,8 +3,8 @@ const UsuarioService = require('../services/UsuarioService');
 class UsuarioController {
   static async create(req, res) {
     try {
-      const new_user_data = await UsuarioService.create(req.body);
-      return res.status(201).json(new_user_data);
+      const new_user = await UsuarioService.create(req.body);
+      return res.status(201).json(new_user);
     } catch (error) {
       console.error('Erro ao criar usuário:');
       return res.status(400).json({ error: error.message });
