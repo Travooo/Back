@@ -1,7 +1,4 @@
-require('dotenv').config();
-const { supabase } = require('../supabaseClient');
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const { supabase } = require('../config/supabaseClient');
 
 async function verificarExistenciaUsuario(usuario_id) {
   const { data, error } = await supabase.from('usuarios').select('id').eq('id', usuario_id).maybeSingle();

@@ -109,4 +109,9 @@ function validatePlano(admin) {
   return parsed;
 }
 
+function normalizeToISOString(date) {
+  const d = new Date(date);
+  return d.toISOString();
+}
+
 module.exports = { validateEmail, validateSenha, validateNomeUsuario, validateNomeCompleto, validateDetalhes, validateSobre, validateFotoPerfilBase64, validateAdmin, validateId, validateDate, validatePlano };
