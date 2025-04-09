@@ -16,7 +16,7 @@ function tryParseBoolean(value) {
 function tryParseDate(value) {
   const parsed = new Date(value);
   if (isNaN(parsed.getTime())) return null;
-  return parsed.toISOString();
+  return parsed;
 }
 
 function tryParseFloat(value) {

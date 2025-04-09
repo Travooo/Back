@@ -1,5 +1,5 @@
 const validator = require('validator');
-const { tryParseBoolean, tryParseInt, tryParseDate, tryParseString, tryParseFloat } = require('../utils/parsers');
+const { tryParseBoolean, tryParseInt, tryParseDate, tryParseString } = require('../utils/parsers');
 
 function validateId(id) {
   const parsed = tryParseInt(id);
@@ -21,7 +21,7 @@ function validateEmail(email) {
 function validateNomeUsuario(nome) {
   const parsed = tryParseString(nome);
   if (!parsed) throw new Error("Atributo 'nome_usuario' ausente ou indefinido.");
-  // Aceita letras Unicode, números e underline (sem espaços ou símbolos especiais)
+  // Aceitando letras Unicode, números e underline (sem espaços ou símbolos especiais)
   if (!/^[\w]{3,}$/u.test(parsed)) {
     throw new Error("Atributo 'nome_usuario' inválido. Use apenas letras, números e underline (mínimo 3 caracteres).");
   }
@@ -31,7 +31,7 @@ function validateNomeUsuario(nome) {
 function validateNomeCompleto(nome) {
   const parsed = tryParseString(nome);
   if (!parsed) throw new Error("Atributo 'nome_completo' ausente ou vazio.");
-  // Aceita letras Unicode, números e underline (sem espaços ou símbolos especiais)
+  // Aceitando letras Unicode, números e underline (sem espaços ou símbolos especiais)
   if (!/^[\p{L} ]+$/u.test(parsed)) {
     throw new Error("Atributo 'nome_completo' inválido. Use apenas letras e espaços.");
   }
@@ -39,7 +39,7 @@ function validateNomeCompleto(nome) {
 }
 
 function validateFotoPerfilBase64(base64) {
-  // Validar/gerar buffer imagem 'foto_perfil':
+  // Validando/gerando buffer imagem 'foto_perfil':
   // Considerando que o front envie a imagem convertida para uma string base64: { "foto_perfil": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."}
   if (!base64 || typeof base64 !== 'string') return null;
   const matches = base64.match(/^data:(image\/[a-z]+);base64,(.+)$/);
@@ -89,10 +89,10 @@ function validateDate(date, atributo) {
     throw new Error(`Atributo '${atributo}' ausente, indefinido ou não é uma string.`);
   }
   const parsed = tryParseDate(date);
-  if (parsed === null) {
+  if (!parsed) {
     throw new Error(`Atributo '${atributo}' inválido. Formato de data inválido ou não reconhecido.`);
   }
-  return parsed;
+  return parsed.toISOString();
 }
 
 function validateAdmin(admin) {
@@ -107,11 +107,6 @@ function validatePlano(admin) {
   if (parsed === null) throw new Error("Atributo 'plano' ausente, indefinido, ou não é um inteiro.");
   if (!planosAtivos.includes(parsed)) throw new Error("Atributo 'plano' inválido.");
   return parsed;
-}
-
-function normalizeToISOString(date) {
-  const d = new Date(date);
-  return d.toISOString();
 }
 
 module.exports = { validateEmail, validateSenha, validateNomeUsuario, validateNomeCompleto, validateDetalhes, validateSobre, validateFotoPerfilBase64, validateAdmin, validateId, validateDate, validatePlano };
