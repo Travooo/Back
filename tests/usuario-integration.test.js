@@ -38,7 +38,7 @@ describe('Testes de Integração - Usuario', () => {
     expect(res.body.length).toBeGreaterThan(0);
   });
 
-  test('Deve atualizar um usuário existente', async () => {
+  test('Deve atualizar um usuario existente', async () => {
     const updates = { nome_usuario: 'NomeAtualizadoViaTeste' };
     const res = await request(app).put(`/usuarios/${usuarioCriadoId}`).send(updates);
     console.log('Updates recebidos:', updates);
