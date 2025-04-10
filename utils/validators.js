@@ -7,8 +7,10 @@ function validateString(value, { atributo, required = false, formato = null, min
     return null;
   }
   const parsed = value.trim();
-  if (required && !parsed) throw new Error(`Atributo '${atributo}' obrigatório ausente, vazio ou indefinido.`);
-  if (parsed === '') return null;
+  if (!parsed) {
+    if (required) throw new Error(`Atributo '${atributo}' obrigatório ausente, vazio ou indefinido.`);
+    return null;
+  }
   if (min && parsed.length < min) throw new Error(`Atributo '${atributo}' inválido. Deve conter ao menos ${min} caracteres.`);
   if (max && parsed.length > max) throw new Error(`Atributo '${atributo}' excede o limite de ${max} caracteres.`);
   if (formato) {
