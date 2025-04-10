@@ -1,112 +1,73 @@
-const validator = require('validator');
-const { tryParseBoolean, tryParseInt, tryParseDate, tryParseString } = require('../utils/parsers');
+const { supabase } = require('../config/supabaseClient');
 
-function validateId(id) {
-  const parsed = tryParseInt(id);
-  if (parsed === null || parsed <= 0) {
-    throw new Error("Atributo 'id' inválido. Deve ser um número inteiro positivo.");
+function validateString(value, { atributo, required = false, formato = null, min = null, max = null, erro = null }) {
+  if (!atributo) throw new Error(`Obrigatório informar nome do atributo em validateString.`);
+  if (typeof value !== 'string') {
+    if (required) throw new Error(`Atributo obrigatório '${atributo}' ausente, vazio ou indefinido.`);
+    return null;
+  }
+  const parsed = value.trim();
+  if (required && !parsed) throw new Error(`Atributo '${atributo}' obrigatório ausente, vazio ou indefinido.`);
+  if (parsed === '') return null;
+  if (min && parsed.length < min) throw new Error(`Atributo '${atributo}' inválido. Deve conter ao menos ${min} caracteres.`);
+  if (max && parsed.length > max) throw new Error(`Atributo '${atributo}' excede o limite de ${max} caracteres.`);
+  if (formato) {
+    const isValid = typeof formato === 'function' ? formato(parsed) : formato.test(parsed);
+    if (!isValid) throw new Error(`Atributo '${atributo}' inválido.` + (erro ? ' ' + erro : ''));
   }
   return parsed;
 }
 
-function validateEmail(email) {
-  const parsed = tryParseString(email.toLowerCase());
-  if (!parsed) throw new Error("Atributo 'email' ausente ou indefinido.");
-  if (!validator.isEmail(parsed)) {
-    throw new Error("Atributo 'email' inválido.");
-  }
+function validateNumber(value, atributo) {
+  const isId = atributo?.toLowerCase().includes('id');
+  const parsed = isId ? parseInt(value, 10) : parseFloat(value);
+  if (isNaN(parsed)) throw new Error(`Atributo '${atributo}' inválido. Valor numérico esperado.`);
+  const validFloat = /^\d+(\.\d{1,2})?$/; // Define máximo de duas casas decimais
+  if (parsed <= 0 || (!isId && !validFloat.test(String(value)))) throw new Error(`Atributo '${atributo}' inválido. ` + (isId ? 'Deve ser um número inteiro positivo.' : 'Deve ser um valor positivo com até duas casas decimais.'));
   return parsed;
-}
-
-function validateNomeUsuario(nome) {
-  const parsed = tryParseString(nome);
-  if (!parsed) throw new Error("Atributo 'nome_usuario' ausente ou indefinido.");
-  // Aceitando letras Unicode, números e underline (sem espaços ou símbolos especiais)
-  if (!/^[\w]{3,}$/u.test(parsed)) {
-    throw new Error("Atributo 'nome_usuario' inválido. Use apenas letras, números e underline (mínimo 3 caracteres).");
-  }
-  return parsed;
-}
-
-function validateNomeCompleto(nome) {
-  const parsed = tryParseString(nome);
-  if (!parsed) throw new Error("Atributo 'nome_completo' ausente ou vazio.");
-  // Aceitando letras Unicode, números e underline (sem espaços ou símbolos especiais)
-  if (!/^[\p{L} ]+$/u.test(parsed)) {
-    throw new Error("Atributo 'nome_completo' inválido. Use apenas letras e espaços.");
-  }
-  return parsed;
-}
-
-function validateFotoPerfilBase64(base64) {
-  // Validando/gerando buffer imagem 'foto_perfil':
-  // Considerando que o front envie a imagem convertida para uma string base64: { "foto_perfil": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."}
-  if (!base64 || typeof base64 !== 'string') return null;
-  const matches = base64.match(/^data:(image\/[a-z]+);base64,(.+)$/);
-  if (!matches) {
-    throw new Error("Atributo 'foto_perfil' inválido. Formato base64 esperado.");
-  }
-  const buffer = Buffer.from(matches[2], 'base64'); // Matches[2] é a parte com os dados64 sem o prefixo "data:image/".
-  if (buffer.length > 5 * 1024 * 1024) {
-    throw new Error("Atributo 'foto_perfil' excede 5MB.");
-  }
-  return buffer;
-}
-
-function validateSenha(senha) {
-  const trimmed = tryParseString(senha);
-  if (!trimmed) throw new Error("Atributo 'senha' ausente ou indefinido.");
-  const caracteresInvalidos = /[ "'\\]/; //Ex: Espaço, aspas duplas, aspas simples, barra invertida
-  if (caracteresInvalidos.test(trimmed)) {
-    throw new Error("Atributo 'senha' inválido. Contém caracteres não permitidos.");
-  }
-  if (trimmed.length < 6) {
-    throw new Error("Atributo 'senha' inválido. Deve conter ao menos 6 caracteres.");
-  }
-  return trimmed;
-}
-
-function validateSobre(sobre) {
-  const trimmed = tryParseString(sobre);
-  if (!trimmed) return null;
-  if (trimmed && trimmed.length > 300) {
-    throw new Error("Atributo 'sobre' excede o limite de 300 caracteres.");
-  }
-  return trimmed;
-}
-
-function validateDetalhes(detalhes) {
-  const trimmed = tryParseString(detalhes);
-  if (!trimmed) return null;
-  if (trimmed && trimmed.length > 1000) {
-    throw new Error("Atributo 'detalhes' excede o limite de 1000 caracteres.");
-  }
-  return trimmed;
 }
 
 function validateDate(date, atributo) {
   if (!date || typeof date !== 'string') {
     throw new Error(`Atributo '${atributo}' ausente, indefinido ou não é uma string.`);
   }
-  const parsed = tryParseDate(date);
-  if (!parsed) {
+  const parsed = new Date(date);
+  if (isNaN(parsed.getTime())) {
     throw new Error(`Atributo '${atributo}' inválido. Formato de data inválido ou não reconhecido.`);
   }
   return parsed.toISOString();
 }
 
-function validateAdmin(admin) {
-  const parsed = tryParseBoolean(admin);
-  if (parsed === null) throw new Error("Atributo 'admin' inválido. Deve ser verdadeiro (true) ou falso (false).");
-  return parsed;
+function validateOption(value, atributo) {
+  const listas = {
+    admin: [true, false],
+    tipo_plano: [1, 2, 3],
+    metodo_pagamento: ['credito', 'debito', 'pix', 'boleto'],
+    status: ['pendente', 'pago', 'cancelado', 'estornado'],
+  };
+  if (!(atributo in listas)) throw new Error(`Atributo '${atributo}' não reconhecido.`);
+  const permitido = listas[atributo];
+  if (!permitido.includes(value)) {
+    throw new Error(`Atributo '${atributo}' inválido.`);
+  }
+  return value;
 }
 
-function validatePlano(admin) {
-  const planosAtivos = [1, 2, 3];
-  const parsed = tryParseInt(admin);
-  if (parsed === null) throw new Error("Atributo 'plano' ausente, indefinido, ou não é um inteiro.");
-  if (!planosAtivos.includes(parsed)) throw new Error("Atributo 'plano' inválido.");
-  return parsed;
+function validateFoto(base64) {
+  // Pode ser generalizado futuramente como validateAnexo com tipo e atributo.
+  if (!base64 || typeof base64 !== 'string') return null;
+  const matches = base64.match(/^data:(image\/[a-z]+);base64,(.+)$/);
+  if (!matches) throw new Error("Atributo 'foto_perfil' inválido. Formato base64 esperado.");
+  const buffer = Buffer.from(matches[2], 'base64'); // Matches[2] é a parte da string base64 com os dados, excluindo o prefixo "data:image/"
+  if (buffer.length > 5 * 1024 * 1024) throw new Error("Atributo 'foto_perfil' excede 5MB.");
+  return buffer;
 }
 
-module.exports = { validateEmail, validateSenha, validateNomeUsuario, validateNomeCompleto, validateDetalhes, validateSobre, validateFotoPerfilBase64, validateAdmin, validateId, validateDate, validatePlano };
+async function getIfExists({ tabela, coluna = 'id', value, select = '*' }) {
+  const { data, error } = await supabase.from(tabela).select(select).eq(coluna, value).maybeSingle();
+  if (error) throw new Error(`Erro ao verificar ${tabela}: ${error.message}`);
+  if (!data) throw new Error(`${tabela.charAt(0).toUpperCase() + tabela.slice(1)} não encontrado.`);
+  return data;
+}
+
+module.exports = { validateString, validateNumber, validateDate, validateOption, validateFoto, getIfExists };
