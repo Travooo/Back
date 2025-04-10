@@ -1,6 +1,6 @@
 class Usuario {
-  constructor(
-    id = null,
+  constructor({
+    id,
     admin,
     email,
     senha,
@@ -9,10 +9,12 @@ class Usuario {
     sobre,
     foto_perfil,
     data_nascimento,
-    created_at,
-    tipo_plano
-  ) {
-    this.id = id;
+    tipo_plano,
+    created_at
+  }) {
+    if (id !== undefined) {
+      this.id = id;
+    }
     this.admin = admin;
     this.email = email;
     this.senha = senha;
@@ -21,9 +23,8 @@ class Usuario {
     this.sobre = sobre;
     this.foto_perfil = foto_perfil;
     this.data_nascimento = data_nascimento;
-    this.created_at = created_at;
     this.tipo_plano = tipo_plano;
+    this.created_at = created_at;
   }
 }
-
 module.exports = Usuario;

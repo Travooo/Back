@@ -1,11 +1,10 @@
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.URL, process.env.APIKEY);
-
 class Conexao {
-    constructor(id_conexao = null, id_usuario1, id_usuario2, data_conexao) {
-        this.id_conexao = id_conexao;
-        this.id_usuario1 = id_usuario1;
-        this.id_usuario2 = id_usuario2;
+    constructor({ id, usuario1_id, usuario2_id, data_conexao }) {
+        if (id !== undefined) {
+            this.id = id;
+        }
+        this.usuario1_id = usuario1_id;
+        this.usuario2_id = usuario2_id;
         this.data_conexao = data_conexao;
     }
 }

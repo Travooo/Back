@@ -2,6 +2,9 @@ const supabase = require('../config/db');
 
 class UsuarioOrganizacaoService {
     static async createUsuarioOrg(data) {
+        if (data.created_at === undefined || data.created_at === null) {
+            delete data.created_at;
+        }
         const { error, data: result } = await supabase.from('organizacoes').insert([data]);
         if (error) throw error;
         return result;

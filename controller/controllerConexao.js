@@ -1,8 +1,15 @@
 const conexaoService = require('../services/conexao_service')
+const Conexao = require('../model/Conexao')
 
 const getConexoes = async (req, res) => {
     try {
-        const conexao = await conexaoService.getAllConexao();
+        const conexaoData = await conexaoService.getAllConexao();
+        const conexao = conexaoData.map(u => new Conexao({
+            id: u.id,
+            usuario1_id: u.usuario1_id,
+            usuario2_id: u.usuario2_id,
+            data_conexao: u.data_conexao,
+        }))
         res.status(200).json(conexao);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -11,10 +18,14 @@ const getConexoes = async (req, res) => {
 const getConexaoById = async (req, res) => {
     try {
         const { id } = req.params;
-        const conexao = await conexaoService.getConexaoById(id);
-        if (!conexao) {
-            return res.status(404).json({ message: "Conexão não encontrada" });
-        }
+        const data = await conexaoService.getConexaoById(id);
+        if (!data) { return res.status(404).json({ message: "Conexão não encontrada" }); }
+        const conexao = new Conexao({
+            id: data.id,
+            usuario1_id: data.usuario1_id,
+            usuario2_id: data.usuario2_id,
+            data_conexao: data.data_conexao,
+        })
         res.status(200).json(conexao);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -22,9 +33,16 @@ const getConexaoById = async (req, res) => {
 }
 const createConexao = async (req, res) => {
     try {
-        const conexaoData = req.body;
-        const novaConexao = await conexaoService.createConexao(conexaoData);
-        res.status(201).json(novaConexao);
+        const { usuario1_id, usuario2_id } = req.body;
+
+        const novaConexao = new Conexao({
+            usuario1_id,
+            usuario2_id,
+        })
+
+        const result = await conexaoService.createConexao(novaConexao);
+
+        res.status(201).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -46,12 +64,17 @@ const deleteConexao = async (req, res) => {
 const updateConexao = async (req, res) => {
     try {
         const { id } = req.params;
-        const conexaoData = req.body;
-        const updatedConexao = await conexaoService.updateConexao(id, conexaoData);
-        if (!updatedConexao) {
+        const { usuario1_id, usuario2_id } = req.body;
+        const conexaoAtualizada = new Conexao({
+            id,
+            usuario1_id,
+            usuario2_id
+        })
+        const result = await conexaoService.updateConexao(id, conexaoAtualizada);
+        if (!result) {
             return res.status(404).json({ message: "Conexão não encontrada" });
         }
-        res.status(200).json(updatedConexao);
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

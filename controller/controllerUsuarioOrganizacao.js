@@ -4,16 +4,16 @@ const UsuarioOrg = require('../model/UsuarioOrganizacao')
 const getUsuariosOrg = async (req, res) => {
     try {
         const usuarioOrgData = await usuarioOrgService.getAllUsuariosOrg();
-        const usuariosOrg = usuarioOrgData.map(u => new UsuarioOrg(
-            u.id,
-            u.cnpj,
-            u.nome_fantasia,
-            u.created_at,
-            u.email,
-            u.telefone,
-            u.razao_social,
-            u.senha
-        ));
+        const usuariosOrg = usuarioOrgData.map(u => new UsuarioOrg({
+            id: u.id,
+            cnpj: u.cnpj,
+            nome_fantasia: u.nome_fantasia,
+            created_at: u.created_at,
+            email: u.email,
+            telefone: u.telefone,
+            razao_social: u.razao_social,
+            senha: u.senha
+        }));
         res.status(200).json(usuariosOrg);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -26,16 +26,16 @@ const getUsuarioOrgById = async (req, res) => {
         if (!data) {
             return res.status(404).json({ message: "Usuário Organização não encontrado" });
         }
-        const usuarioOrg = new UsuarioOrg(
-            data.id,
-            data.cnpj,
-            data.nome_fantasia,
-            data.created_at,
-            data.email,
-            data.telefone,
-            data.razao_social,
-            data.senha
-        );
+        const usuarioOrg = new UsuarioOrg({
+            id: data.id,
+            cnpj: data.cnpj,
+            nome_fantasia: data.nome_fantasia,
+            created_at: data.created_at,
+            email: data.email,
+            telefone: data.telefone,
+            razao_social: data.razao_social,
+            senha: data.senha
+        });
         res.status(200).json(usuarioOrg);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -52,8 +52,7 @@ const createUsuarioOrg = async (req, res) => {
             razao_social,
             senha
         } = req.body;
-        const novoUsuarioOrg = new UsuarioOrg(
-            null,
+        const novoUsuarioOrg = new UsuarioOrg({
             cnpj,
             nome_fantasia,
             created_at,
@@ -61,7 +60,7 @@ const createUsuarioOrg = async (req, res) => {
             telefone,
             razao_social,
             senha
-        );
+        });
         
         const result = await usuarioOrgService.createUsuarioOrg(novoUsuarioOrg);
         res.status(201).json(result);
@@ -95,7 +94,7 @@ const updateUsuarioOrg = async (req, res) => {
             razao_social,
             senha
         } = req.body;
-        const usuarioOrgAtualizado = new UsuarioOrg(
+        const usuarioOrgAtualizado = new UsuarioOrg({
             id,
             cnpj,
             nome_fantasia,
@@ -104,7 +103,7 @@ const updateUsuarioOrg = async (req, res) => {
             telefone,
             razao_social,
             senha
-        );
+        });
         const result = await usuarioOrgService.updateUsuarioOrg(id, usuarioOrgAtualizado);
         if (!result) {
             return res.status(404).json({ message: "Usuário Organização não encontrado" });

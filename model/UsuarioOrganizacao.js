@@ -1,6 +1,6 @@
 class UsuarioOrganizacao {
-  constructor(
-    id = null,
+  constructor({ 
+    id,
     cnpj,
     nome_fantasia,
     created_at,
@@ -8,8 +8,10 @@ class UsuarioOrganizacao {
     telefone,
     razao_social,
     senha
-  ) {
-    this.id = id;
+  }) {
+    if (id !== undefined) {
+      this.id = id;
+    }
     this.cnpj = cnpj;
     this.nome_fantasia = nome_fantasia;
     this.created_at = created_at;

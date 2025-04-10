@@ -1,8 +1,18 @@
 const eventoService = require('../services/evento_service');
+const Evento = require('../model/Evento');
 
 const getEventos = async (req, res) => {
     try {
-        const eventos = await eventoService.getAllEventos();
+        const eventosData = await eventoService.getAllEventos();
+        const eventos = eventosData.map(u => new Evento({
+            id: u.id,
+            estabelecimento_id: u.estabelecimento_id,
+            organizacao_id: u.organizacao_id,
+            nome: u.nome,
+            data: u.data,
+            descricao: u.descricao,
+            created_at: u.created_at
+        }))
         res.status(200).json(eventos);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -12,8 +22,20 @@ const getEventos = async (req, res) => {
 const getEventoById = async (req, res) => {
     try {
         const { id } = req.params;
-        const evento = await eventoService.getEventoById(id);
-        if (!evento) return res.status(404).json({ message: "Evento não encontrado" });
+        const data = await eventoService.getEventoById(id);
+
+        if (!data) return res.status(404).json({ message: "Evento não encontrado" });
+
+        const evento = new Evento({
+            id: data.id,
+            estabelecimento_id: data.estabelecimento_id,
+            organizacao_id: data.organizacao_id,
+            nome: data.nome,
+            data: data.data,
+            descricao: data.descricao,
+            created_at: data.created_at
+        })
+
         res.status(200).json(evento);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -22,9 +44,18 @@ const getEventoById = async (req, res) => {
 
 const createEvento = async (req, res) => {
     try {
-        const eventoData = req.body;
-        const novoEvento = await eventoService.createEvento(eventoData);
-        res.status(201).json(novoEvento);
+        const {estabelecimento_id, organizacao_id, nome, data, descricao} = req.body;
+
+        const novoEvento = new Evento({
+            estabelecimento_id,
+            organizacao_id,
+            nome,
+            data,
+            descricao,
+        })
+
+        const result = await eventoService.createEvento(novoEvento);
+        res.status(201).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -44,10 +75,25 @@ const deleteEvento = async (req, res) => {
 const updateEvento = async (req, res) => {
     try {
         const { id } = req.params;
-        const eventoData = req.body;
-        const updatedEvento = await eventoService.updateEvento(id, eventoData);
-        if (!updatedEvento) return res.status(404).json({ message: "Evento não encontrado" });
-        res.status(200).json(updatedEvento);
+        const {
+            estabelecimento_id,
+            organizacao_id,
+            nome,
+            data,
+            descricao,
+        } = req.body;
+
+        const eventoAtualizado = new Evento({
+            id,
+            estabelecimento_id,
+            organizacao_id,
+            nome,
+            data,
+            descricao,
+        })
+        const result = await eventoService.updateEvento(id, eventoAtualizado);
+        if (!result) return res.status(404).json({ message: "Evento não encontrado" });
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

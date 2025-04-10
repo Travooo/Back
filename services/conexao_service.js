@@ -3,6 +3,9 @@ const supabase = require('../config/db');
 
 class ConexaoService {
     static async createConexao(data) {
+        if (data.data_conexao === undefined || data.data_conexao === null) {
+            delete data.data_conexao;
+        }
         const { error, data: result } = await supabase.from('conexoes').insert([data]);
         if (error) throw error;
         return result;

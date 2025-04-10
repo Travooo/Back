@@ -1,14 +1,14 @@
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.URL, process.env.APIKEY);
-
 class Evento {
-    constructor(id_evento = null, id_usuario, id_usuario_organizacao, nome, data, descricao) {
-        this.id_evento = id_evento;
-        this.id_usuario = id_usuario;
-        this.id_usuario_organizacao = id_usuario_organizacao;
+    constructor({id, estabelecimento_id, organizacao_id, nome, data, descricao, created_at}) {
+        if (id !== undefined) {
+            this.id = id;
+          }
+        this.estabelecimento_id = estabelecimento_id;
+        this.organizacao_id = organizacao_id;
         this.nome = nome;
         this.data = data;
         this.descricao = descricao;
+        this.created_at = created_at;
     }
 }
 

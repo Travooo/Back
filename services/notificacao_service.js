@@ -3,6 +3,9 @@ const supabase = require('../config/db');
 
 class NotificacaoService {
     static async createNotificacao(data) {
+        if (data.created_at === undefined || data.created_at === null) {
+            delete data.created_at;
+        }
         const { error, data: result } = await supabase.from('notificacoes').insert([data]);
         if (error) throw error;
         return result;

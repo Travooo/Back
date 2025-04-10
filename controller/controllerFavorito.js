@@ -1,8 +1,15 @@
 const favoritoService = require('../services/favorito_service');
+const Favorito = require('../model/Favorito')
 
 const getFavoritos = async (req, res) => {
     try {
-        const favorito = await favoritoService.getAllFavoritos();
+        const data = await favoritoService.getAllFavoritos();
+        const favorito = data.map(u => new Favorito({
+            id: u.id,
+            estabelecimento_id: u.estabelecimento_id,
+            usuario_id: u.usuario_id,
+            created_at: u.created_at
+        }))
         res.status(200).json(favorito);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -12,8 +19,14 @@ const getFavoritos = async (req, res) => {
 const getFavoritoById = async (req, res) => {
     try {
         const { id } = req.params;
-        const favorito = await favoritoService.getFavoritoById(id);
-        if (!favorito) return res.status(404).json({ message: "Favorito não encontrado" });
+        const data = await favoritoService.getFavoritoById(id);
+        if (!data) return res.status(404).json({ message: "Favorito não encontrado" });
+        const favorito = new Favorito({
+            id: data.id,
+            estabelecimento_id: data.estabelecimento_id,
+            usuario_id: data.usuario_id,
+            created_at: data.created_at
+        })
         res.status(200).json(favorito);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -22,9 +35,13 @@ const getFavoritoById = async (req, res) => {
 
 const createFavorito = async (req, res) => {
     try {
-        const favoritoData = req.body;
-        const novoFavorito = await favoritoService.createFavorito(favoritoData);
-        res.status(201).json(novoFavorito);
+        const {estabelecimento_id, usuario_id} = req.body;
+        const novoFavorito = new Favorito({
+            estabelecimento_id, 
+            usuario_id, 
+        })
+        const result = await favoritoService.createFavorito(novoFavorito);
+        res.status(201).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -44,10 +61,14 @@ const deleteFavorito = async (req, res) => {
 const updateFavorito = async (req, res) => {
     try {
         const { id } = req.params;
-        const favoritoData = req.body;
-        const updatedFavorito = await favoritoService.updateFavorito(id, favoritoData);
-        if (!updatedFavorito) return res.status(404).json({ message: "Favorito não encontrado" });
-        res.status(200).json(updatedFavorito);
+        const {estabelecimento_id, usuario_id} = req.body;
+        const favoritoAtualizado = new Favorito({
+            estabelecimento_id, 
+            usuario_id, 
+        })
+        const result = await favoritoService.updateFavorito(id, favoritoAtualizado);
+        if (!result) return res.status(404).json({ message: "Favorito não encontrado" });
+        res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -4,19 +4,19 @@ const Usuario = require('../model/Usuario');
 const getUsuarios = async (req, res) => {
     try {
         const usuariosData = await usuarioService.getAllUsuarios();
-        const usuarios = usuariosData.map(u => new Usuario(
-            u.id,
-            u.admin,
-            u.email,
-            u.senha,
-            u.nome_usuario,
-            u.nome_completo,
-            u.sobre,
-            u.foto_perfil,
-            u.data_nascimento,
-            u.created_at,
-            u.tipo_plano
-        ));
+        const usuarios = usuariosData.map(u => new Usuario({
+            id: u.id,
+            admin: u.admin,
+            email: u.email,
+            senha: u.senha,
+            nome_usuario: u.nome_usuario,
+            nome_completo: u.nome_completo,
+            sobre: u.sobre,
+            foto_perfil: u.foto_perfil,
+            data_nascimento: u.data_nascimento,
+            tipo_plano: u.tipo_plano,
+            created_at: u.created_at
+        }));
         res.status(200).json(usuarios);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -32,19 +32,20 @@ const getUsuarioById = async (req, res) => {
             return res.status(404).json({ message: "Usuário não encontrado" });
         }
 
-        const usuario = new Usuario(
-            data.id,
-            data.admin,
-            data.email,
-            data.senha,
-            data.nome_usuario,
-            data.nome_completo,
-            data.sobre,
-            data.foto_perfil,
-            data.data_nascimento,
-            data.created_at,
-            data.tipo_plano
-        );
+        const usuario = new Usuario({
+            id: data.id,
+            admin: data.admin,
+            email: data.email,
+            senha: data.senha,
+            nome_usuario: data.nome_usuario,
+            nome_completo: data.nome_completo,
+            sobre: data.sobre,
+            foto_perfil: data.foto_perfil,
+            data_nascimento: data.data_nascimento,
+            tipo_plano: data.tipo_plano,
+            created_at: data.created_at
+        });
+        
 
         res.status(200).json(usuario);
     } catch (error) {
@@ -63,12 +64,10 @@ const createUsuario = async (req, res) => {
             sobre,
             foto_perfil,
             data_nascimento,
-            created_at,
-            tipo_plano
+            tipo_plano,
         } = req.body;
 
-        const novoUsuario = new Usuario(
-            null,
+        const novoUsuario = new Usuario({
             admin,
             email,
             senha,
@@ -77,9 +76,8 @@ const createUsuario = async (req, res) => {
             sobre,
             foto_perfil,
             data_nascimento,
-            created_at,
             tipo_plano
-        );
+          });
 
         const result = await usuarioService.createUsuario(novoUsuario);
         res.status(201).json(result);
@@ -115,11 +113,10 @@ const updateUsuario = async (req, res) => {
             sobre,
             foto_perfil,
             data_nascimento,
-            created_at,
             tipo_plano
         } = req.body;
 
-        const usuarioAtualizado = new Usuario(
+        const usuarioAtualizado = new Usuario({
             id,
             admin,
             email,
@@ -129,9 +126,9 @@ const updateUsuario = async (req, res) => {
             sobre,
             foto_perfil,
             data_nascimento,
-            created_at,
             tipo_plano
-        );
+        });
+        
 
         const result = await usuarioService.updateUsuario(id, usuarioAtualizado);
 
