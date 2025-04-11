@@ -1,11 +1,14 @@
-require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { supabase } = require('./config/supabaseClient');
+const { createClient } = require('@supabase/supabase-js');
+
+const { SUPABASE_URL, SUPABASE_KEY } = process.env;
+if (!SUPABASE_URL || !SUPABASE_KEY) {
+  throw new Error('Variáveis de ambiente do Supabase estão faltando. Cheque seu .env.');
+}
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const app = express();
-
-// Middlewares globais:
 app.use(cors());
 app.use(express.json());
 
@@ -17,7 +20,7 @@ app.get('/test-supabase', async (req, res) => {
 
     res.json({ success: true, data });
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Erro ao conectar ao Supabase', error });
+    res.status(500).json({ success: false, message: 'Erro ao conectar ao Supabase. ', error });
   }
 });
 

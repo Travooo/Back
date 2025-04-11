@@ -20,7 +20,7 @@ class Avaliacao {
     }
     const numerosPermitidos = [1, 2, 3, 4, 5];
     if (!numerosPermitidos.includes(numero_estrelas)) {
-      throw new Error("Atributo 'numero_estrelas' deve ser 1, 2, 3, 4 ou 5.");
+      throw new Error("Atributo 'numero_estrelas' inserido não existe.");
     }
     if (
       (data_comentario !== null && !(data_comentario instanceof Date)) ||

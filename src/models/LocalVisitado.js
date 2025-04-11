@@ -12,8 +12,12 @@ class LocalVisitado {
     if (!Number.isInteger(usuario_id) || usuario_id <= 0) {
       throw new Error("Atributo 'usuario_id' inválido.");
     }
-    if (!(data_visita instanceof Date && isNaN(data_visita.getTime()))) {
-      throw new Error("Atributo 'data_visita' deve ser um objeto Date.");
+    const dataConvertida =
+      typeof horario === "string" ? new Date(horario) : horario;
+    if (!(dataConvertida instanceof Date) || isNaN(dataConvertida.getTime())) {
+      throw new Error(
+        "Atributo 'horario' deve ser uma string ISO ou Date válida."
+      );
     }
   }
 }

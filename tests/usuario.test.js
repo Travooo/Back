@@ -1,3 +1,4 @@
+require('dotenv').config();
 const request = require('supertest');
 const app = require('../app');
 
@@ -10,10 +11,11 @@ describe('Testes de Integração - Usuario', () => {
       senha: 'senha123',
       nome_usuario: 'testeUser',
       nome_completo: 'Usuário Teste API',
-      foto_perfil: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4//8/AwAI/AL+fctJ7wAAAABJRU5ErkJggg==',
+      foto_perfil:
+        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4//8/AwAI/AL+fctJ7wAAAABJRU5ErkJggg==',
       data_nascimento: '2002-06-20',
-      admin: 'false',
-      tipo_plano: '1',
+      admin: false,
+      tipo_plano: 1,
     };
     const res = await request(app).post('/usuarios').send(new_user);
     console.log('Resposta da criação:', res.body);
@@ -41,7 +43,6 @@ describe('Testes de Integração - Usuario', () => {
   test('Deve atualizar um usuario existente', async () => {
     const updates = { nome_usuario: 'NomeAtualizadoViaTeste' };
     const res = await request(app).put(`/usuarios/${usuarioCriadoId}`).send(updates);
-    console.log('Updates recebidos:', updates);
     console.log('Usuário atualizado:', res.body);
     expect(res.status).toBe(200);
     expect(Array.isArray(res.body)).toBe(true);
@@ -52,6 +53,6 @@ describe('Testes de Integração - Usuario', () => {
     const res = await request(app).delete(`/usuarios/${usuarioCriadoId}`);
     console.log('Resposta da exclusão:', res.body);
     expect(res.status).toBe(204);
-    expect(res.body).not.toBeInstanceOf(Error);
+    expect(res.body).toEqual({});
   });
 });

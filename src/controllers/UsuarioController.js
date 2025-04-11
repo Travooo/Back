@@ -11,18 +11,18 @@ class UsuarioController {
     }
   }
 
-  static async get_by_id(req, res) {
+  static async getById(req, res) {
     try {
-      const data = await UsuarioService.get_by_id(req.params.id);
+      const data = await UsuarioService.getById(req.params.id);
       return res.status(200).json(data);
     } catch (error) {
       return res.status(404).json({ error: error.message });
     }
   }
 
-  static async get_all(req, res) {
+  static async getAll(req, res) {
     try {
-      const data = await UsuarioService.get_all();
+      const data = await UsuarioService.getAll();
       return res.status(200).json(data);
     } catch (error) {
       return res.status(500).json({ error: error.message });

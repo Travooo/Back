@@ -1,6 +1,9 @@
 const { supabase } = require('../config/supabaseClient');
 
-function validateString(value, { atributo, required = false, formato = null, min = null, max = null, erro = null }) {
+function validateString(
+  value,
+  { atributo, required = false, formato = null, min = null, max = null, erro_formato = null }
+) {
   if (!atributo) throw new Error(`Obrigatório informar nome do atributo em validateString.`);
   if (typeof value !== 'string') {
     if (required) throw new Error(`Atributo obrigatório '${atributo}' ausente, vazio ou indefinido.`);
@@ -11,11 +14,12 @@ function validateString(value, { atributo, required = false, formato = null, min
     if (required) throw new Error(`Atributo '${atributo}' obrigatório ausente, vazio ou indefinido.`);
     return null;
   }
-  if (min && parsed.length < min) throw new Error(`Atributo '${atributo}' inválido. Deve conter ao menos ${min} caracteres.`);
+  if (min && parsed.length < min)
+    throw new Error(`Atributo '${atributo}' inválido. Deve conter ao menos ${min} caracteres.`);
   if (max && parsed.length > max) throw new Error(`Atributo '${atributo}' excede o limite de ${max} caracteres.`);
   if (formato) {
     const isValid = typeof formato === 'function' ? formato(parsed) : formato.test(parsed);
-    if (!isValid) throw new Error(`Atributo '${atributo}' inválido.` + (erro ? ' ' + erro : ''));
+    if (!isValid) throw new Error(`Atributo '${atributo}' inválido.` + (erro_formato ? ' ' + erro_formato : ''));
   }
   return parsed;
 }
@@ -25,7 +29,11 @@ function validateNumber(value, atributo) {
   const parsed = isId ? parseInt(value, 10) : parseFloat(value);
   if (isNaN(parsed)) throw new Error(`Atributo '${atributo}' inválido. Valor numérico esperado.`);
   const validFloat = /^\d+(\.\d{1,2})?$/; // Define máximo de duas casas decimais
-  if (parsed <= 0 || (!isId && !validFloat.test(String(value)))) throw new Error(`Atributo '${atributo}' inválido. ` + (isId ? 'Deve ser um número inteiro positivo.' : 'Deve ser um valor positivo com até duas casas decimais.'));
+  if (parsed <= 0 || (!isId && !validFloat.test(String(value))))
+    throw new Error(
+      `Atributo '${atributo}' inválido. ` +
+        (isId ? 'Deve ser um número inteiro positivo.' : 'Deve ser um valor positivo com até duas casas decimais.')
+    );
   return parsed;
 }
 
