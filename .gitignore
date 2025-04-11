@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# Variáveis de ambiente
+.env
+
+# Logs
+npm-debug.log*
+pnpm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editor de código
+.vscode/
+.idea/
