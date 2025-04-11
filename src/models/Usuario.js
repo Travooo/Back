@@ -1,47 +1,124 @@
-const { validateString, validateFoto, validateDate, validateOption } = require('../utils/validators');
+const { validateString, validateFoto, validateDate, validateOption } = require('../utils/validators')
+
+const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const regexSenha = /^[a-zA-Z0-9!@#\$%\^&\*\)\(+=._-]+$/
+const regexNomeUsuario = /^[a-zA-Z0-9_]+$/
+const regexNomeCompleto = /^[A-Za-zÀ-ÿ\s]+$/
 
 class Usuario {
-  constructor(email, senha, nome_usuario, nome_completo, foto_perfil = null, sobre = null, data_nascimento, admin, tipo_plano) {
-    this.email = validateString(email, {
+  static #schema = {
+    // #: Privado
+    email: {
+      tipo: 'string',
+      required: true,
       atributo: 'email',
-      required: true,
-      formato: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      formato: regexEmail,
       erro: 'Formato de email inválido.',
-    });
-    this.senha = validateString(senha, {
-      atributo: 'senha',
+    },
+    senha: {
+      tipo: 'string',
       required: true,
+      atributo: 'senha',
       min: 6,
       max: 20,
-      formato: /^[a-zA-Z0-9!@#\$%\^\&*\)\(+=._-]+$/, // Permite letras, números e alguns caracteres especiais
+      formato: regexSenha,
       erro: 'A senha deve conter apenas letras, números ou caracteres especiais permitidos.',
-    });
-    this.nome_usuario = validateString(nome_usuario, {
+    },
+    nome_usuario: {
+      tipo: 'string',
+      required: true,
       atributo: 'nome_usuario',
-      required: true,
       min: 4,
-      max: 20,
-      formato: /^[a-zA-Z0-9_]+$/, // Permite letras, números e underline
-      erro: 'O nome de usuário pode conter apenas letras, números ou underline (sem espaços ou símbolos especiais).',
-    });
-    this.nome_completo = validateString(nome_completo, {
-      atributo: 'nome_completo',
+      max: 30,
+      formato: regexNomeUsuario,
+      erro: 'O nome de usuário pode conter apenas letras, números ou underline.',
+    },
+    nome_completo: {
+      tipo: 'string',
       required: true,
+      atributo: 'nome_completo',
       min: 3,
       max: 60,
-      formato: /^[A-Za-zÀ-ÿ\s]+$/, // Permite letras com acentos e espaços
-      erro: 'O nome completo deve conter apenas letras e espaços (sem números ou símbolos).',
-    });
-    this.foto_perfil = validateFoto(foto_perfil);
-    this.sobre = validateString(nome_completo, {
-      atributo: 'nome_completo',
+      formato: regexNomeCompleto,
+      erro: 'O nome completo deve conter apenas letras e espaços.',
+    },
+    sobre: {
+      tipo: 'string',
+      atributo: 'sobre',
       min: 10,
       max: 300,
-    });
-    this.data_nascimento = validateDate(data_nascimento, 'data_nascimento');
-    this.admin = validateOption(admin, 'admin');
-    this.tipo_plano = validateOption(tipo_plano, 'tipo_plano');
+    },
+    admin: {
+      tipo: 'option',
+      atributo: 'admin',
+    },
+    tipo_plano: {
+      tipo: 'option',
+      atributo: 'tipo_plano',
+    },
+    data_nascimento: {
+      tipo: 'date',
+      atributo: 'data_nascimento',
+    },
+    foto_perfil: {
+      tipo: 'foto',
+      atributo: 'foto_perfil',
+    },
+  }
+  constructor(data = {}) {
+    for (const key in Usuario.#schema) {
+      const rule = Usuario.#schema[key]
+      const valor = data[key]
+      if (valor === undefined || valor === null || valor === '') {
+        if (rule.required) {
+          throw new Error(`Atributo obrigatório '${key}' ausente.`)
+        }
+        this[key] = null
+      } else {
+        this[key] = Usuario.#validate(valor, key)
+      }
+    }
+  }
+
+  static #validate(value, key) {
+    const rule = this.#schema[key]
+    if (!rule) return null
+
+    const { tipo, atributo = key, erro, ...rest } = rule
+
+    switch (tipo) {
+      case 'string':
+        return validateString(value, { atributo, erro_formato: erro, ...rest })
+      case 'option':
+        return validateOption(value, atributo)
+      case 'date':
+        return validateDate(value, atributo)
+      case 'foto':
+        return validateFoto(value)
+      default:
+        throw new Error(`Tipo de validação '${tipo}' não reconhecido para '${key}'`)
+    }
+  }
+  // Método auxiliar (pode ser exportado para update/create)
+  static validateBySchema(data = {}) {
+    const validados = {}
+    for (const key in data) {
+      if (key in this.#schema) {
+        validados[key] = this.#validate(data[key], key)
+      }
+    }
+    return validados
+  }
+  static getValidKeys() {
+    return Object.keys(this.#schema)
+  }
+  toJSON() {
+    const json = {}
+    for (const key of Usuario.getValidKeys()) {
+      json[key] = this[key]
+    }
+    return json
   }
 }
 
-module.exports = Usuario;
+module.exports = Usuario
