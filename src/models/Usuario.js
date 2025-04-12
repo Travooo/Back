@@ -83,9 +83,7 @@ class Usuario {
   static #validate(value, key) {
     const rule = this.#schema[key]
     if (!rule) return null
-
     const { tipo, atributo = key, erro, ...rest } = rule
-
     switch (tipo) {
       case 'string':
         return validateString(value, { atributo, erro_formato: erro, ...rest })
@@ -99,6 +97,7 @@ class Usuario {
         throw new Error(`Tipo de validação '${tipo}' não reconhecido para '${key}'`)
     }
   }
+
   // Método auxiliar (pode ser exportado para update/create)
   static validateBySchema(data = {}) {
     const validados = {}
@@ -109,9 +108,11 @@ class Usuario {
     }
     return validados
   }
+
   static getValidKeys() {
     return Object.keys(this.#schema)
   }
+
   toJSON() {
     const json = {}
     for (const key of Usuario.getValidKeys()) {

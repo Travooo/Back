@@ -35,8 +35,7 @@ class UsuarioService {
   static async getById(id) {
     const { senha, ...rest } = await getIfExists({
       tabela: 'usuarios',
-      coluna: 'id',
-      value: validateNumber(id),
+      value: validateNumber(id, 'usuario_id'),
       campos: '*',
     })
     return rest
@@ -74,7 +73,7 @@ class UsuarioService {
   }
 
   static async delete(id) {
-    const usuariodId = validateNumber(id, 'id')
+    const usuariodId = validateNumber(id, 'usuario_id')
     const { data, error } = await supabase.from('usuarios').delete().eq('id', usuariodId)
     if (error) throw new Error(error.message)
     return data
