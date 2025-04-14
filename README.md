@@ -78,45 +78,6 @@ class UsuarioController {
 
 Responsáveis por interagir com o banco. Encapsulam a interação com o Supabase, incuindo as lógicas e regras de negócio necessárias, e retornam os dados ou feedbacks de forma adequada aos controllers.
 
-```javascript
-class UsuarioService {
-  static async create(user_data_json) {
-    try {
-      const usuario = new Usuario(
-        user_data_json.email,
-        user_data_json.senha,
-        user_data_json.nome_usuario,
-        user_data_json.nome_completo,
-        user_data_json.foto_perfil,
-        user_data_json.sobre,
-        user_data_json.data_nascimento,
-        user_data_json.admin,
-        user_data_json.tipo_plano
-      )
-      const { data, error } = await supabase
-        .from('usuarios')
-        .insert({
-          email: usuario.email,
-          senha: usuario.senha,
-          nome_usuario: usuario.nome_usuario,
-          nome_completo: usuario.nome_completo,
-          foto_perfil: usuario.foto_perfil,
-          sobre: usuario.sobre,
-          data_nascimento: usuario.data_nascimento,
-          admin: usuario.admin,
-          tipo_plano: usuario.tipo_plano,
-        })
-        .single()
-        .select()
-      if (error) throw new Error(error.message)
-      return data
-    } catch (error) {
-      throw new Error(error.message)
-    }
-  }
-}
-```
-
 ### Models
 
 ### Middleware
