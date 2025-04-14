@@ -79,6 +79,7 @@ class UsuarioController {
 Responsáveis por interagir com o banco. Encapsulam a interação com o Supabase, incuindo as lógicas e regras de negócio necessárias, e retornam os dados ou feedbacks de forma adequada aos controllers.
 
 ### Models
+Responsáveis por definir um modelo de dados com regras e métodos de validação para a criação ou atualização de entidades.
 
 ### Middleware
 
