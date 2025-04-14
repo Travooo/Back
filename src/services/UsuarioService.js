@@ -31,11 +31,11 @@ class UsuarioService {
     }
   }
 
-  // ... = Operador de resto  |  { senha, ...rest } é o objeto sem a propriedade 'senha'
   static async getById(id) {
+    const usuarioId = validateNumber(id, 'usuario_id')
     const { senha, ...rest } = await getIfExists({
       tabela: 'usuarios',
-      value: validateNumber(id, 'usuario_id'),
+      value: usuarioId,
       campos: '*',
     })
     return rest

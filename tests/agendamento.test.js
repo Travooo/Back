@@ -4,13 +4,14 @@ const request = require('supertest')
 
 let agendamentoCriadoId
 
-describe('Testes de Integração - Usuario', () => {
+describe('Testes de Integração - Agendamento', () => {
   const new_agendamento = {
     estabelecimento_id: 3,
     usuario_id: 1,
     horario: '2025-04-11T14:30',
     detalhes: 'Usuário Teste API',
   }
+
   test('Deve criar um agendamento via API', async () => {
     const res = await request(app).post('/agendamentos').send(new_agendamento)
     console.log('Resposta da criação:', res.body)
@@ -21,17 +22,16 @@ describe('Testes de Integração - Usuario', () => {
 
   test('Deve listar um agendamento do Supabase', async () => {
     const res = await request(app).get(`/agendamentos/${agendamentoCriadoId}`)
-    console.log('Agendamento buscado:', res.body)
+    console.log('Resposta da listagem:', res.body)
     expect(res.status).toBe(200)
     expect(res.body).toBeDefined()
     expect(res.body).toHaveProperty('id', agendamentoCriadoId)
-    expect(res.body).not.toHaveProperty('senha')
   })
 
   test('Deve listar agendamentos do Supabase', async () => {
     const res = await request(app).get(`/agendamentos`)
-    console.log('Total de agendamentos:', res.body.length)
     console.log('Resposta da listagem:', res.body)
+    console.log('Total de agendamentos:', res.body.length)
     expect(res.status).toBe(200)
     expect(Array.isArray(res.body)).toBe(true)
     expect(res.body.length).toBeGreaterThan(0)

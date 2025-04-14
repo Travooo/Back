@@ -16,6 +16,7 @@ class UsuarioController {
       const data = await UsuarioService.getById(req.params.id)
       return res.status(200).json(data)
     } catch (error) {
+      console.error(`Erro ao buscar usuário #${req.params.id}:`)
       return res.status(404).json({ error: error.message })
     }
   }
@@ -25,6 +26,7 @@ class UsuarioController {
       const data = await UsuarioService.getAll()
       return res.status(200).json(data)
     } catch (error) {
+      console.error('Erro ao buscar todos usuários:')
       return res.status(500).json({ error: error.message })
     }
   }
@@ -32,9 +34,9 @@ class UsuarioController {
   static async update(req, res) {
     try {
       const data = await UsuarioService.update(req.params.id, req.body)
-      console.log('Retorno do service:', data)
       return res.status(200).json(data)
     } catch (error) {
+      console.error(`Erro ao atualizar usuário #${req.params.id}:`)
       return res.status(400).json({ error: error.message })
     }
   }
@@ -44,6 +46,7 @@ class UsuarioController {
       await UsuarioService.delete(req.params.id)
       return res.status(204).send()
     } catch (error) {
+      console.error(`Erro ao deletar usuário #${req.params.id}:`)
       return res.status(400).json({ error: error.message })
     }
   }

@@ -6,7 +6,7 @@ let usuarioCriadoId
 
 describe('Testes de Integração - Usuario', () => {
   const new_user = {
-    email: 'new_email@email.com',
+    email: 'email_new@email.com',
     senha: 'senha123',
     nome_usuario: 'testeUser',
     nome_completo: 'Usuário Teste API',
@@ -16,6 +16,7 @@ describe('Testes de Integração - Usuario', () => {
     admin: false,
     tipo_plano: 1,
   }
+
   test('Deve criar um usuário via API', async () => {
     const res = await request(app).post('/usuarios').send(new_user)
     console.log('Resposta da criação:', res.body)
@@ -26,7 +27,7 @@ describe('Testes de Integração - Usuario', () => {
 
   test('Deve listar um usuário do Supabase', async () => {
     const res = await request(app).get(`/usuarios/${usuarioCriadoId}`)
-    console.log('Usuário buscado:', res.body)
+    console.log('Resposta da listagem:', res.body)
     expect(res.status).toBe(200)
     expect(res.body).toBeDefined()
     expect(res.body).toHaveProperty('id', usuarioCriadoId)
@@ -35,8 +36,8 @@ describe('Testes de Integração - Usuario', () => {
 
   test('Deve listar usuários do Supabase', async () => {
     const res = await request(app).get('/usuarios')
-    console.log('Total de usuários:', res.body.length)
     console.log('Resposta da listagem:', res.body)
+    console.log('Total de usuários:', res.body.length)
     expect(res.status).toBe(200)
     expect(Array.isArray(res.body)).toBe(true)
     expect(res.body.length).toBeGreaterThan(0)
