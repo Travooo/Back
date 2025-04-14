@@ -92,7 +92,7 @@ class Usuario {
       case 'date':
         return validateDate(value, atributo)
       case 'foto':
-        return validateFoto(value)
+        return validateFoto(value, atributo)
       default:
         throw new Error(`Tipo de validação '${tipo}' não reconhecido para '${key}'`)
     }

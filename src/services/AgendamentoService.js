@@ -3,9 +3,9 @@ const Agendamento = require('../models/Agendamento')
 const supabase = require('../config/supabaseClient')
 
 class AgendamentoService {
-  static async create(agendamento_data) {
+  static async create(agendamento) {
     try {
-      const agendamento = new Agendamento(agendamento_data)
+      const agendamento = new Agendamento(agendamento)
 
       const estabelecimentoExiste = await getIfExists({
         tabela: 'estabelecimentos',
@@ -51,11 +51,14 @@ class AgendamentoService {
     if (!updates || typeof updates !== 'object') {
       throw new Error('Atualizações inválidas ou não fornecidas.')
     }
+
     const validados = {}
     for (const key of Object.keys(updates)) {
       if (!Agendamento.getValidKeys().includes(key)) continue
+
       validados[key] = Agendamento.validateBySchema({ [key]: updates[key] })[key]
     }
+
     const { data, error } = await supabase.from('agendamentos').update(validados).eq('id', agendamentoId).select()
     if (error) {
       throw new Error(error.message)

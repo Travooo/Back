@@ -37,6 +37,7 @@ function validateNumber(value, atributo) {
   return parsed
 }
 
+// Implementar verificação do atributo para definir se o formato deve ser data ou data/hora
 function validateDate(date, atributo) {
   if (!date || typeof date !== 'string') {
     throw new Error(`Atributo '${atributo}' ausente, indefinido ou não é uma string.`)
@@ -63,13 +64,13 @@ function validateOption(value, atributo) {
   return value
 }
 
-function validateFoto(base64) {
+function validateFoto(base64, atributo) {
   // Pode ser generalizado futuramente como validateAnexo com tipo e atributo.
   if (!base64 || typeof base64 !== 'string') return null
   const matches = base64.match(/^data:(image\/[a-z]+);base64,(.+)$/)
-  if (!matches) throw new Error("Atributo 'foto_perfil' inválido. Formato base64 esperado.")
+  if (!matches) throw new Error(`Atributo '${atributo}' inválido. Formato base64 esperado.`)
   const buffer = Buffer.from(matches[2], 'base64') // Matches[2] é a parte da string base64 com os dados, excluindo o prefixo "data:image/"
-  if (buffer.length > 5 * 1024 * 1024) throw new Error("Atributo 'foto_perfil' excede 5MB.")
+  if (buffer.length > 5 * 1024 * 1024) throw new Error(`Atributo '${atributo}' excede 5MB.`)
   return buffer
 }
 
