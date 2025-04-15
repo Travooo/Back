@@ -14,7 +14,7 @@ npm run dev    # 'dev' definido como 'nodemon src/config/index.js' em package.js
 
 O projeto segue princípios de **separação de responsabilidades** com camadas para **modelos de entidades**, **serviços**, **rotas** e **controladores**.
 
-## index.js
+## *index.js*
 
 Ponto de entrada do servidor da aplicação. Inicia o servidor importando app.js.
 
