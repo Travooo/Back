@@ -18,7 +18,7 @@ O projeto segue princípios de **separação de responsabilidades** com camadas 
 
 Ponto de entrada do servidor da aplicação. Inicia o servidor importando app.js.
 
-## app.js
+## *app.js*
 
 Arquivo central de configuração do servidor. Carrega as variáveis de ambiente, instância _Express_/_CORS_, importa o SupabaseClient e registra as rotas da aplicação.
 
