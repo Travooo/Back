@@ -72,6 +72,36 @@ class UsuarioController {
 
 Responsáveis por interagir com o banco. Encapsulam a interação com o Supabase (incuindo as regras de negócio) e retornam os dados (ou feedbacks) de forma adequada aos controllers.
 
+```javascript
+class UsuarioService {
+  static async create(user) {
+    try {
+      const usuario = new Usuario(user)
+
+      const emailExistente = await getIfExists({
+        tabela: 'usuarios',
+        coluna: 'email',
+        value: usuario.email,
+        select: 'id',
+      }).catch(() => null)
+      if (emailExistente) {
+        throw new Error('Já existe um usuário com este email.')
+      }
+
+      const salt = await bcrypt.genSalt(10)
+      usuario.senha = await bcrypt.hash(usuario.senha, salt)
+
+      const { data, error } = await supabase.from('usuarios').insert(usuario.toJSON()).single().select()
+      if (error) {
+        throw new Error(error.message)
+      }
+      return data
+    } catch (error) {
+      throw new Error(error.message)
+    }
+  }
+```
+
 ### Models
 
 Responsáveis por definir modelos de dados com regras e métodos de validação, como foco na criação ou atualização de entidades.
