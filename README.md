@@ -6,10 +6,10 @@ npm install
 npm init -y
 npm install express cors dotenv
 npm install @supabase/supabase-js pg
-npm install validator
-npm install bcrypt
-node index.js
-http://localhost:3000/
+npm install bcrypt    // Biblioteca comum de criptografia para hashing de senhas
+npm install --save-dev nodemon    // Instala local no projeto. Para rodar 'nodemon' em qualquer diretório, 'npm install -g nodemon' (global)
+npm run dev    // 'dev' definido como 'nodemon src/config/index.js' em package.json (scripts)
+// http://localhost:3000/
 ```
 
 O projeto segue princípios de **separação de responsabilidades** com camadas para **modelos de entidades**, **serviços**, **rotas** e **controladores**.
