@@ -1,6 +1,5 @@
-# 📌 Back: Node/JavaScript/PostgreSQL/Supabase
 
-### 📦 Instalando dependências
+### Instalando dependências
 
 ```bash
 npm install
