@@ -12,7 +12,7 @@ node index.js
 http://localhost:3001/test-supabase
 ```
 
-O projeto segue princípios de **separação de responsabilidades** com camas para **modelos de entidades**, **serviços**, **rotas** e **controladores**.
+O projeto segue princípios de **separação de responsabilidades** com camadas para **modelos de entidades**, **serviços**, **rotas** e **controladores**.
 
 ## app.js
 
