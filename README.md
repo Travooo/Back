@@ -9,7 +9,7 @@ npm install @supabase/supabase-js pg
 npm install validator
 npm install bcrypt
 node index.js
-http://localhost:3001/test-supabase
+http://localhost:3000/
 ```
 
 O projeto segue princípios de **separação de responsabilidades** com camadas para **modelos de entidades**, **serviços**, **rotas** e **controladores**.
