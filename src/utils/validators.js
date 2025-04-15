@@ -64,13 +64,24 @@ function validateOption(value, atributo) {
   return value
 }
 
-function validateFoto(base64, atributo) {
-  // Pode ser generalizado futuramente como validateAnexo com tipo e atributo.
+function validateAnexo(base64, { atributo, tiposPermitidos = [], tamanhoMaxMB = 50 }) {
+  if (!atributo) throw new Error(`Obrigatório informar nome do atributo em validateAnexo.`)
   if (!base64 || typeof base64 !== 'string') return null
-  const matches = base64.match(/^data:(image\/[a-z]+);base64,(.+)$/)
-  if (!matches) throw new Error(`Atributo '${atributo}' inválido. Formato base64 esperado.`)
-  const buffer = Buffer.from(matches[2], 'base64') // Matches[2] é a parte da string base64 com os dados, excluindo o prefixo "data:image/"
-  if (buffer.length > 5 * 1024 * 1024) throw new Error(`Atributo '${atributo}' excede 5MB.`)
+  const matches = base64.match(/^data:([\w\/\-\+\.]+);base64,(.+)$/)
+  if (!matches) {
+    throw new Error(`Atributo '${atributo}' inválido. Formato base64 esperado.`)
+  }
+  const mimeType = matches[1]
+  const base64Data = matches[2]
+  // Verifica se o tipo MIME é permitido
+  if (tiposPermitidos.length > 0 && !tiposPermitidos.includes(mimeType)) {
+    throw new Error(`Atributo '${atributo}' inválido. Tipo de arquivo '${mimeType}' não permitido.`)
+  }
+  const buffer = Buffer.from(base64Data, 'base64')
+  const maxBytes = tamanhoMaxMB * 1024 * 1024
+  if (buffer.length > maxBytes) {
+    throw new Error(`Atributo '${atributo}' excede o limite de ${tamanhoMaxMB}MB.`)
+  }
   return buffer
 }
 
@@ -116,7 +127,7 @@ module.exports = {
   validateNumber,
   validateDate,
   validateOption,
-  validateFoto,
+  validateAnexo,
   getIfExists,
   validateBySchema,
 }
