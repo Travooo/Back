@@ -9,7 +9,7 @@ app.use(express.json())
 // Rota teste de conexão Supabase:
 app.get('/test-supabase', async (req, res) => {
   try {
-    const { data, error } = await supabase.from('usuario').select('*').limit(10)
+    const { data, error } = await supabase.from('usuarios').select('*').limit(10)
     if (error) throw error
 
     res.json({ success: true, data })
@@ -19,17 +19,17 @@ app.get('/test-supabase', async (req, res) => {
 })
 
 const rotas = [
-  //['agendamentos', 'agendamentoRouter'],
-  //['anexos', 'anexoRouter'],
-  //['avaliacoes', 'avaliacaoRouter'],
-  //['conexoes', 'conexaoRouter'],
-  //['cupons', 'cupomRouter'],
-  //['estabelecimentos', 'estabelecimentoRouter'],
-  //['eventos', 'eventoRouter'],
-  //['favoritos', 'favoritoRouter'],
-  //['locais_visitados', 'localVisitadoRouter'],
-  //['organizacoes', 'organizacaoRouter'],
-  //['pagamentos', 'pagamentoRouter'],
+  ['agendamentos', 'agendamentoRouter'],
+  ['anexos', 'anexoRouter'],
+  ['avaliacoes', 'avaliacaoRouter'],
+  ['conexoes', 'conexaoRouter'],
+  ['cupons', 'cupomRouter'],
+  ['estabelecimentos', 'estabelecimentoRouter'],
+  ['eventos', 'eventoRouter'],
+  ['favoritos', 'favoritoRouter'],
+  ['locais_visitados', 'localVisitadoRouter'],
+  ['organizacoes', 'organizacaoRouter'],
+  ['pagamentos', 'pagamentoRouter'],
   ['usuarios', 'usuarioRouter'],
 ]
 
