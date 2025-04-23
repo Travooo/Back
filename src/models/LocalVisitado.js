@@ -1,25 +1,71 @@
+const { validateNumber, validateDate } = require('../utils/validators')
+
 class LocalVisitado {
-  constructor(estabelecimento_id, usuario_id, data_visita) {
-    this.estabelecimento_id = estabelecimento_id;
-    this.usuario_id = usuario_id;
-    this.data_visita = data_visita;
-    if (!estabelecimento_id || !usuario_id || !data_visita) {
-      throw new Error("Campos obrigatórios ausentes ou inválidos.");
+  static #schema = {
+    // #: Privado
+    estabelecimento_id: {
+      tipo: 'number',
+      required: true,
+      atributo: 'estabelecimento_id',
+    },
+    usuario_id: {
+      tipo: 'number',
+      required: true,
+      atributo: 'usuario_id',
+    },
+    data_visita: {
+      tipo: 'date',
+      required: true,
+      atributo: 'data_nascimento',
+    },
+  }
+  constructor(data = {}) {
+    for (const key in LocalVisitado.#schema) {
+      const rule = LocalVisitado.#schema[key]
+      const valor = data[key]
+      if (valor === undefined || valor === null || valor === '') {
+        if (rule.required) {
+          throw new Error(`Atributo obrigatório '${key}' ausente.`)
+        }
+        this[key] = null
+      } else {
+        this[key] = LocalVisitado.#validate(valor, key)
+      }
     }
-    if (!Number.isInteger(estabelecimento_id) || estabelecimento_id <= 0) {
-      throw new Error("Atributo 'estabelecimento_id' inválido.");
+  }
+  static #validate(value, key) {
+    const rule = this.#schema[key]
+    if (!rule) return null
+    const { tipo, atributo = key, erro, ...rest } = rule
+    switch (tipo) {
+      case 'number':
+        return validateNumber(value, atributo)
+      case 'date':
+        return validateDate(value, atributo)
+      default:
+        throw new Error(`Tipo de validação '${tipo}' não reconhecido para '${key}'`)
     }
-    if (!Number.isInteger(usuario_id) || usuario_id <= 0) {
-      throw new Error("Atributo 'usuario_id' inválido.");
+  }
+  // Método auxiliar (pode ser exportado para outras camadas)
+  static validateBySchema(data = {}) {
+    const validados = {}
+    for (const key in data) {
+      if (key in this.#schema) {
+        validados[key] = this.#validate(data[key], key)
+      }
     }
-    const dataConvertida =
-      typeof horario === "string" ? new Date(horario) : horario;
-    if (!(dataConvertida instanceof Date) || isNaN(dataConvertida.getTime())) {
-      throw new Error(
-        "Atributo 'horario' deve ser uma string ISO ou Date válida."
-      );
+    return validados
+  }
+  static getValidKeys() {
+    return Object.keys(this.#schema)
+  }
+  toJSON() {
+    const json = {}
+    for (const key of LocalVisitado.getValidKeys()) {
+      json[key] = this[key]
     }
+    return json
   }
 }
 
-module.exports = LocalVisitado;
+module.exports = LocalVisitado

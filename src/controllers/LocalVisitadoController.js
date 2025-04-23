@@ -1,46 +1,55 @@
-const LocalVisitadoService = require("../services/LocalVisitadoService");
+const LocalVisitadoService = require('../services/LocalVisitadoService')
 
 class LocalVisitadoController {
   static async create(req, res) {
     try {
-      const data = await LocalVisitadoService.create(req.body);
-      return res.status(201).json(data);
-      // 201 Created: Indica que um novo recurso foi criado com sucesso, mas não há conteúdo a ser retornado na resposta.
+      const localVisitado = await LocalVisitadoService.create(req.body)
+      return res.status(201).json(localVisitado)
     } catch (error) {
-      return res.status(400).json({ error: error.message });
-      // 400 Bad Request: Indica que a requisição do cliente é inválida.
-      // Geralmente por falta de parâmetros obrigatórios ou formato incorreto.
+      console.error('Erro ao criar local visistado:')
+      return res.status(400).json({ error: error.message })
     }
   }
 
-  static async registrar_visita(req, res) {
-    const { id_estabelecimento, id_usuario } = req.body;
+  static async getById(req, res) {
     try {
-      const visita = await LocalVisitadoService.registrar_visita(
-        id_estabelecimento,
-        id_usuario
-      );
-      res.status(201).json(visita);
+      const localVisitado = await LocalVisitadoService.getById(req.params.id)
+      return res.status(200).json(localVisitado)
     } catch (error) {
-      res.status(500).json({ error: err.message });
+      console.error(`Erro ao buscar local visistado #${req.params.id}:`)
+      return res.status(404).json({ error: error.message })
     }
   }
-  static async listar_visitas(req, res) {
+
+  static async getAll(req, res) {
     try {
-      const { id_usuario } = req.params;
-      const { error, visitas } = await LocalVisitadoService.listar_visitas(
-        id_usuario
-      );
-      if (error) return res.status(400).json({ error: error.message });
-      // 400 Bad Request: Indica que a requisição do cliente é inválida.
-      // Geralmente por falta de parâmetros obrigatórios ou formato incorreto.
-      if (!data) return res.status(404).json({ error: error.message });
-      // 404 Not Found: Indica que o recurso solicitado não foi encontrado no servidor.
-      // Pode ser um endpoint inexistente ou ID inválido.
-      res.status(200).json(visitas);
+      const localVisitado = await LocalVisitadoService.getAll()
+      return res.status(200).json(localVisitado)
     } catch (error) {
-      res.status(500).json({ error: err.message });
+      console.error('Erro ao buscar todos locais visitados:')
+      return res.status(500).json({ error: error.message })
+    }
+  }
+
+  static async update(req, res) {
+    try {
+      const localVisitado = await LocalVisitadoService.update(req.params.id, req.body)
+      return res.status(200).json(localVisitado)
+    } catch (error) {
+      console.error(`Erro ao atualizar local visitado #${req.params.id}:`)
+      return res.status(400).json({ error: error.message })
+    }
+  }
+
+  static async delete(req, res) {
+    try {
+      await LocalVisitadoService.delete(req.params.id)
+      return res.status(200).send()
+    } catch (error) {
+      console.error(`Erro ao deletar local visitado #${req.params.id}:`)
+      return res.status(400).json({ error: error.message })
     }
   }
 }
-module.exports = LocalVisitadoController;
+
+module.exports = LocalVisitadoController
