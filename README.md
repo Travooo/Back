@@ -5,12 +5,9 @@
 npm init -y
 npm install express cors dotenv @supabase/supabase-js pg bcrypt
 npm install --save-dev nodemon
-#Adicionar em package.json/"script":
-#"scripts": {
-#   "dev": "nodemon src/config/index.js"
-#}
+# Adicionar em package.json/"scripts" "'dev'" : "'nodemon src/config/index.js'"
 npm run dev
-#http://localhost:3000/
+# http://localhost:3000/
 ```
 
 O projeto segue princípios de **separação de responsabilidades** com camadas para **modelos de entidades**, **serviços**, **rotas** e **controladores**.
