@@ -2,13 +2,14 @@
 ### Instalando dependências
 
 ```bash
-npm install
 npm init -y
-npm install express cors dotenv
-npm install @supabase/supabase-js pg
-npm install bcrypt    # Biblioteca comum de criptografia para hashing de senhas
-npm install --save-dev nodemon    # Instala local no projeto. Para rodar 'nodemon' em qualquer diretório, 'npm install -g nodemon' (global)
-npm run dev    # 'dev' definido como 'nodemon src/config/index.js' em package.json (scripts)
+npm install express cors dotenv @supabase/supabase-js pg bcrypt
+npm install --save-dev nodemon
+// Adicionar em package.json/"script":
+// "scripts": {
+//    "dev": "nodemon src/config/index.js"
+//  }
+npm run dev
 // http://localhost:3000/
 ```
 
