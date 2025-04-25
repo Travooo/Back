@@ -2,7 +2,7 @@ const LocalVisitado = require("../models/LocalVisitado");
 const UsuarioService = require("../services/UsuarioService");
 const EstabelecimentoService = require("../services/EstabelecimentoService");
 const supabase = require("../config/supabaseClient");
-const { validateNumber } = require("../utils/validators");
+const { validateNumber, cleanObject } = require("../utils/validators");
 
 class LocalVisitadoService {
   static async create(dados) {
@@ -10,37 +10,18 @@ class LocalVisitadoService {
     if (!dados || typeof dados !== "object") {
       throw new Error("Dados inválidos ou não fornecidos.");
     }
-    const { estabelecimento_id, usuario_id, data_visita } = dados;
-    // Verifica se todos os dados foram passados
-    if (
-      ![estabelecimento_id, usuario_id, data_visita].every(
-        (val) => val && val !== ""
-      )
-    ) {
-      throw new Error("Todos os campos obrigatórios devem ser preenchidos.");
-    }
+    const validated = LocalVisitado.validateBySchema(dados);
     // Verifica se o usuário existe
-    if ((await UsuarioService.getById(validateNumber(usuario_id))) == null) {
-      throw new Error("Usuário não encontrado.");
-    }
+    const usuario = await UsuarioService.getById(validated.usuario_id);
+    if (!usuario) throw new Error("Usuário não encontrado.");
     // Verifica se o estabelecimento existe
-    if (
-      (await EstabelecimentoService.getById(
-        validateNumber(estabelecimento_id)
-      )) == null
-    ) {
-      throw new Error("Estabelecimento não encontrado.");
-    }
-    // Verifica se a data de visita é posterior a hoje
-    const hoje = new Date();
-    const dataVisita = new Date(data_visita);
-    if (dataVisita <= hoje) {
-      throw new Error("A data da visita deve ser posterior à data atual.");
-    }
-    const localVisitado = new LocalVisitado(dados);
+    const estabelecimento = await EstabelecimentoService.getById(
+      validated.estabelecimento_id
+    );
+    if (!estabelecimento) throw new Error("Estabelecimento não encontrado.");
     const { data, error } = await supabase
       .from("locais_visitados")
-      .insert([localVisitado.toJSON()])
+      .insert(validated)
       .select()
       .single();
     if (error) throw error;
@@ -70,36 +51,34 @@ class LocalVisitadoService {
     if (!updates || typeof updates !== "object") {
       throw new Error("Atualizações inválidas ou não fornecidas.");
     }
-    // Verifica se o registro existe antes de atualizar
     const validId = validateNumber(id, "local_visitado_id");
+    // Verifica se o registro existe antes de atualizar
     if (!(await this.getById(validId))) {
       throw new Error("Local visitado não encontrado.");
     }
+    const camposValidos = cleanObject(updates);
+    const validados = LocalVisitado.validateBySchema(camposValidos);
     // Verifica se 'usuario_id' foi enviado e se esse usuário existe
-    if ("usuario_id" in updates) {
-      const idValido = validateNumber(updates.usuario_id, "usuario_id");
+    if ("usuario_id" in validados) {
       const usuario = await UsuarioService.getById(idValido);
-      if (!usuario) {
-        throw new Error("Usuário não encontrado para atualização.");
-      }
+      if (!usuario) throw new Error("Usuário não encontrado para atualização.");
     }
     // Verifica se 'estabelecimento_id' foi enviado e se esse estabelecimento existe
-    if ("estabelecimento_id" in updates) {
-      const estIdValido = validateNumber(
-        updates.estabelecimento_id,
-        "estabelecimento_id"
+    if ("estabelecimento_id" in validados) {
+      const estabelecimento = await EstabelecimentoService.getById(
+        validados.estabelecimento_id
       );
-      const estabelecimento = await EstabelecimentoService.getById(estIdValido);
-      if (!estabelecimento) {
-        throw new Error("Resposta do banco de dados não retornada.");
-      }
+      if (!estabelecimento)
+        throw new Error("Estabelecimento não encontrado para atualização.");
     }
-    // Valida os dados conforme schema
-    const validados = {};
-    for (const key of Object.keys(updates)) {
-      if (!LocalVisitado.getValidKeys().includes(key)) continue;
-      const validado = LocalVisitado.validateBySchema({ [key]: updates[key] });
-      validados[key] = validado[key];
+    // Verifica se 'data_visita' é anterior ou igual à atual
+    if (
+      "data_visita" in validados &&
+      new Date(validados.data_visita) > new Date()
+    ) {
+      throw new Error(
+        "A nova data da visita deve ser anterior ou igual à data atual."
+      );
     }
     const { data, error } = await supabase
       .from("locais_visitados")
@@ -113,12 +92,10 @@ class LocalVisitadoService {
   }
 
   static async delete(id) {
-    const localVisitado = await LocalVisitadoService.getById(
+    const localVisitado = await this.getById(
       validateNumber(id, "local_visitado_id")
     );
-    if (!localVisitado) {
-      throw new Error("Local visitado não encontrado.");
-    }
+    if (!localVisitado) throw new Error("Local visitado não encontrado.");
     const { data, error } = await supabase
       .from("locais_visitados")
       .delete()
