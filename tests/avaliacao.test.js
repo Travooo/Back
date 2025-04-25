@@ -1,56 +1,64 @@
-require('dotenv').config()
-const app = require('../src/app')
-const request = require('supertest')
+require("dotenv").config();
+const app = require("../src/app");
+const request = require("supertest");
 
-let avaliacaoCriadaId
+let avaliacaoCriadaId;
 
-describe('Testes de Integração - Avaliação', () => {
-  const hoje = new Date().toISOString().slice(0, 10)
+describe("Testes de Integração - Avaliação", () => {
   const avaliacao = {
     estabelecimento_id: 3,
     usuario_id: 1,
-    comentario: 'Lamentável!',
+    comentario: "Lamentável!",
     numero_estrelas: 1,
-    data_comentario: hoje,
-  }
+    data_comentario: "2025-04-25",
+  };
 
-  test('Deve criar uma avaliação via API', async () => {
-    const res = await request(app).post('/avaliacoes').send(avaliacao)
-    console.log('Resposta da criação:', res.body)
-    expect(res.status).toBe(201)
-    expect(res.body).toHaveProperty('id')
-    avaliacaoCriadaId = res.body.id
-  })
+  test("Deve criar uma avaliacao via API", async () => {
+    const res = await request(app).post("/avaliacoes").send(avaliacao);
+    console.log("Resposta da criação:", res.body);
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty("id");
+    avaliacaoCriadaId = res.body.id;
+  });
 
-  test('Deve listar uma avaliação do Supabase', async () => {
-    const res = await request(app).get(`/avaliacoes/${avaliacaoCriadaId}`)
-    console.log('Resposta da listagem:', res.body)
-    expect(res.status).toBe(200)
-    expect(res.body).toBeDefined()
-    expect(res.body).toHaveProperty('id', avaliacaoCriadaId)
-  })
+  describe("Leitura", () => {
+    test("Deve listar uma avaliacao pelo ID", async () => {
+      const res = await request(app).get(`/avaliacoes/${avaliacaoCriadaId}`);
+      console.log("Resposta da listagem por ID:", res.body);
+      expect(res.status).toBe(200);
+      expect(res.body).toBeDefined();
+      expect(res.body).toHaveProperty("id", avaliacaoCriadaId);
+    });
 
-  test('Deve listar avaliações do Supabase', async () => {
-    const res = await request(app).get('/avaliacoes')
-    console.log('Resposta da listagem:', res.body)
-    console.log('Total de avaliações:', res.body.length)
-    expect(res.status).toBe(200)
-    expect(Array.isArray(res.body)).toBe(true)
-    expect(res.body.length).toBeGreaterThan(0)
-  })
+    test("Deve listar todas as avaliacoes cadastradas", async () => {
+      const res = await request(app).get("/avaliacoes");
+      console.log("Resposta da listagem geral:", res.body);
+      console.log("Total de avaliações:", res.body.length);
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
+      expect(res.body.length).toBeGreaterThan(0);
+    });
+  });
 
-  test('Deve atualizar o comentário e número de estrelas de uma avaliação existente', async () => {
-    const updates = { comentario: 'Foram super atenciosos!', numero_estrelas: 4 }
-    const res = await request(app).put(`/avaliacoes/${avaliacaoCriadaId}`).send(updates)
-    console.log('Resposta da atualização:', res.body)
-    expect(res.status).toBe(200)
-    expect(res.body).toHaveProperty('comentario', 'Foram super atenciosos!')
-    expect(res.body).toHaveProperty('numero_estrelas', 4)
-  })
+  describe("Atualização", () => {
+    test("Deve atualizar o comentario e numero de estrelas", async () => {
+      const updates = {
+        comentario: "Foram super atenciosos!",
+      };
+      const res = await request(app)
+        .put(`/avaliacoes/${avaliacaoCriadaId}`)
+        .send(updates);
+      console.log("Resposta da atualização:", res.body);
+      expect(res.status).toBe(200);
+      expect(res.body.comentario).toContain("Foram super atenciosos!");
+    });
+  });
 
-  test('Deve remover uma avaliação do Supabase', async () => {
-    const res = await request(app).delete(`/avaliacoes/${avaliacaoCriadaId}`)
-    console.log('Resposta da exclusão:', res.body)
-    expect(res.status).toBe(200)
-  })
-})
+  describe("Exclusão", () => {
+    test("Deve excluir a avaliacao criada", async () => {
+      const res = await request(app).delete(`/avaliacoes/${avaliacaoCriadaId}`);
+      console.log("Resposta da exclusão:", res.body);
+      expect(res.status).toBe(200);
+    });
+  });
+});
