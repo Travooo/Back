@@ -7,7 +7,7 @@ let usuarioCriadoId;
 describe("Testes de Integração - Usuário", () => {
   test("Deve criar um usuario via API", async () => {
     const res = await request(app).post("/usuarios").send({
-      email: "eita4@email.com",
+      email: "eita5@email.com",
       senha: "senha123",
       nome_usuario: "testeUser",
       nome_completo: "Usuário Teste API",
@@ -53,7 +53,7 @@ describe("Testes de Integração - Usuário", () => {
     });
   });
 
-  describe("🗑️ Exclusão", () => {
+  describe("Exclusão", () => {
     test("Deve excluir o usuario criado", async () => {
       const res = await request(app).delete(`/usuarios/${usuarioCriadoId}`);
       console.log("Resposta da exclusão:", res.body);

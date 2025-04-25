@@ -1,15 +1,11 @@
-const {
-  validateString,
-  validateDate,
-  validateOption,
-} = require("../utils/validators");
+const ModeloBase = require("./ModeloBase");
 
 const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const regexSenha = /^[a-zA-Z0-9!@#\$%\^&\*\)\(+=._-]+$/;
 const regexNomeUsuario = /^[a-zA-Z0-9_]+$/;
 const regexNomeCompleto = /^[A-Za-zÀ-ÿ\s]+$/;
 
-class Usuario {
+class Usuario extends ModeloBase {
   static #schema = {
     // #: Privado
     email: {
@@ -74,68 +70,8 @@ class Usuario {
       atributo: "tipo_plano",
     },
   };
-  constructor(data = {}) {
-    for (const key in Usuario.#schema) {
-      const rule = Usuario.#schema[key];
-      const valor = data[key];
-      if (valor === undefined || valor === null || valor === "") {
-        if (rule.required) {
-          throw new Error(`Atributo obrigatório '${key}' ausente.`);
-        }
-        this[key] = null;
-      } else {
-        this[key] = Usuario.#validate(valor, key);
-      }
-    }
-  }
-  static #validate(value, key) {
-    const rule = this.#schema[key];
-    if (!rule) return null;
-    const { tipo, atributo = key, erro, formato, ...rest } = rule;
-    switch (tipo) {
-      case "string":
-        return validateString(value, {
-          atributo,
-          erro_formato: erro,
-          formato,
-          ...rest,
-        });
-      case "option":
-        return validateOption(value, atributo);
-      case "date":
-        return validateDate(value, atributo);
-      case "foto":
-        if (value === null || value === undefined || value === "") {
-          return null;
-        }
-        if (typeof value === "string" && value.startsWith("data:image")) {
-          return value; // Aceita base64 por enquanto
-        }
-      default:
-        throw new Error(
-          `Tipo de validação '${tipo}' não reconhecido para '${key}'`
-        );
-    }
-  }
-  // Método auxiliar (pode ser exportado para update/create)
-  static validateBySchema(data = {}) {
-    const validados = {};
-    for (const key in data) {
-      if (key in this.#schema) {
-        validados[key] = this.#validate(data[key], key);
-      }
-    }
-    return validados;
-  }
-  static getValidKeys() {
-    return Object.keys(this.#schema);
-  }
-  toJSON() {
-    const json = {};
-    for (const key of Usuario.getValidKeys()) {
-      json[key] = this[key];
-    }
-    return json;
+  static getSchema() {
+    return this.#schema;
   }
 }
 
