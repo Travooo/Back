@@ -87,13 +87,11 @@ class Usuario {
         this[key] = Usuario.#validate(valor, key);
       }
     }
-    console.log("✅ Instância final de usuário:", this.toJSON());
   }
   static #validate(value, key) {
     const rule = this.#schema[key];
     if (!rule) return null;
     const { tipo, atributo = key, erro, formato, ...rest } = rule;
-    console.log(`📐 Aplicando validação do tipo '${tipo}' no campo '${key}'`);
     switch (tipo) {
       case "string":
         return validateString(value, {
@@ -111,7 +109,6 @@ class Usuario {
           return null;
         }
         if (typeof value === "string" && value.startsWith("data:image")) {
-          console.log("🖼️ Foto de perfil em base64 aceita.");
           return value; // Aceita base64 por enquanto
         }
       default:
@@ -122,7 +119,6 @@ class Usuario {
   }
   // Método auxiliar (pode ser exportado para update/create)
   static validateBySchema(data = {}) {
-    console.log("🧪 Validando dados por schema (sem instanciar):", data);
     const validados = {};
     for (const key in data) {
       if (key in this.#schema) {
