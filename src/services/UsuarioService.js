@@ -20,7 +20,7 @@ class UsuarioService {
       .select()
       .maybeSingle();
     if (!data) throw new Error("Resposta do banco de dados não retornada.");
-    if (error) throw new Error("Email já cadastrado na base de dados:", error);
+    if (error) throw new Error(error.message);
     return data;
   }
 
