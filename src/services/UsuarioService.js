@@ -1,83 +1,98 @@
-const Usuario = require('../models/Usuario')
-const bcrypt = require('bcrypt')
-const supabase = require('../config/supabaseClient')
-const { validateNumber, getIfExists } = require('../utils/validators')
+const Usuario = require("../models/Usuario");
+const bcrypt = require("bcrypt");
+const supabase = require("../config/supabaseClient");
+const { validateNumber, cleanObject } = require("../utils/validators");
 
 class UsuarioService {
   static async create(user) {
-    try {
-      const usuario = new Usuario(user)
-
-      const emailExistente = await getIfExists({
-        tabela: 'usuarios',
-        coluna: 'email',
-        value: usuario.email,
-        select: 'id',
-      }).catch(() => null)
-      if (emailExistente) {
-        throw new Error('Já existe um usuário com este email.')
-      }
-
-      const salt = await bcrypt.genSalt(10)
-      usuario.senha = await bcrypt.hash(usuario.senha, salt)
-
-      const { data, error } = await supabase.from('usuarios').insert(usuario.toJSON()).single().select()
-      if (error) {
-        throw new Error(error.message)
-      }
-      return data
-    } catch (error) {
-      throw new Error(error.message)
+    if (!user || typeof user !== "object") {
+      throw new Error("Dados inválidos ou não fornecidos.");
     }
+    console.log("📥 Dados recebidos para criação:", user);
+    const validated = Usuario.validateBySchema(user);
+    // Verifica se já existe usuário com 'email'
+    const usuarioExiste = await this.getByEmail(validated.email);
+    if (usuarioExiste) throw new Error("Email já cadastrado na base de dados.");
+    // Faz o hashing da senha
+    validated.senha = await bcrypt.hash(validated.senha, 10);
+    const { data, error } = await supabase
+      .from("usuarios")
+      .insert(validated)
+      .select()
+      .maybeSingle();
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    if (error) throw new Error("Email já cadastrado na base de dados:", error);
+    return data;
   }
 
   static async getById(id) {
-    const usuarioId = validateNumber(id, 'usuario_id')
-    const { senha, ...rest } = await getIfExists({
-      tabela: 'usuarios',
-      value: usuarioId,
-      campos: '*',
-    })
-    return rest
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("*")
+      .eq("id", validateNumber(id, "usuario_id"))
+      .maybeSingle();
+    if (error) throw error;
+    return data;
+  }
+
+  static async getByEmail(email) {
+    const validados = Usuario.validateBySchema({ email });
+    const { data, error } = await supabase
+      .from("usuarios")
+      .select("*")
+      .eq("email", validados.email)
+      .maybeSingle();
+    if (error) throw error;
+    return data;
   }
 
   static async getAll() {
-    const { data, error } = await supabase.from('usuarios').select('*')
-    if (error) throw new Error(error.message)
-    return data.map(({ senha, ...rest }) => rest)
+    const { data, error } = await supabase.from("usuarios").select("*");
+    if (error) throw error;
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    return data;
   }
 
   static async update(id, updates) {
-    const usuariodId = validateNumber(id, 'usuario_id')
-    if (!updates || typeof updates !== 'object') {
-      throw new Error('Atualizações inválidas ou não fornecidas.')
+    if (!updates || typeof updates !== "object") {
+      throw new Error("Atualizações inválidas ou não fornecidas.");
     }
-
-    const validados = {}
-    for (const key of Object.keys(updates)) {
-      if (!Usuario.getValidKeys().includes(key)) continue
-
-      if (key === 'senha') {
-        const salt = await bcrypt.genSalt(10)
-        validados.senha = await bcrypt.hash(updates.senha, salt)
-      } else {
-        validados[key] = Usuario.validateBySchema({ [key]: updates[key] })[key]
-      }
+    // Verifica se o registro existe antes de atualizar
+    const validId = validateNumber(id, "usuario_id");
+    if (!(await this.getById(validId))) {
+      throw new Error("Usuário não encontrado.");
     }
-
-    const { data, error } = await supabase.from('usuarios').update(validados).eq('id', usuariodId).select()
-    if (error) {
-      throw new Error(error.message)
-    }
-    return data
+    // Valida os dados conforme schema
+    const camposValidos = cleanObject(updates);
+    const validados = Usuario.validateBySchema(camposValidos);
+    // Inserção no banco
+    const { data, error } = await supabase
+      .from("usuarios")
+      .update(validados)
+      .eq("id", validId)
+      .select()
+      .single();
+    if (error) throw error;
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    return data;
   }
 
   static async delete(id) {
-    const usuariodId = validateNumber(id, 'usuario_id')
-    const { data, error } = await supabase.from('usuarios').delete().eq('id', usuariodId)
-    if (error) throw new Error(error.message)
-    return data
+    const usuario = await UsuarioService.getById(
+      validateNumber(id, "usuario_id")
+    );
+    if (!usuario) {
+      throw new Error("Usuário não encontrado.");
+    }
+    const { data, error } = await supabase
+      .from("usuarios")
+      .delete()
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data;
   }
 }
 
-module.exports = UsuarioService
+module.exports = UsuarioService;

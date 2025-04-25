@@ -1,125 +1,146 @@
-const { validateString, validateFoto, validateDate, validateOption } = require('../utils/validators')
+const {
+  validateString,
+  validateDate,
+  validateOption,
+} = require("../utils/validators");
 
-const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const regexSenha = /^[a-zA-Z0-9!@#\$%\^&\*\)\(+=._-]+$/
-const regexNomeUsuario = /^[a-zA-Z0-9_]+$/
-const regexNomeCompleto = /^[A-Za-zÀ-ÿ\s]+$/
+const regexEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const regexSenha = /^[a-zA-Z0-9!@#\$%\^&\*\)\(+=._-]+$/;
+const regexNomeUsuario = /^[a-zA-Z0-9_]+$/;
+const regexNomeCompleto = /^[A-Za-zÀ-ÿ\s]+$/;
 
 class Usuario {
   static #schema = {
     // #: Privado
     email: {
-      tipo: 'string',
+      tipo: "string",
       required: true,
-      atributo: 'email',
+      atributo: "email",
       formato: regexEmail,
-      erro: 'Formato de email inválido.',
+      erro: "Formato de email inválido.",
     },
     senha: {
-      tipo: 'string',
+      tipo: "string",
       required: true,
-      atributo: 'senha',
+      atributo: "senha",
       min: 6,
       max: 20,
       formato: regexSenha,
-      erro: 'A senha deve conter apenas letras, números ou caracteres especiais permitidos.',
+      erro: "A senha deve conter apenas letras, números ou caracteres especiais permitidos.",
     },
     nome_usuario: {
-      tipo: 'string',
+      tipo: "string",
       required: true,
-      atributo: 'nome_usuario',
+      atributo: "nome_usuario",
       min: 4,
       max: 30,
       formato: regexNomeUsuario,
-      erro: 'O nome de usuário pode conter apenas letras, números ou underline.',
+      erro: "O nome de usuário pode conter apenas letras, números ou underline.",
     },
     nome_completo: {
-      tipo: 'string',
+      tipo: "string",
       required: true,
-      atributo: 'nome_completo',
+      atributo: "nome_completo",
       min: 3,
       max: 60,
       formato: regexNomeCompleto,
-      erro: 'O nome completo deve conter apenas letras e espaços.',
+      erro: "O nome completo deve conter apenas letras e espaços.",
+    },
+    foto_perfil: {
+      tipo: "foto",
+      atributo: "foto_perfil",
+      tiposPermitidos: ["image/jpeg", "image/png"],
+      tamanhoMaxMB: 3,
     },
     sobre: {
-      tipo: 'string',
-      atributo: 'sobre',
+      tipo: "string",
+      atributo: "sobre",
       min: 10,
       max: 300,
     },
+    data_nascimento: {
+      tipo: "date",
+      required: true,
+      atributo: "data_nascimento",
+    },
     admin: {
-      tipo: 'option',
-      atributo: 'admin',
+      tipo: "option",
+      required: true,
+      atributo: "admin",
     },
     tipo_plano: {
-      tipo: 'option',
-      atributo: 'tipo_plano',
+      tipo: "option",
+      required: true,
+      atributo: "tipo_plano",
     },
-    data_nascimento: {
-      tipo: 'date',
-      atributo: 'data_nascimento',
-    },
-    foto_perfil: {
-      tipo: 'foto',
-      atributo: 'foto_perfil',
-    },
-  }
+  };
   constructor(data = {}) {
     for (const key in Usuario.#schema) {
-      const rule = Usuario.#schema[key]
-      const valor = data[key]
-      if (valor === undefined || valor === null || valor === '') {
+      const rule = Usuario.#schema[key];
+      const valor = data[key];
+      if (valor === undefined || valor === null || valor === "") {
         if (rule.required) {
-          throw new Error(`Atributo obrigatório '${key}' ausente.`)
+          throw new Error(`Atributo obrigatório '${key}' ausente.`);
         }
-        this[key] = null
+        this[key] = null;
       } else {
-        this[key] = Usuario.#validate(valor, key)
+        this[key] = Usuario.#validate(valor, key);
       }
     }
+    console.log("✅ Instância final de usuário:", this.toJSON());
   }
-
   static #validate(value, key) {
-    const rule = this.#schema[key]
-    if (!rule) return null
-    const { tipo, atributo = key, erro, ...rest } = rule
+    const rule = this.#schema[key];
+    if (!rule) return null;
+    const { tipo, atributo = key, erro, formato, ...rest } = rule;
+    console.log(`📐 Aplicando validação do tipo '${tipo}' no campo '${key}'`);
     switch (tipo) {
-      case 'string':
-        return validateString(value, { atributo, erro_formato: erro, ...rest })
-      case 'option':
-        return validateOption(value, atributo)
-      case 'date':
-        return validateDate(value, atributo)
-      case 'foto':
-        return validateFoto(value, atributo)
+      case "string":
+        return validateString(value, {
+          atributo,
+          erro_formato: erro,
+          formato,
+          ...rest,
+        });
+      case "option":
+        return validateOption(value, atributo);
+      case "date":
+        return validateDate(value, atributo);
+      case "foto":
+        if (value === null || value === undefined || value === "") {
+          return null;
+        }
+        if (typeof value === "string" && value.startsWith("data:image")) {
+          console.log("🖼️ Foto de perfil em base64 aceita.");
+          return value; // Aceita base64 por enquanto
+        }
       default:
-        throw new Error(`Tipo de validação '${tipo}' não reconhecido para '${key}'`)
+        throw new Error(
+          `Tipo de validação '${tipo}' não reconhecido para '${key}'`
+        );
     }
   }
-
   // Método auxiliar (pode ser exportado para update/create)
   static validateBySchema(data = {}) {
-    const validados = {}
+    console.log("🧪 Validando dados por schema (sem instanciar):", data);
+    const validados = {};
     for (const key in data) {
       if (key in this.#schema) {
-        validados[key] = this.#validate(data[key], key)
+        validados[key] = this.#validate(data[key], key);
       }
     }
-    return validados
+    return validados;
   }
-
   static getValidKeys() {
-    return Object.keys(this.#schema)
+    return Object.keys(this.#schema);
   }
-
   toJSON() {
-    const json = {}
+    const json = {};
     for (const key of Usuario.getValidKeys()) {
-      json[key] = this[key]
+      json[key] = this[key];
     }
-    return json
+    return json;
   }
 }
 
-module.exports = Usuario
+module.exports = Usuario;
