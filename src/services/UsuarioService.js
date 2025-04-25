@@ -8,7 +8,6 @@ class UsuarioService {
     if (!user || typeof user !== "object") {
       throw new Error("Dados inválidos ou não fornecidos.");
     }
-    console.log("📥 Dados recebidos para criação:", user);
     const validated = Usuario.validateBySchema(user);
     // Verifica se já existe usuário com 'email'
     const usuarioExiste = await this.getByEmail(validated.email);
