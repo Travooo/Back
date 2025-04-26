@@ -153,10 +153,46 @@ const updateUsuario = async (req, res) => {
     }
 };
 
+const loginUsuario = async (req, res) => {
+    try {
+        const { email, senha } = req.body;
+
+        const data = await usuarioService.getUsuarioByEmail(email);
+
+        if (!data) {
+            return res.status(401).json({ mensagem: 'Email não encontrado' });
+        }
+
+        if (data.senha !== senha) {
+            return res.status(401).json({ mensagem: 'Senha incorreta' });
+        }
+
+        const usuario = new Usuario({
+            id: data.id,
+            admin: data.admin,
+            email: data.email,
+            senha: data.senha,
+            nome_usuario: data.nome_usuario,
+            nome_completo: data.nome_completo,
+            sobre: data.sobre,
+            foto_perfil: data.foto_perfil,
+            data_nascimento: data.data_nascimento,
+            tipo_plano: data.tipo_plano,
+            created_at: data.created_at
+        });
+
+        res.status(200).json({ mensagem: 'Login bem-sucedido', usuario });
+    } catch (error) {
+        res.status(500).json({ mensagem: 'Erro no login', erro: error.message });
+    }
+};
+
+
 module.exports = {
     getUsuarios,
     getUsuarioById,
     createUsuario,
     deleteUsuario,
-    updateUsuario
+    updateUsuario,
+    loginUsuario
 };

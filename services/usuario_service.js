@@ -33,6 +33,17 @@ class UsuarioService {
         if (error) throw error;
         return { message: 'Usuário removido com sucesso' };
     }
+    
+    static async getUsuarioByEmail(email) {
+        const { error, data } = await supabase
+            .from('usuarios')
+            .select('*')
+            .eq('email', email)
+            .single();
+    
+        if (error || !data) return null;
+        return data;
+    }
 }
 
 module.exports = UsuarioService;
