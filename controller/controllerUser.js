@@ -1,5 +1,6 @@
 const usuarioService = require('../services/usuario_service');
 const Usuario = require('../model/Usuario');
+const { validateUserInput } = require('../validators/usuarioValidator');
 
 const getUsuarios = async (req, res) => {
     try {
@@ -55,6 +56,11 @@ const getUsuarioById = async (req, res) => {
 
 const createUsuario = async (req, res) => {
     try {
+        const validationErrors = validateUserInput(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const {
             admin,
             email,
@@ -103,6 +109,11 @@ const deleteUsuario = async (req, res) => {
 
 const updateUsuario = async (req, res) => {
     try {
+        const validationErrors = validateUserInput(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { id } = req.params;
         const {
             admin,
