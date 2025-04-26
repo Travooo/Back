@@ -10,8 +10,14 @@ class LocalVisitadoService {
     if (!dados || typeof dados !== "object") {
       throw new Error("Dados inválidos ou não fornecidos.");
     }
-    // Verifica se já existe um registro igual
     const validated = LocalVisitado.validateBySchema(dados);
+    // Verifica se o usuário existe
+    const usuario = await UsuarioService.getById(validated.usuario_id);
+    if (!usuario) throw new Error("Usuário não encontrado.");
+    // Verifica se o Servico existe
+    const servico = await ServicoService.getById(validated.servico_id);
+    if (!servico) throw new Error("Serviço não encontrado.");
+    // Verifica se já existe um registro igual
     const { data: existente, error: errorExistente } = await supabase
       .from("locais_visitados")
       .select("id")
@@ -25,12 +31,6 @@ class LocalVisitadoService {
         "Já existe um local visitado para este usuário, serviço e data."
       );
     }
-    // Verifica se o usuário existe
-    const usuario = await UsuarioService.getById(validated.usuario_id);
-    if (!usuario) throw new Error("Usuário não encontrado.");
-    // Verifica se o Servico existe
-    const servico = await ServicoService.getById(validated.servico_id);
-    if (!servico) throw new Error("Serviço não encontrado.");
     const { data, error } = await supabase
       .from("locais_visitados")
       .insert(validated)
@@ -70,6 +70,16 @@ class LocalVisitadoService {
     }
     const camposValidos = cleanObject(updates);
     const validados = LocalVisitado.validateBySchema(camposValidos);
+    // Verifica se 'usuario_id' foi enviado e se esse usuário existe
+    if ("usuario_id" in validados) {
+      const usuario = await UsuarioService.getById(idValido);
+      if (!usuario) throw new Error("Usuário não encontrado para atualização.");
+    }
+    // Verifica se 'Servico_id' foi enviado e se esse Servico existe
+    if ("servico_id" in validados) {
+      const Servico = await ServicoService.getById(validados.servico_id);
+      if (!Servico) throw new Error("Servico não encontrado para atualização.");
+    }
     // Se usuario_id, servico_id e data_visita foram enviados, validar duplicidade
     if (validados.usuario_id && validados.servico_id && validados.data_visita) {
       const { data: existente, error: errorExistente } = await supabase
@@ -86,25 +96,6 @@ class LocalVisitadoService {
           "Já existe um registro com este usuário, serviço e data."
         );
       }
-    }
-    // Verifica se 'usuario_id' foi enviado e se esse usuário existe
-    if ("usuario_id" in validados) {
-      const usuario = await UsuarioService.getById(idValido);
-      if (!usuario) throw new Error("Usuário não encontrado para atualização.");
-    }
-    // Verifica se 'Servico_id' foi enviado e se esse Servico existe
-    if ("servico_id" in validados) {
-      const Servico = await ServicoService.getById(validados.Servico_id);
-      if (!Servico) throw new Error("Servico não encontrado para atualização.");
-    }
-    // Verifica se 'data_visita' é anterior ou igual à atual
-    if (
-      "data_visita" in validados &&
-      new Date(validados.data_visita) > new Date()
-    ) {
-      throw new Error(
-        "A nova data da visita deve ser anterior ou igual à data atual."
-      );
     }
     const { data, error } = await supabase
       .from("locais_visitados")

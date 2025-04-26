@@ -9,7 +9,7 @@ describe("Testes de Integração - Serviço", () => {
     const res = await request(app).post("/locais_visitados").send({
       servico_id: 3,
       usuario_id: 2,
-      data_visita: "2025-04-23",
+      data_visita: "2025-02-23",
     });
     console.log("Resposta da criação:", res.body);
     expect(res.status).toBe(201);
@@ -40,13 +40,13 @@ describe("Testes de Integração - Serviço", () => {
 
   describe("Atualização", () => {
     test("Deve atualizar a data de visita", async () => {
-      const updates = { data_visita: "2025-04-24" };
+      const updates = { data_visita: "2025-02-22" };
       const res = await request(app)
         .put(`/locais_visitados/${localVisitadoCriadoId}`)
         .send(updates);
       console.log("Resposta da atualização:", res.body);
       expect(res.status).toBe(200);
-      expect(res.body.data_visita).toContain("2025-04-24");
+      expect(res.body.data_visita).toContain("2025-02-22");
     });
   });
 
