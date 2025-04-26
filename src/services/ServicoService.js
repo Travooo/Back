@@ -29,7 +29,7 @@ class ServicoService {
   }
 
   static async getById(id) {
-    const validId = validateNumber(id, "service_id");
+    const validId = validateNumber(id, "servico_id");
     const { data, error } = await supabase
       .from("servicos")
       .select("*")
