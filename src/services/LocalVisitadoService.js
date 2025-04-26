@@ -1,6 +1,6 @@
 const LocalVisitado = require("../models/LocalVisitado");
 const UsuarioService = require("../services/UsuarioService");
-const EstabelecimentoService = require("../services/EstabelecimentoService");
+const ServicoService = require("../services/ServicoService");
 const supabase = require("../config/supabaseClient");
 const { validateNumber, cleanObject } = require("../utils/validators");
 
@@ -10,15 +10,27 @@ class LocalVisitadoService {
     if (!dados || typeof dados !== "object") {
       throw new Error("Dados inválidos ou não fornecidos.");
     }
+    // Verifica se já existe um registro igual
     const validated = LocalVisitado.validateBySchema(dados);
+    const { data: existente, error: errorExistente } = await supabase
+      .from("locais_visitados")
+      .select("id")
+      .eq("usuario_id", validated.usuario_id)
+      .eq("servico_id", validated.servico_id)
+      .eq("data_visita", validated.data_visita)
+      .maybeSingle();
+    if (errorExistente) throw errorExistente;
+    if (existente) {
+      throw new Error(
+        "Já existe um local visitado para este usuário, serviço e data."
+      );
+    }
     // Verifica se o usuário existe
     const usuario = await UsuarioService.getById(validated.usuario_id);
     if (!usuario) throw new Error("Usuário não encontrado.");
-    // Verifica se o estabelecimento existe
-    const estabelecimento = await EstabelecimentoService.getById(
-      validated.estabelecimento_id
-    );
-    if (!estabelecimento) throw new Error("Estabelecimento não encontrado.");
+    // Verifica se o Servico existe
+    const servico = await ServicoService.getById(validated.servico_id);
+    if (!servico) throw new Error("Serviço não encontrado.");
     const { data, error } = await supabase
       .from("locais_visitados")
       .insert(validated)
@@ -58,18 +70,32 @@ class LocalVisitadoService {
     }
     const camposValidos = cleanObject(updates);
     const validados = LocalVisitado.validateBySchema(camposValidos);
+    // Se usuario_id, servico_id e data_visita foram enviados, validar duplicidade
+    if (validados.usuario_id && validados.servico_id && validados.data_visita) {
+      const { data: existente, error: errorExistente } = await supabase
+        .from("locais_visitados")
+        .select("id")
+        .eq("usuario_id", validados.usuario_id)
+        .eq("servico_id", validados.servico_id)
+        .eq("data_visita", validados.data_visita)
+        .neq("id", validId) // <- Exclui o próprio registro
+        .maybeSingle();
+      if (errorExistente) throw errorExistente;
+      if (existente) {
+        throw new Error(
+          "Já existe um registro com este usuário, serviço e data."
+        );
+      }
+    }
     // Verifica se 'usuario_id' foi enviado e se esse usuário existe
     if ("usuario_id" in validados) {
       const usuario = await UsuarioService.getById(idValido);
       if (!usuario) throw new Error("Usuário não encontrado para atualização.");
     }
-    // Verifica se 'estabelecimento_id' foi enviado e se esse estabelecimento existe
-    if ("estabelecimento_id" in validados) {
-      const estabelecimento = await EstabelecimentoService.getById(
-        validados.estabelecimento_id
-      );
-      if (!estabelecimento)
-        throw new Error("Estabelecimento não encontrado para atualização.");
+    // Verifica se 'Servico_id' foi enviado e se esse Servico existe
+    if ("servico_id" in validados) {
+      const Servico = await ServicoService.getById(validados.Servico_id);
+      if (!Servico) throw new Error("Servico não encontrado para atualização.");
     }
     // Verifica se 'data_visita' é anterior ou igual à atual
     if (

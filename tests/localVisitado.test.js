@@ -4,17 +4,13 @@ const request = require("supertest");
 
 let localVisitadoCriadoId;
 
-describe("Testes de Integração - Local Visitado", () => {
-  const localVisitado = {
-    usuario_id: 1,
-    estabelecimento_id: 3,
-    data_visita: "2025-04-23",
-  };
-
+describe("Testes de Integração - Serviço", () => {
   test("Deve criar um local visitado via API", async () => {
-    const res = await request(app)
-      .post("/locais_visitados")
-      .send(localVisitado);
+    const res = await request(app).post("/locais_visitados").send({
+      servico_id: 3,
+      usuario_id: 2,
+      data_visita: "2025-04-23",
+    });
     console.log("Resposta da criação:", res.body);
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("id");
