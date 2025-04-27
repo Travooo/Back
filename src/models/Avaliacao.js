@@ -2,7 +2,7 @@ const ModeloBase = require("./ModeloBase");
 
 class Avaliacao extends ModeloBase {
   static #schema = {
-    estabelecimento_id: {
+    servico_id: {
       tipo: "number",
       required: true,
       atributo: "estabelecimento_id",

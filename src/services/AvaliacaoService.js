@@ -1,6 +1,6 @@
 const Avaliacao = require("../models/Avaliacao");
 const UsuarioService = require("../services/UsuarioService");
-const EstabelecimentoService = require("../services/EstabelecimentoService");
+const ServicoService = require("../services/ServicoService");
 const supabase = require("../config/supabaseClient");
 const { validateNumber, cleanObject } = require("../utils/validators");
 
@@ -11,14 +11,12 @@ class AvaliacaoService {
       throw new Error("Dados inválidos ou não fornecidos.");
     }
     const validated = Avaliacao.validateBySchema(avaliacao);
-    // Verifica se o usuário com 'usuario_id' existe
-    const usuarioExiste = await UsuarioService.getById(validated.usuario_id);
-    if (!usuarioExiste) throw new Error("Usuário não encontrado.");
-    // Verifica se o estabelecimento com 'estabelecimento_id' existe
-    const estabelecimentoExiste = await EstabelecimentoService.getById(
-      validated.estabelecimento_id
-    );
-    if (!estabelecimentoExiste) throw new Error("Usuário não encontrado.");
+    // Verifica se usuário com 'usuario_id' existe
+    const usuario = await UsuarioService.getById(validated.usuario_id);
+    if (!usuario) throw new Error("Usuário não encontrado.");
+    // Verifica se serviço com 'servico_id' existe
+    const servico = await ServicoService.getById(validated.servico_id);
+    if (!servico) throw new Error("Serviço não encontrado.");
     // Insere no supabase
     const { data, error } = await supabase
       .from("avaliacoes")
@@ -52,54 +50,50 @@ class AvaliacaoService {
     if (!updates || typeof updates !== "object") {
       throw new Error("Atualizações inválidas ou não fornecidas.");
     }
-    // Verifica se o registro existe antes de atualizar
     const validId = validateNumber(id, "avaliacao_id");
+    // Verifica se o registro existe antes de atualizar
     if (!(await this.getById(validId))) {
       throw new Error("Avaliação não encontrada.");
     }
+    // Valida os dados conforme schema
+    const camposValidos = cleanObject(updates);
+    const validados = Avaliacao.validateBySchema(camposValidos);
     // Verifica se 'usuario_id' foi enviado e se esse usuário existe
-    if ("usuario_id" in updates) {
-      const validId = validateNumber(updates.usuario_id, "usuario_id");
-      const usuarioExiste = await UsuarioService.getById(validId);
-      if (!usuarioExiste) {
-        throw new Error("Usuário não encontrado.");
-      }
+    if ("usuario_id" in validados) {
+      const usuario = await UsuarioService.getById(validados.usuario_id);
+      if (!usuario) throw new Error("Usuário não encontrado para atualização.");
     }
-    // Verifica se 'estabelecimento_id' foi enviado e se esse estabelecimento existe
-    if ("estabelecimento_id" in updates) {
-      const validId = validateNumber(
-        updates.estabelecimento_id,
-        "estabelecimento_id"
-      );
-      const estabelecimentoExiste = await UsuarioService.getById(validId);
-      if (!estabelecimentoExiste) {
-        throw new Error("Estabelecimento não encontrado.");
-      }
+    // Verifica se 'servico_id' foi enviado e se esse estabelecimento existe
+    if ("servico_id" in validados) {
+      const servico = await ServicoService.getById(validados.servico_id);
+      if (!servico) throw new Error("Serviço não encontrado para atualização.");
     }
-    // Verifica se 'estabelecimento_id' foi enviado e se esse estabelecimento existe
-    if ("estabelecimento_id" in updates) {
-      const validId = validateNumber(
-        updates.estabelecimento_id,
-        "estabelecimento_id"
-      );
-      const estabelecimentoExiste = await UsuarioService.getById(validId);
-      if (!estabelecimentoExiste) {
-        throw new Error("Usuário não encontrado.");
-      }
-      // Valida os dados conforme schema
-      const camposValidos = cleanObject(updates);
-      const validados = Usuario.validateBySchema(camposValidos);
-      // Inserção no banco
-      const { data, error } = await supabase
+    // Se usuario_id, servico_id e data_visita foram enviados, validar duplicidade
+    if (validados.usuario_id && validados.servico_id && validados.data_visita) {
+      const { data: existente, error: errorExistente } = await supabase
         .from("avaliacoes")
-        .update(validados)
-        .eq("id", validId)
-        .select()
-        .single();
-      if (error) throw error;
-      if (!data) throw new Error("Resposta do banco de dados não retornada.");
-      return data;
+        .select("id")
+        .eq("usuario_id", validados.usuario_id)
+        .eq("servico_id", validados.servico_id)
+        .eq("data_comentario", validados.data_comentario)
+        .neq("id", validId) // <- Exclui o próprio registro
+        .maybeSingle();
+      if (errorExistente) throw errorExistente;
+      if (existente)
+        throw new Error(
+          "Já existe um registro com este usuário, serviço e data."
+        );
     }
+    // Inserção no banco
+    const { data, error } = await supabase
+      .from("avaliacoes")
+      .update(validados)
+      .eq("id", validId)
+      .select()
+      .single();
+    if (error) throw error;
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    return data;
   }
 
   static async delete(id) {

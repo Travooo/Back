@@ -5,16 +5,14 @@ const request = require("supertest");
 let avaliacaoCriadaId;
 
 describe("Testes de Integração - Avaliação", () => {
-  const avaliacao = {
-    estabelecimento_id: 3,
-    usuario_id: 1,
-    comentario: "Lamentável!",
-    numero_estrelas: 1,
-    data_comentario: "2025-04-25",
-  };
-
   test("Deve criar uma avaliacao via API", async () => {
-    const res = await request(app).post("/avaliacoes").send(avaliacao);
+    const res = await request(app).post("/avaliacoes").send({
+      servico_id: 3,
+      usuario_id: 1,
+      comentario: "Lamentável!",
+      numero_estrelas: 1,
+      data_comentario: "2025-03-25",
+    });
     console.log("Resposta da criação:", res.body);
     expect(res.status).toBe(201);
     expect(res.body).toHaveProperty("id");
