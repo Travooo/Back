@@ -72,13 +72,13 @@ class LocalVisitadoService {
     const validados = LocalVisitado.validateBySchema(camposValidos);
     // Verifica se 'usuario_id' foi enviado e se esse usuário existe
     if ("usuario_id" in validados) {
-      const usuario = await UsuarioService.getById(idValido);
+      const usuario = await UsuarioService.getById(validados.usuario_id);
       if (!usuario) throw new Error("Usuário não encontrado para atualização.");
     }
     // Verifica se 'Servico_id' foi enviado e se esse Servico existe
     if ("servico_id" in validados) {
-      const Servico = await ServicoService.getById(validados.servico_id);
-      if (!Servico) throw new Error("Servico não encontrado para atualização.");
+      const servico = await ServicoService.getById(validados.servico_id);
+      if (!servico) throw new Error("Servico não encontrado para atualização.");
     }
     // Se usuario_id, servico_id e data_visita foram enviados, validar duplicidade
     if (validados.usuario_id && validados.servico_id && validados.data_visita) {
