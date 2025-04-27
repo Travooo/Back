@@ -9,7 +9,7 @@ describe("Testes de Integração - Serviço", () => {
     const res = await request(app).post("/locais_visitados").send({
       servico_id: 3,
       usuario_id: 2,
-      data_visita: "2025-02-23",
+      data_visita: "2025-01-23",
     });
     console.log("Resposta da criação:", res.body);
     expect(res.status).toBe(201);
