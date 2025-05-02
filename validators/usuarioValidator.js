@@ -6,6 +6,11 @@ const userSchema = z.object({
     invalid_type_error: "Nome de usuário deve ser uma string.",
   }),
 
+  nome_completo: z.string({
+    required_error: "Nome completo é obrigatório.",
+    invalid_type_error: "Nome completo deve ser uma string.",
+  }),
+
   email: z.string({
     required_error: "Email é obrigatório.",
     invalid_type_error: "Email deve ser uma string.",
@@ -33,6 +38,11 @@ const userSchema = z.object({
     required_error: "Campo 'admin' deve ser informado.",
     invalid_type_error: "O campo 'admin' deve ser verdadeiro ou falso (boolean)."
   }),
+
+  tipo_plano: z.number({
+    required_error: "Campo tipo_plano deve ser informado.",
+    invalid_type_error: "O campo 'tipo_plano' deve ser um valor inteiro."
+  })
 
 });
 

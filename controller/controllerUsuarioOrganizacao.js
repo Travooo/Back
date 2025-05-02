@@ -1,5 +1,6 @@
 const usuarioOrgService = require('../services/usuarioOrganizacao_service')
 const UsuarioOrg = require('../model/UsuarioOrganizacao')
+const { validateUserOrgInput } = require('../validators/usuarioValidator');
 
 const getUsuariosOrg = async (req, res) => {
     try {
@@ -43,6 +44,11 @@ const getUsuarioOrgById = async (req, res) => {
 }
 const createUsuarioOrg = async (req, res) => {
     try {
+        const validationErrors = validateUserOrgInput(req.body);
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
+
         const {
             cnpj,
             nome_fantasia,
@@ -84,6 +90,11 @@ const deleteUsuarioOrg = async (req, res) => {
 }
 const updateUsuarioOrg = async (req, res) => {
     try {
+        const validationErrors = validateUserOrgInput(req.body);
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
+
         const { id } = req.params;
         const {
             cnpj,

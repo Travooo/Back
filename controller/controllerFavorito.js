@@ -1,5 +1,6 @@
 const favoritoService = require('../services/favorito_service');
 const Favorito = require('../model/Favorito')
+const {validateFavorito} = require('../validators/favoritoValidator');
 
 const getFavoritos = async (req, res) => {
     try {
@@ -35,6 +36,11 @@ const getFavoritoById = async (req, res) => {
 
 const createFavorito = async (req, res) => {
     try {
+        const validationErrors = validateFavorito(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const {estabelecimento_id, usuario_id} = req.body;
         const novoFavorito = new Favorito({
             estabelecimento_id, 
@@ -60,6 +66,11 @@ const deleteFavorito = async (req, res) => {
 
 const updateFavorito = async (req, res) => {
     try {
+        const validationErrors = validateFavorito(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { id } = req.params;
         const {estabelecimento_id, usuario_id} = req.body;
         const favoritoAtualizado = new Favorito({

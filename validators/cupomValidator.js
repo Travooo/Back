@@ -1,0 +1,25 @@
+
+const { z } = require('zod');
+
+const cupomSchema = z.object({
+    estabelecimento_id: z.number({ required_error: "estabelecimento_id é obrigatório" }),
+    usuario_id: z.number({ required_error: "usuario_id é obrigatório" }),
+    descricao: z.string({ 
+        required_error: "Descrição é obrigatória", 
+        invalid_type_error: "Tipo deve ser string"
+    }),
+    created_at: z.string().refine((val) => !isNaN(Date.parse(val)), {
+        message: "Data de criação inválida"
+    })
+});
+
+function validateCupom(data) {
+    try {
+        cupomSchema.parse(data);
+        return [];
+    } catch (err) {
+        return err.errors.map(e => e.message);
+    }
+}
+
+module.exports = { validateCupom };

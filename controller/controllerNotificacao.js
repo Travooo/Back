@@ -1,5 +1,6 @@
 const notificacaoService = require('../services/notificacao_service');
 const Notificacao = require('../model/Notificacao');
+const {validateUserOrgInput} = require('../validators/notificacaoValidator');
 
 const getNotificacoes = async (req, res) => {
     try {
@@ -37,6 +38,10 @@ const getNotificacaoById = async (req, res) => {
 
 const createNotificacao = async (req, res) => {
     try {
+        const validationErrors = validateUserOrgInput(req.body);
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { titulo, descricao, usuario_id} = req.body;
 
         const novaNotificacao = new Notificacao({
@@ -65,6 +70,10 @@ const deleteNotificacao = async (req, res) => {
 
 const updateNotificacao = async (req, res) => {
     try {
+        const validationErrors = validateUserOrgInput(req.body);
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { id } = req.params;
         const { titulo, descricao, usuario_id} = req.body;
         const notificacaoAtualizada = new Notificacao({

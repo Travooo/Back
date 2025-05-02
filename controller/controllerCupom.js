@@ -1,5 +1,6 @@
 const cupomService = require('../services/cupom_service');
 const Cupom = require('../model/Cupom');
+const { validateCupom } = require('../validators/cupomValidator');
 
 const getCupons = async (req, res) => {
     try {
@@ -39,6 +40,11 @@ const getCupomById = async (req, res) => {
 
 const createCupom = async (req, res) => {
     try {
+        const validationErrors = validateCupom(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const {estabelecimento_id, usuario_id, descricao} = req.body;
         const novoCupom = new Cupom({
             estabelecimento_id, 
@@ -69,6 +75,11 @@ const deleteCupom = async (req, res) => {
 
 const updateCupom = async (req, res) => {
     try {
+        const validationErrors = validateCupom(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { id } = req.params;
         const {estabelecimento_id, usuario_id, descricao} = req.body;
         const cupomAtualizado = new Cupom({

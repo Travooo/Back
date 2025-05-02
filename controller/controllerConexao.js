@@ -1,5 +1,6 @@
 const conexaoService = require('../services/conexao_service')
 const Conexao = require('../model/Conexao')
+const { validateConexao } = require('../validators/conexaoValidator');
 
 const getConexoes = async (req, res) => {
     try {
@@ -33,6 +34,11 @@ const getConexaoById = async (req, res) => {
 }
 const createConexao = async (req, res) => {
     try {
+        const validationErrors = validateConexao(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { usuario1_id, usuario2_id } = req.body;
 
         const novaConexao = new Conexao({
@@ -63,6 +69,11 @@ const deleteConexao = async (req, res) => {
 }
 const updateConexao = async (req, res) => {
     try {
+        const validationErrors = validateConexao(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { id } = req.params;
         const { usuario1_id, usuario2_id } = req.body;
         const conexaoAtualizada = new Conexao({

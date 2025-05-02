@@ -1,5 +1,6 @@
 const eventoService = require('../services/evento_service');
 const Evento = require('../model/Evento');
+const { validateEvento } = require('../validators/eventoValidator');
 
 const getEventos = async (req, res) => {
     try {
@@ -44,6 +45,11 @@ const getEventoById = async (req, res) => {
 
 const createEvento = async (req, res) => {
     try {
+        const validationErrors = validateEvento(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const {estabelecimento_id, organizacao_id, nome, data, descricao} = req.body;
 
         const novoEvento = new Evento({
@@ -74,6 +80,11 @@ const deleteEvento = async (req, res) => {
 
 const updateEvento = async (req, res) => {
     try {
+        const validationErrors = validateEvento(req.body);
+
+        if (validationErrors.length > 0) {
+            return res.status(400).json({ errors: validationErrors });
+        }
         const { id } = req.params;
         const {
             estabelecimento_id,
