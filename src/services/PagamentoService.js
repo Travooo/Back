@@ -1,87 +1,114 @@
-require('dotenv').config();
-const Pagamento = require('../../../models/Pagamento');
-const validator = require('validator');
-const {
-  validateId,
-  validateValor,
-  validateMetodoPagamento,
-  validateStatus,
-  getIfExists,
-} = require('../../../utils/validators');
-
-const { createClient } = require('@supabase/supabase-js');
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const Pagamento = require("../models/Pagamento");
+const UsuarioService = require("../services/UsuarioService");
+const supabase = require("../config/supabaseClient");
+const { validateNumber } = require("../utils/validators");
 
 class PagamentoService {
-  static async create(pagamento_data) {
-    try {
-      const pagamento = new Pagamento(
-        pagamento_data.valor,
-        pagamento_data.metodo_pagamento,
-        pagamento_data.status,
-        pagamento_data.usuario_id
-      );
-      await getIfExists({ tabela: 'usuarios', coluna: 'id', valor: pagamento.usuario_id });
-      const { data, error } = await supabase
-        .from('pagamentos')
-        .insert({
-          valor: pagamento.valor,
-          metodo_pagamento: pagamento.metodo_pagamento,
-          status: pagamento.status,
-          usuario_id: pagamento.usuario_id,
-        })
-        .single()
-        .select();
-      if (error) throw new Error(error.message);
-      return data;
-    } catch (error) {
-      throw new Error(error.message);
+  static async create(pagamento) {
+    // Garante que os dados foram recebidos e no formato de objeto
+    if (!pagamento || typeof pagamento !== "object") {
+      throw new Error("Dados inválidos ou não fornecidos.");
     }
-  }
-
-  static async getById(id) {
-    return await getIfExists({ tabela: 'pagamentos', valor: id });
-  }
-
-  static async getStatus(id) {
-    return await getIfExists({ tabela: 'pagamentos', valor: id, select: 'status' });
-  }
-
-  static async getAll() {
-    const { data, error } = await supabase.from('pagamentos').select('*');
+    const validated = Pagamento.validateBySchema(pagamento);
+    // Verifica se usuário com 'usuario_id' existe
+    const usuario = await UsuarioService.getById(validated.usuario_id);
+    if (!usuario) throw new Error("Usuário não encontrado.");
+    // Insere no supabase
+    const { data, error } = await supabase
+      .from("pagamentos")
+      .insert(validated)
+      .select()
+      .single();
     if (error) throw new Error(error.message);
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
     return data;
   }
 
-  static async update_status(id, novoStatus) {
-    const statusPermitidos = ['pendente', 'pago', 'cancelado', 'estornado'];
-    if (!statusPermitidos.includes(novoStatus)) {
-      throw new Error('Status inválido.');
-    }
+  static async getById(id) {
     const { data, error } = await supabase
-      .from('pagamentos')
-      .update({ status: novoStatus })
-      .eq('id', id)
-      .select('status')
+      .from("pagamentos")
+      .select("*")
+      .eq("id", validateNumber(id, "pagamento_id"))
+      .maybeSingle();
+    if (error) throw error;
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    return data;
+  }
+
+  static async getStatus(id) {
+    const { data, error } = await supabase
+      .from("pagamentos")
+      .select("status")
+      .eq("id", validateNumber(id, "pagamento_id"))
+      .single();
+    if (error) throw error;
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    return data;
+  }
+
+  static async getAll() {
+    const { data, error } = await supabase.from("avaliacoes").select("*");
+    if (error) throw error;
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    return data;
+  }
+
+  static async updateStatus(id, novoStatus) {
+    if (!id || !novoStatus)
+      throw new Error("Atualizações inválidas ou não fornecidas.");
+    const idValido = validateNumber(id);
+    const validado = Pagamento.validate(novoStatus, "status");
+    const { data, error } = await supabase
+      .from("pagamentos")
+      .update({ status: validado })
+      .eq("id", idValido)
+      .select("status")
       .single();
     if (error) throw new Error(error.message);
-    if (!data || data.length === 0) {
-      throw new Error('Pagamento não encontrado ou não atualizado.');
-    }
+    if (!data) throw new Error("Pagamento não encontrado ou não atualizado.");
     return data;
   }
 
   static async update(id, updates) {
-    const pagamentoId = validateId(id);
-    if (!updates || typeof updates !== 'object') throw new Error('Atualizações inválidas ou não fornecidas.');
-    const validados = {};
-    if ('valor' in updates) validados.valor = validateValor(updates.valor);
-    if ('metodo_pagamento' in updates) validados.metodo_pagamento = validateMetodoPagamento(updates.metodo_pagamento);
-    if ('status' in updates) validados.status = validateStatus(updates.status);
-    if (Object.keys(validados).length === 0) throw new Error('Nenhuma alteração válida detectada.');
-    const { data, error } = await supabase.from('pagamentos').update(validados).eq('id', pagamentoId).select();
-    if (error) return Error(error.message);
-    if (!data || data.length === 0) throw new Error('Pagamento não encontrado ou não atualizado.');
+    const pagamentoId = validateNumber(id);
+    if (!updates || typeof updates !== "object")
+      throw new Error("Atualizações inválidas ou não fornecidas.");
+    const validados = Pagamento.validateBySchema(updates);
+    if (Object.keys(validados).length === 0)
+      throw new Error("Nenhuma alteração válida detectada.");
+    // Verifica se usuario_id existe, caso esteja nos updates
+    if (validados.usuario_id) {
+      const idValido = validateNumber(validados.usuario_id, "usuario_id");
+      const usuario = await UsuarioService.getById(idValido);
+      if (!usuario) {
+        throw new Error("Usuário informado não existe.");
+      }
+    }
+    const { data, error } = await supabase
+      .from("pagamentos")
+      .update(validados)
+      .eq("id", pagamentoId)
+      .select()
+      .single();
+    if (error) throw new Error(error.message);
+    if (!data || data.length === 0)
+      throw new Error("Pagamento não encontrado ou não atualizado.");
+    return data;
+  }
+
+  static async delete(id) {
+    // Verifica se o registro existe antes de atualizar
+    const pagamento = await this.getById(validateNumber(id, "avaliacao_id"));
+    if (!pagamento) {
+      throw new Error("Pagamento não encontrado para remoção.");
+    }
+    const { data, error } = await supabase
+      .from("pagamentos")
+      .delete()
+      .eq("id", id)
+      .select()
+      .single();
+    if (error) throw error;
     return data;
   }
 }
