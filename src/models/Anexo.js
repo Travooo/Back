@@ -1,17 +1,32 @@
-class Anexo {
-  constructor(anexo, estabelecimento_id) {
-    if (!anexo || !estabelecimento_id) {
-      throw new Error("Campos obrigatórios ausentes ou inválidos.");
-    }
-    if (!(anexo instanceof Buffer)) {
-      throw new Error("Atributo 'anexo' inválido.");
-    }
-    if (!Number.isInteger(estabelecimento_id) || estabelecimento_id <= 0) {
-      throw new Error("Atributo 'estabelecimento_id' inválido.");
-    }
-    this.anexo = anexo;
-    this.estabelecimento_id = estabelecimento_id;
+const ModeloBase = require("./ModeloBase");
+
+class Anexo extends ModeloBase {
+  static #schema = {
+    // #: Privado
+    estabelecimento_id: {
+      tipo: "number",
+      required: true,
+      atributo: "estabelecimento_id",
+      erro: "'estabelecimento_id' deve ser um número válido.",
+    },
+    entidade: {
+      tipo: "string",
+      required: true,
+      atributo: "entidade",
+      min: 1,
+      max: 63,
+    },
+    tipo_anexo: {
+      tipo: "option",
+      required: true,
+      atributo: "tipo_anexo",
+      opcoes: ["image/jpeg", "image/png"],
+      erro: "Tipo de anexo não permitido. Use apenas JPEG ou PNG.",
+    },
+  };
+  static getSchema() {
+    return this.#schema;
   }
 }
 
-module.exports = Anexo;
+module.exports = Usuario;

@@ -5,6 +5,7 @@ const { validateNumber, cleanObject } = require("../utils/validators");
 
 class UsuarioService {
   static async create(user) {
+    // Garante que os dados foram recebidos e no formato de objeto
     if (!user || typeof user !== "object") {
       throw new Error("Dados inválidos ou não fornecidos.");
     }
@@ -12,7 +13,7 @@ class UsuarioService {
     // Verifica se já existe usuário com 'email'
     const usuarioExiste = await this.getByEmail(validated.email);
     if (usuarioExiste) throw new Error("Email já cadastrado na base de dados.");
-    // Faz o hashing da senha
+    // Faz o hashing da senha antes da inserção
     validated.senha = await bcrypt.hash(validated.senha, 10);
     const { data, error } = await supabase
       .from("usuarios")
@@ -61,7 +62,7 @@ class UsuarioService {
     if (!(await this.getById(validId))) {
       throw new Error("Usuário não encontrado.");
     }
-    // Valida os dados conforme schema
+    // Valida os dados conforme schema e faz o hashing da senha se houver
     const camposValidos = cleanObject(updates);
     const validados = Usuario.validateBySchema(camposValidos);
     // Inserção no banco
@@ -77,6 +78,7 @@ class UsuarioService {
   }
 
   static async delete(id) {
+    // Verifica se o registro existe antes de atualizar
     const usuario = await UsuarioService.getById(
       validateNumber(id, "usuario_id")
     );

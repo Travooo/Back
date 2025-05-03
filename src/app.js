@@ -19,6 +19,7 @@ app.get("/test-supabase", async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
+
       message: "Erro ao conectar ao Supabase. ",
       error,
     });
@@ -26,19 +27,19 @@ app.get("/test-supabase", async (req, res) => {
 });
 
 const rotas = [
-  //["agendamentos", "agendamentoRouter"],
-  //['anexos', 'anexoRouter'],
-  //["avaliacoes", "avaliacaoRouter"],
+  ["agendamentos", "agendamentoRouter"],
+  ["anexos", "anexoRouter"],
+  ["avaliacoes", "avaliacaoRouter"],
   //['conexoes', 'conexaoRouter'],
   //['cupons', 'cupomRouter'],
   //['eventos', 'eventoRouter'],
   //['favoritos', 'favoritoRouter'],
-  //["locais_visitados", "localVisitadoRouter"],
+  ["locais_visitados", "localVisitadoRouter"],
   //["notificacoes", "notificacaoRouter"],
   //['pagamentos', 'pagamentoRouter'],
-  //["servicos", "servicoRouter"],
-  //["usuarios", "usuarioRouter"],
-  //["usuarios_organizacao", "usuarioOrganizacaoRouter"],
+  ["servicos", "servicoRouter"],
+  ["usuarios", "usuarioRouter"],
+  ["usuarios_organizacao", "usuarioOrganizacaoRouter"],
 ];
 
 rotas.forEach(([path, file]) => {

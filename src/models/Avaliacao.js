@@ -1,5 +1,4 @@
 const ModeloBase = require("./ModeloBase");
-
 class Avaliacao extends ModeloBase {
   static #schema = {
     servico_id: {
@@ -34,5 +33,4 @@ class Avaliacao extends ModeloBase {
     return this.#schema;
   }
 }
-
 module.exports = Avaliacao;

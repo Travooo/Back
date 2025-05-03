@@ -12,6 +12,8 @@ class Usuario extends ModeloBase {
       tipo: "string",
       required: true,
       atributo: "email",
+      min: 3,
+      max: 254,
       formato: regexEmail,
       erro: "Formato de email inválido.",
     },

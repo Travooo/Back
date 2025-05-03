@@ -1,6 +1,5 @@
 class ModeloBase {
   static #schema = {}; // Cada subclasse deve sobrescrever com seu próprio schema
-
   constructor(data = {}) {
     const schema = this.constructor.getSchema();
     for (const key in schema) {
@@ -21,10 +20,8 @@ class ModeloBase {
     const schema = this.getSchema();
     const rule = schema[key];
     if (!rule) return null;
-
     const { tipo, atributo = key, erro, formato, ...rest } = rule;
     const validators = require("../utils/validators");
-
     switch (tipo) {
       case "string":
         return validators.validateString(value, {
@@ -64,15 +61,12 @@ class ModeloBase {
     }
     return validados;
   }
-
   static getValidKeys() {
     return Object.keys(this.getSchema());
   }
-
   static getSchema() {
     return this.#schema;
   }
-
   toJSON() {
     const json = {};
     for (const key of this.constructor.getValidKeys()) {
