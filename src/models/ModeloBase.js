@@ -33,6 +33,26 @@ class ModeloBase {
       case "number":
         return validators.validateNumber(value, atributo, erro);
       case "option":
+        // Atualmente checando se existem predefinições no schema. Se houver valida com base nelas, se não, cai no validateOption como fallback.
+        // Futuramente se livrar do método utils/validators/ValidateOption, definindo diretamente nos schemas e atualizando o método ModeloBase/ValidateBySchema
+        if (Array.isArray(rule.opcoes)) {
+          console.log("Opções válidas:", rule.opcoes);
+          const normalizedValue = value.toLowerCase();
+          const normalizedOptions = rule.opcoes.map((option) =>
+            option.toLowerCase()
+          );
+          console.log("Normalized value:", normalizedValue);
+          if (!normalizedOptions.includes(normalizedValue)) {
+            throw new Error(
+              erro ||
+                `Atributo '${atributo}' inválido. Valores permitidos: ${rule.opcoes.join(
+                  ", "
+                )}.`
+            );
+          }
+          return value;
+        }
+        // Fallback para lista centralizada
         return validators.validateOption(value, atributo);
       case "date":
         return validators.validateDate(value, atributo);
