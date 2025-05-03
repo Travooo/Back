@@ -1,6 +1,13 @@
 const supabase = require("../config/supabaseClient");
 
+// Atualmente IDs também são validados nessa classe otimizada. Além de floats que devem ter duas casas.
+// Existem bibliotecas que tornam os IDs mais seguros como UUID, se for desenvolvido, o método cresce ou outro nasce específico para ids.
 function validateNumber(value, atributo) {
+  if (!value) {
+    throw new Error(
+      `Atributo '${atributo}' é obrigatório e não pode ser vazio.`
+    );
+  }
   const isId = atributo?.toLowerCase().includes("id");
   const parsed = isId ? parseInt(value, 10) : parseFloat(value);
   if (isNaN(parsed))
