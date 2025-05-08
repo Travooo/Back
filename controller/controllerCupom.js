@@ -10,6 +10,7 @@ const getCupons = async (req, res) => {
             estabelecimento_id: u.estabelecimento_id,
             usuario_id: u.usuario_id,
             descricao: u.descricao,
+            expiration: u.expiration,
             created_at: u.created_at
         }))
         res.status(200).json(cupom);
@@ -30,6 +31,7 @@ const getCupomById = async (req, res) => {
             estabelecimento_id: data.estabelecimento_id,
             usuario_id: data.usuario_id,
             descricao: data.descricao,
+            expiration: data.expiration,
             created_at: data.created_at
         })
         res.status(200).json(cupom);
@@ -45,11 +47,12 @@ const createCupom = async (req, res) => {
         if (validationErrors.length > 0) {
             return res.status(400).json({ errors: validationErrors });
         }
-        const {estabelecimento_id, usuario_id, descricao} = req.body;
+        const {estabelecimento_id, usuario_id, descricao, expiration} = req.body;
         const novoCupom = new Cupom({
             estabelecimento_id, 
             usuario_id, 
-            descricao
+            descricao,
+            expiration
         })
         const result = await cupomService.createCupom(novoCupom);
         res.status(201).json(result);
@@ -81,10 +84,11 @@ const updateCupom = async (req, res) => {
             return res.status(400).json({ errors: validationErrors });
         }
         const { id } = req.params;
-        const {estabelecimento_id, usuario_id, descricao} = req.body;
+        const {estabelecimento_id, usuario_id, descricao, expiration} = req.body;
         const cupomAtualizado = new Cupom({
             estabelecimento_id, 
             usuario_id, 
+            expiration,
             descricao
         })
         const result = await cupomService.updateCupom(id, cupomAtualizado);

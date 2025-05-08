@@ -10,7 +10,16 @@ const cupomSchema = z.object({
     }),
     created_at: z.string().refine((val) => !isNaN(Date.parse(val)), {
         message: "Data de criação inválida"
-    })
+    }),
+    expiration: z.string({
+        required_error: "Data de vencimento é obrigatória"
+      }).refine((val) => {
+        const data = new Date(val);
+        const agora = new Date();
+        return !isNaN(data) && data > agora;
+      }, {
+        message: "A data de vencimento deve ser uma data válida no futuro."
+      })
 });
 
 function validateCupom(data) {
