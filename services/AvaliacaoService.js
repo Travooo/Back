@@ -1,6 +1,6 @@
 const Avaliacao = require("../model/Avaliacao");
 const UsuarioService = require("./usuario_service");
-const ServicoService = require("../services/ServicoService");
+const ServicoService = require("./ServicoService");
 const supabase = require("../config/db");
 const { validateNumber, cleanObject } = require("../validators/validators");
 
@@ -12,7 +12,7 @@ class AvaliacaoService {
     }
     const validated = Avaliacao.validateBySchema(avaliacao);
     // Verifica se usuário com 'usuario_id' existe
-    const usuario = await UsuarioService.getById(validated.usuario_id);
+    const usuario = await UsuarioService.getUsuarioById(validated.usuario_id);
     if (!usuario) throw new Error("Usuário não encontrado.");
     // Verifica se serviço com 'servico_id' existe
     const servico = await ServicoService.getById(validated.servico_id);
@@ -60,7 +60,7 @@ class AvaliacaoService {
     const validados = Avaliacao.validateBySchema(camposValidos);
     // Verifica se 'usuario_id' foi enviado e se esse usuário existe
     if ("usuario_id" in validados) {
-      const usuario = await UsuarioService.getById(validados.usuario_id);
+      const usuario = await UsuarioService.getUsuarioById(validados.usuario_id);
       if (!usuario) throw new Error("Usuário não encontrado para atualização.");
     }
     // Verifica se 'servico_id' foi enviado e se esse estabelecimento existe

@@ -11,7 +11,7 @@ class PagamentoService {
     }
     const validated = Pagamento.validateBySchema(pagamento);
     // Verifica se usuário com 'usuario_id' existe
-    const usuario = await UsuarioService.getById(validated.usuario_id);
+    const usuario = await UsuarioService.getUsuarioById(validated.usuario_id);
     if (!usuario) throw new Error("Usuário não encontrado.");
     // Insere no supabase
     const { data, error } = await supabase
@@ -79,7 +79,7 @@ class PagamentoService {
     // Verifica se usuario_id existe, caso esteja nos updates
     if (validados.usuario_id) {
       const idValido = validateNumber(validados.usuario_id, "usuario_id");
-      const usuario = await UsuarioService.getById(idValido);
+      const usuario = await UsuarioService.getUsuarioById(idValido);
       if (!usuario) {
         throw new Error("Usuário informado não existe.");
       }

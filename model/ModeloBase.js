@@ -21,7 +21,7 @@ class ModeloBase {
     const rule = schema[key];
     if (!rule) return null;
     const { tipo, atributo = key, erro, formato, ...rest } = rule;
-    const validators = require("../utils/validators");
+    const validators = require("../validators/validators");
     switch (tipo) {
       case "string":
         return validators.validateString(value, {
