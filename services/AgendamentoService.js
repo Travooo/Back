@@ -1,6 +1,6 @@
 const Agendamento = require("../model/Agendamento");
 const UsuarioService = require("./usuario_service");
-const ServicoService = require("../services/ServicoService");
+const ServicoService = require("./ServicoService");
 const supabase = require("../config/db");
 const { validateNumber, cleanObject } = require("../validators/validators");
 
@@ -12,7 +12,7 @@ class AgendamentoService {
     }
     const validated = Agendamento.validateBySchema(dados);
     // Verifica se o usuário existe
-    const usuario = await UsuarioService.getById(validated.usuario_id);
+    const usuario = await UsuarioService.getUsuarioById(validated.usuario_id);
     if (!usuario) throw new Error("Usuário não encontrado.");
     // Verifica se o Servico existe
     const servico = await ServicoService.getById(validated.servico_id);
@@ -73,7 +73,7 @@ class AgendamentoService {
     const validados = Agendamento.validateBySchema(camposValidos);
     // Verifica se 'usuario_id' foi enviado e se esse usuário existe
     if ("usuario_id" in validados) {
-      const usuario = await UsuarioService.getById(idValido);
+      const usuario = await UsuarioService.getUsuarioById(idValido);
       if (!usuario) throw new Error("Usuário não encontrado para atualização.");
     }
     // Verifica se 'Servico_id' foi enviado e se esse Servico existe
@@ -94,7 +94,7 @@ class AgendamentoService {
       if (errorExistente) throw errorExistente;
       if (existente) {
         throw new Error(
-          "Já existe um registro com este usuário, serviço e horario."
+          "Já existe um registro com este usuário, serviço e horário."
         );
       }
     }

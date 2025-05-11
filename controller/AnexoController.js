@@ -1,33 +1,37 @@
 const AnexoService = require("../services/AnexoService");
 
 class AnexoController {
-  static async create(req, res) {
+  static async upload(req, res) {
     try {
-      const user = await AnexoService.create(req.body);
-      return res.status(201).json(user);
+      const file = req.file
+      const { entidade_tipo, entidade_id, folder } = req.body
+      if (!file){
+        return res.status(400).json({ error: 'Nenhum arquivo enviado.' })
+      }
+      const upload = await AnexoService.upload(file, entidade_tipo, entidade_id, folder)
+      return res.status(200).json(upload)
     } catch (error) {
-      console.error("Erro ao criar anexo:");
-      return res.status(400).json({ error: error.message });
+      console.error('Erro no upload do anexo:', error.message)
+      return res.status(500).json({ error: error.message })
     }
   }
 
   static async getById(req, res) {
     try {
-      const data = await AnexoService.getById(req.params.id);
-      return res.status(200).json(data);
+      const anexo = await AnexoService.getById(req.params.id);
+      return res.status(200).json(anexo);
     } catch (error) {
       console.error(`Erro ao buscar anexo #${req.params.id}:`);
       return res.status(404).json({ error: error.message });
     }
   }
 
-  static async getByEmail(req, res) {
+  static async download(req, res) {
     try {
-      const data = await AnexoService.getByEmail(req.params.email);
-      return res.status(200).json(data);
+      const fileStream = await AnexoService.getFileStream(req.params.id);
+      fileStream.pipe(res);
     } catch (error) {
-      console.error(`Erro ao buscar anexo #${req.params.id}:`);
-      return res.status(404).json({ error: error.message });
+      return res.status(404).json({ error: 'Arquivo não encontrado.' });
     }
   }
 
@@ -43,8 +47,8 @@ class AnexoController {
 
   static async update(req, res) {
     try {
-      const data = await AnexoService.update(req.params.id, req.body);
-      return res.status(200).json(data);
+      const anexo = await AnexoService.update(req.params.id, req.body);
+      return res.status(200).json(anexo);
     } catch (error) {
       console.error(`Erro ao atualizar anexo #${req.params.id}:`);
       return res.status(400).json({ error: error.message });
@@ -53,8 +57,8 @@ class AnexoController {
 
   static async delete(req, res) {
     try {
-      await AnexoService.delete(req.params.id);
-      return res.status(200).send();
+      const anexo = await AnexoService.delete(req.params.id);
+      return res.status(200).send(anexo);
     } catch (error) {
       console.error(`Erro ao deletar anexo #${req.params.id}:`);
       return res.status(400).json({ error: error.message });

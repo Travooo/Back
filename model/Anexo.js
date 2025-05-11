@@ -3,25 +3,39 @@ const ModeloBase = require("./ModeloBase");
 class Anexo extends ModeloBase {
   static #schema = {
     // #: Privado
-    estabelecimento_id: {
+    entidade_id: {
       tipo: "number",
       required: true,
-      atributo: "estabelecimento_id",
-      erro: "'estabelecimento_id' deve ser um número válido.",
+      atributo: "entidade_id",
+      erro: "'entidade_id' deve ser um número válido.",
     },
-    entidade: {
-      tipo: "string",
+    entidade_tipo: {
+      tipo: "option",
       required: true,
-      atributo: "entidade",
+      atributo: "entidade_tipo",
       min: 1,
       max: 63,
     },
-    tipo_anexo: {
-      tipo: "option",
+    nome_arquivo: {
+      tipo: "string",
       required: true,
-      atributo: "tipo_anexo",
-      opcoes: ["image/jpeg", "image/png"],
-      erro: "Tipo de anexo não permitido. Use apenas JPEG ou PNG.",
+      atributo: "nome_arquivo",
+      min: 1,
+      max: 255,
+    },
+    path: {
+      tipo: "string",
+      required: true,
+      atributo: "path",
+      min: 1,
+      max: 500,
+    },
+    url_publica: {
+      tipo: "string",
+      required: true,
+      atributo: "url_publica",
+      min: 1,
+      max: 500,
     },
   };
   static getSchema() {
@@ -29,4 +43,4 @@ class Anexo extends ModeloBase {
   }
 }
 
-module.exports = Usuario;
+module.exports = Anexo;

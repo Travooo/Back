@@ -10,7 +10,7 @@ class ServicoService {
     }
     const validated = Servico.validateBySchema(servico);
     // Verifica se já existe serviço com 'usuario_organizacao_id'
-    const organizacao = await UsuarioOrganizacaoService.getById(
+    const organizacao = await UsuarioOrganizacaoService.getUsuarioOrgById(
       validated.usuario_organizacao_id
     );
     if (!organizacao) {
