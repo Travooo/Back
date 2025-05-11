@@ -1,8 +1,10 @@
+// Last modifications: included "entidade_tipo: ["usuarios", "servicos"]" in validateOption;
+
 const supabase = require("../config/db");
 
-// Atualmente IDs também são validados nessa classe otimizada. Além de floats que devem ter duas casas.
-// Existem bibliotecas que tornam os IDs mais seguros como UUID, se for desenvolvido, o método cresce ou outro nasce específico para ids.
 function validateNumber(value, atributo) {
+// *Com UUID, este método creceria ou outro específico para IDs nasceria.*
+
   if (!value) {
     throw new Error(
       `Atributo '${atributo}' é obrigatório e não pode ser vazio.`
@@ -126,6 +128,7 @@ function validateOption(value, atributo) {
     metodo_pagamento: ["credito", "debito", "pix", "boleto"],
     status: ["pendente", "pago", "cancelado", "estornado"],
     tipo_anexo: ["pendente", "pago", "cancelado", "estornado"],
+    entidade_tipo: ["usuarios", "servicos"],
   };
   if (!(atributo in listas))
     throw new Error(`Atributo '${atributo}' não reconhecido.`);
