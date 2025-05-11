@@ -56,6 +56,8 @@ const getUsuarioById = async (req, res) => {
 
 const createUsuario = async (req, res) => {
     try {
+        req.body.admin = false
+        req.body.tipo_plano = 1
         const validationErrors = validateUserInput(req.body);
 
         if (validationErrors.length > 0) {

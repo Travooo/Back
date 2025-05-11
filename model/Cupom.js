@@ -1,5 +1,5 @@
 class Cupom {
-    constructor({id, estabelecimento_id, usuario_id, descricao, created_at, expiration}) {
+    constructor({id, estabelecimento_id, usuario_id, descricao, created_at, expiration, nome}) {
         if (id !== undefined) {
             this.id = id;
           }
@@ -8,6 +8,7 @@ class Cupom {
         this.descricao = descricao;
         this.created_at = created_at;
         this.expiration = expiration;
+        this.nome = nome;
     }
 }
 
