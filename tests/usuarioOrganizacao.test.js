@@ -1,12 +1,11 @@
-require("dotenv").config();
-const app = require("../../back-origin/src/app");
+const app = require("../server.js");
 const request = require("supertest");
 
 let organizacaoCriadaId;
 
 describe("Testes de Integração - UsuarioOrganizacao", () => {
   test("Deve criar uma organizacao via API", async () => {
-    const res = await request(app).post("/usuarios_organizacao").send({
+    const res = await request(app).post("rest/v1/usuarios_organizacao").send({
       cnpj: "01415862000148",
       nome_fantasia: "Empresa Teleinformática",
       email: "email.empresa3@email.me",
