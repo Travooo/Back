@@ -2,9 +2,8 @@ const { z } = require('zod');
 
 const userSchema = z.object({
   nome_usuario: z.string({
-    required_error: "Nome de usuário é obrigatório.",
     invalid_type_error: "Nome de usuário deve ser uma string.",
-  }),
+  }).optional(),
 
   nome_completo: z.string({
     required_error: "Nome completo é obrigatório.",
@@ -24,7 +23,6 @@ const userSchema = z.object({
   sobre: z.string().max(1000, "O campo 'sobre' deve ter no máximo 1000 caracteres.").optional(),
 
   data_nascimento: z.string({
-    required_error: "Data de nascimento é obrigatório",
     invalid_type_error: "A data deve ser tipo DATE"
   }).refine((val) => {
     const date = new Date(val);
@@ -32,7 +30,7 @@ const userSchema = z.object({
     return !isNaN(date) && date <= now;
   }, {
     message: "Data de nascimento inválida ou no futuro.",
-  }),
+  }).optional(),
 
   admin: z.boolean({
     required_error: "Campo 'admin' deve ser informado.",
