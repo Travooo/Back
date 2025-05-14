@@ -37,16 +37,15 @@ async function cadastrar(usuario) {
   const existente = await UsuarioService.getUsuarioByEmail(usuario.email);
   if (existente) throw new Error("Email já cadastrado.");
 
-  // Define valores padrão para campos obrigatórios não enviados
-  if (usuario.admin === undefined) {
-    usuario.admin = false;  // Valor padrão para admin
+  // Cria as propriedades 'admin' e 'tipo_plano' com valores padrão se não vierem do front
+  if (!('admin' in usuario)) {
+    usuario.admin = false;
+  }
+  if (!('tipo_plano' in usuario)) {
+    usuario.tipo_plano = 1;
   }
 
-  if (usuario.tipo_plano === undefined) {
-    usuario.tipo_plano = 1;  // Valor padrão para tipo_plano
-  }
-
-   // Criptografa a senha ANTES de enviar para o service
+  // Criptografa a senha ANTES de enviar para o service
   const hashedSenha = await bcrypt.hash(usuario.senha, 10);
   usuario.senha = hashedSenha;
   
