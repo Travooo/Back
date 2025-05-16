@@ -1,6 +1,8 @@
 const usuarioService = require('../services/usuario_service');
 const Usuario = require('../model/Usuario');
 const { validateUserInput } = require('../validators/usuarioValidator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const getUsuarios = async (req, res) => {
     try {
@@ -46,7 +48,7 @@ const getUsuarioById = async (req, res) => {
             tipo_plano: data.tipo_plano,
             created_at: data.created_at
         });
-        
+
 
         res.status(200).json(usuario);
     } catch (error) {
@@ -74,18 +76,19 @@ const createUsuario = async (req, res) => {
             data_nascimento,
             tipo_plano,
         } = req.body;
+        const senhaCriptografada = await bcrypt.hash(senha, 10);
 
         const novoUsuario = new Usuario({
             admin,
             email,
-            senha,
+            senha: senhaCriptografada,
             nome_usuario,
             nome_completo,
             sobre,
             foto_perfil,
             data_nascimento,
             tipo_plano
-          });
+        });
 
         const result = await usuarioService.createUsuario(novoUsuario);
         res.status(201).json(result);
@@ -141,7 +144,7 @@ const updateUsuario = async (req, res) => {
             data_nascimento,
             tipo_plano
         });
-        
+
 
         const result = await usuarioService.updateUsuario(id, usuarioAtualizado);
 
@@ -165,25 +168,19 @@ const loginUsuario = async (req, res) => {
             return res.status(401).json({ mensagem: 'Email não encontrado' });
         }
 
-        if (data.senha !== senha) {
+        const senhaConfere = await bcrypt.compare(senha, data.senha);
+        
+        if (!senhaConfere) {
             return res.status(401).json({ mensagem: 'Senha incorreta' });
         }
 
-        const usuario = new Usuario({
-            id: data.id,
-            admin: data.admin,
-            email: data.email,
-            senha: data.senha,
-            nome_usuario: data.nome_usuario,
-            nome_completo: data.nome_completo,
-            sobre: data.sobre,
-            foto_perfil: data.foto_perfil,
-            data_nascimento: data.data_nascimento,
-            tipo_plano: data.tipo_plano,
-            created_at: data.created_at
-        });
+        const token = jwt.sign(
+            { id: data.id, email: data.email, admin: data.admin },
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN }
+        );
 
-        res.status(200).json({ mensagem: 'Login bem-sucedido', usuario });
+        res.status(200).json({ mensagem: 'Login bem-sucedido', token});
     } catch (error) {
         res.status(500).json({ mensagem: 'Erro no login', erro: error.message });
     }
