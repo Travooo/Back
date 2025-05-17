@@ -11,6 +11,6 @@ router.patch('/usuarios/:id', verificaToken, controllerUser.updateUsuario);
 
 //rotas sem token
 router.post('/usuarios', controllerUser.createUsuario);
-router.post('/login', controllerUser.loginUsuario);
+router.post('/usuario/login', controllerUser.loginUsuario);
 
 module.exports = router;
