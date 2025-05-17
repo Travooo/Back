@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const controllerUser = require('../controller/controllerUser');
+const verificaToken = require('../middlewares/verificaToken');
 
-router.get('/usuarios', controllerUser.getUsuarios);
-router.get('/usuarios/:id',controllerUser.getUsuarioById);
+//rotas com token
+router.get('/usuarios', verificaToken, controllerUser.getUsuarios);
+router.get('/usuarios/:id', verificaToken, controllerUser.getUsuarioById);
+router.delete('/usuarios/:id', verificaToken, controllerUser.deleteUsuario);
+router.patch('/usuarios/:id', verificaToken, controllerUser.updateUsuario);
+
+//rotas sem token
 router.post('/usuarios', controllerUser.createUsuario);
-router.delete('/usuarios/:id', controllerUser.deleteUsuario);
-router.patch('/usuarios/:id', controllerUser.updateUsuario);
-router.post('/login', controllerUser.loginUsuario);
+router.post('/usuario/login', controllerUser.loginUsuario);
 
 module.exports = router;
