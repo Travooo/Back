@@ -1,8 +1,8 @@
 
 `npm install supertest --save-dev`
+`npm install --save-dev jest`
 # Supertest:
   - Permite fazer requisições HTTP (GET, POST, PUT, DELETE) para testar APIs Node.js
-`npm install --save-dev jest`
-# Jest: framework de testes para definir, rodar e verificar os testes. 
-  - describe(), test(), expect() — funções do Jest.
+# Jest: 
+  - Framework para definir, rodar e verificar os testes - describe(), test(), expect()
 
