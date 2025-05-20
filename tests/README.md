@@ -1,3 +1,4 @@
+Alternativa aos testes via Postman, manter no .gitignore
 
 `npm install --save-dev supertest jest`
 # Supertest:
