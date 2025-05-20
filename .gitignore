@@ -3,4 +3,5 @@ package-lock.json
 package.json
 .env
 .prettierrc
+tests
 melhorias_pos_MVP.md
