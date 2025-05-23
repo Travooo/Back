@@ -2,28 +2,39 @@
 
 const supabase = require("../config/db");
 
-function validateNumber(value, atributo) {
-// *Com UUID, este método creceria ou outro específico para IDs nasceria.*
-
-  if (!value) {
+function validateNumber(value, atributo, erroCustomizado, options = {}) {
+  if (value === null || value === undefined || value === '') {
     throw new Error(
-      `Atributo '${atributo}' é obrigatório e não pode ser vazio.`
+      erroCustomizado || `Atributo '${atributo}' é obrigatório e não pode ser vazio.`
     );
   }
+
   const isId = atributo?.toLowerCase().includes("id");
   const parsed = isId ? parseInt(value, 10) : parseFloat(value);
-  if (isNaN(parsed))
+
+  if (isNaN(parsed)) {
     throw new Error(
-      `Atributo '${atributo}' inválido. Valor numérico esperado.`
+      erroCustomizado || `Atributo '${atributo}' inválido. Valor numérico esperado.`
     );
-  const validFloat = /^\d+(\.\d{1,2})?$/; // Define máximo de duas casas decimais
-  if (parsed <= 0 || (!isId && !validFloat.test(String(value))))
-    throw new Error(
-      `Atributo '${atributo}' inválido. ` +
-        (isId
-          ? "Deve ser um número inteiro positivo."
-          : "Deve ser um valor positivo com até duas casas decimais.")
-    );
+  }
+
+  if (typeof options.minimo === 'number' && parsed < options.minimo) {
+    throw new Error(`Atributo '${atributo}' deve ser no mínimo ${options.minimo}.`);
+  }
+
+  if (typeof options.maximo === 'number' && parsed > options.maximo) {
+    throw new Error(`Atributo '${atributo}' deve ser no máximo ${options.maximo}.`);
+  }
+
+
+  if (typeof options.casasDecimais === 'number') {
+    const partes = parsed.toString().split('.');
+    const decimais = partes[1] ? partes[1].length : 0;
+    if (decimais > options.casasDecimais) {
+      throw new Error(`Atributo '${atributo}' deve ter no máximo ${options.casasDecimais} casas decimais.`);
+    }
+  }
+
   return parsed;
 }
 

@@ -51,6 +51,28 @@ class Servico extends ModeloBase {
       min: 1,
       max: 20,
     },
+    lat: {
+      tipo: "number",
+      required: false,
+      atributo: "lat",
+      minimo: -90,
+      maximo: 90,
+      casasDecimais: 8,
+    },
+    lng: {
+      tipo: "number",
+      required: false,
+      atributo: "lng",
+      minimo: -180,
+      maximo: 180,
+      casasDecimais: 8,
+    },
+
+    anexo_id: {
+      tipo: "number",
+      required: false,
+      atributo: "usuario_organizacao_id",
+    },
   };
   static getSchema() {
     return this.#schema;

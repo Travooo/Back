@@ -3,6 +3,7 @@ const supabase = require("../config/db");
 const { validateNumber, cleanObject } = require("../validators/validators");
 const UsuarioOrganizacaoService = require("./usuarioOrganizacao_service");
 
+
 class ServicoService {
   static async create(servico) {
     if (!servico || typeof servico !== "object") {

@@ -1,12 +1,38 @@
 const ServicoService = require("../services/ServicoService");
+const axios = require("axios")
 
 class ServicoController {
-  static async create(req, res) {
+ static async create(req, res) {
     try {
-      const servico = await ServicoService.create(req.body);
+      const { endereco, ...resto } = req.body;
+
+      if (!endereco) {
+        return res.status(400).json({ error: "Endereço é obrigatório" });
+      }
+
+      //Transformar endereço em lat, lng com google API
+      const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(endereco)}&key=${GOOGLE_API_KEY}`;
+      const response = await axios.get(geocodeUrl);
+      const data = response.data;
+      if (data.status !== 'OK' || data.results.length === 0) {
+        return res.status(400).json({ error: "Endereço inválido ou não encontrado" });
+      }
+      const location = data.results[0].geometry.location;
+
+      const dadosFinal = {
+        ...resto,
+        endereco,
+        lat: location.lat,
+        lng: location.lng,
+      };
+      
+      const servico = await ServicoService.create(dadosFinal);
+
       return res.status(201).json(servico);
+
     } catch (error) {
-      console.error("Erro ao criar serviço:");
+      console.error("Erro ao criar serviço:", error);
       return res.status(400).json({ error: error.message });
     }
   }
