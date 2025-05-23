@@ -20,9 +20,20 @@ class ServicoController {
       }
       const location = data.results[0].geometry.location;
 
+      //tranformar cep em endereço
+      const cepUrl = `viacep.com.br/ws/${endereco}/json/`;
+      const datacep = await axios.get(cepUrl);
+      if (datacep.status !== 200) {
+        return res.status(400).json({ error: "CEP inválido" });
+      }
+      const rua = datacep.logradouro
+      const bairro = datacep.bairro
+      const enderecoFinal =  rua + "," + bairro;
+
+      
       const dadosFinal = {
         ...resto,
-        endereco,
+        endereco: enderecoFinal,
         lat: location.lat,
         lng: location.lng,
       };
