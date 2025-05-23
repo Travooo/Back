@@ -57,49 +57,33 @@ const getUsuarioById = async (req, res) => {
 };
 
 const createUsuario = async (req, res) => {
-    try {        
-        const {
-            nome_completo,
-            nome_usuario,
-            data_nascimento,
-            email,
-            senha,
-        } = req.body;
+    try {    
+        if (req.body.data_nascimento?.includes('/')) {
+            const [dia, mes, ano] = req.body.data_nascimento.split('/');
+            req.body.data_nascimento = `${ano}-${mes}-${dia}`;
+        }   
 
-        if (!nome_completo || !nome_usuario || !data_nascimento || !email || !senha ) {
-            return res.status(400).json({ erro: 'Dados obrigatórios não recebidos.' });
-        }
-
-        const emailExiste = await usuarioService.getUsuarioByEmail(email);
-        if (emailExiste) {
-            return res.status(401).json({ mensagem: 'Email já possui cadastro.' });
-        }
-
-        const [dia, mes, ano] = data_nascimento.split('/');
-        const dataConvertidaIso = `${ano}-${mes}-${dia}`;
-
-        const dadosValidados = {
-            ...req.body, // Inclui as propriedades de req.body (pares chave-valor)
-            data_nascimento: dataConvertidaIso, // Sobrescreve 'data_nascimento'
+        const userData = {
+            ...req.body,
             admin: false,
             tipo_plano: 1,
         };
 
-        const validationErrors = validateUserInput(dadosValidados);
+        const validationErrors = validateUserInput(userData);
         if (validationErrors.length > 0) {
             return res.status(400).json({ errors: validationErrors });
         }
 
-        const senhaCriptografada = await bcrypt.hash(senha, 10);
+        const emailExiste = await usuarioService.getUsuarioByEmail(userData.email);
+        if (emailExiste) {
+            return res.status(401).json({ mensagem: 'Email já possui cadastro.' });
+        }
+
+        const senhaCriptografada = await bcrypt.hash(userData.senha, 10);
 
         const novoUsuario = new Usuario({
-            email,
+            ...userData,
             senha: senhaCriptografada,
-            nome_usuario,
-            nome_completo,
-            data_nascimento: dataConvertidaIso,
-            admin: false,
-            tipo_plano: 1,
         });
 
         const usuarioCriado = await usuarioService.createUsuario(novoUsuario);
