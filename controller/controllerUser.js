@@ -88,15 +88,7 @@ const createUsuario = async (req, res) => {
 
         const usuarioCriado = await usuarioService.createUsuario(novoUsuario);
 
-        const token = jwt.sign({
-                id: usuarioCriado.id, 
-                email: usuarioCriado.email, 
-                admin: usuarioCriado.admin 
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN }
-        );
-        res.status(201).json({ mensagem: 'Registro bem-sucedido', usuarioCriado, token});
+        res.status(201).json({ mensagem: 'Registro bem-sucedido', usuarioCriado });
     } catch (error) {
         res.status(500).json({ mensagem: 'Erro no registro', erro: error.message });
     }
