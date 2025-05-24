@@ -10,27 +10,26 @@ class ServicoController {
         return res.status(400).json({ error: "Endereço é obrigatório" });
       }
 
-      //Transformar endereço em lat, lng com google API
-      const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(endereco)}&key=${GOOGLE_API_KEY}`;
-      const response = await axios.get(geocodeUrl);
-      const data = response.data;
-      if (data.status !== 'OK' || data.results.length === 0) {
-        return res.status(400).json({ error: "Endereço inválido ou não encontrado" });
-      }
-      const location = data.results[0].geometry.location;
-
       //tranformar cep em endereço
-      const cepUrl = `viacep.com.br/ws/${endereco}/json/`;
+      const cepUrl = `https://viacep.com.br/ws/${endereco}/json/`;
       const datacep = await axios.get(cepUrl);
       if (datacep.status !== 200) {
         return res.status(400).json({ error: "CEP inválido" });
       }
-      const rua = datacep.logradouro
-      const bairro = datacep.bairro
-      const enderecoFinal =  rua + "," + bairro;
+      const rua = datacep.data.logradouro
+      const bairro = datacep.data.bairro
+      const enderecoFinal =  bairro + "," + rua;
 
-      
+      //Transformar endereço em lat, lng com google API
+      const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
+      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(enderecoFinal)}&key=${GOOGLE_API_KEY}`;
+      const response = await axios.get(geocodeUrl);
+      const data = response.data;
+      console.log(data)
+      if (data.status !== 'OK' || data.results.length === 0) {
+        return res.status(400).json({ error: "Endereço inválido ou não encontrado" });
+      }
+      const location = data.results[0].geometry.location;
       const dadosFinal = {
         ...resto,
         endereco: enderecoFinal,
