@@ -37,24 +37,27 @@ SUPABASE_KEY=your_supabase_key
 JWT_SECRET=uma_senha_segura_e_complexa
 JWT_EXPIRES_IN=2h
 ```
-### 5. Instalar nodemon:
 
-#####  Reinicia automaticamente o servidor quando há alterações no código:
-
-```bash
-npm install --save-dev nodemon
-```
-
-### 6. Inicie o servidor:
+### 5. Inicie o servidor:
 
 ```bash
 node server.js
 ```
 
-##### Para rodar o projeto com `npm run dev` adicione na seção `scripts` de seu `package.json`:
+### 5. (Opcional) Instalar nodemon:
+
+Reinicia automaticamente o servidor quando há alterações no código:
+
+```bash
+npm install --save-dev nodemon
+```
+
+Para rodar o projeto com `npm run dev` adicione na seção `scripts` de seu `package.json`:
 
 ```bash
 "scripts": {
 "dev": "nodemon server.js"   //ou "node server.js"
 }
 ```
+
+Ou `node server.js` se não utilizar nodemon.
