@@ -5,7 +5,9 @@ class UsuarioService {
         if (data.created_at === undefined || data.created_at === null) {
             delete data.created_at;
         }
-        const { error, data: result } = await supabase.from('usuarios').insert([data]);
+        const { error, data: result } = await supabase
+            .from('usuarios')
+            .insert([data], { returning: 'representation' });
         if (error) throw error;
         return result;
     }
@@ -33,15 +35,15 @@ class UsuarioService {
         if (error) throw error;
         return { message: 'Usuário removido com sucesso' };
     }
-    
+
     static async getUsuarioByEmail(email) {
         const { error, data } = await supabase
             .from('usuarios')
             .select('*')
             .eq('email', email)
             .single();
-    
         if (error || !data) return null;
+        console.log(data)
         return data;
     }
 }

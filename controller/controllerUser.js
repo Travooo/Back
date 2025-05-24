@@ -89,9 +89,18 @@ const createUsuario = async (req, res) => {
             data_nascimento,
             tipo_plano
         });
+        
+        //verifica se email ja esta cadastrado
+        const data = await usuarioService.getUsuarioByEmail(email);
+        if (data) {
+            return res.status(409).json({ mensagem: 'Email já existe' });
+        }
 
         const result = await usuarioService.createUsuario(novoUsuario);
-        res.status(201).json(result);
+        res.status(201).json({
+            mensagem: "Usuário criado com sucesso!",
+            usuario: result,
+        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -169,7 +178,7 @@ const loginUsuario = async (req, res) => {
         }
 
         const senhaConfere = await bcrypt.compare(senha, data.senha);
-        
+
         if (!senhaConfere) {
             return res.status(401).json({ mensagem: 'Senha incorreta' });
         }
@@ -180,7 +189,7 @@ const loginUsuario = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
 
-        res.status(200).json({ mensagem: 'Login bem-sucedido', token});
+        res.status(200).json({ mensagem: 'Login bem-sucedido', token });
     } catch (error) {
         res.status(500).json({ mensagem: 'Erro no login', erro: error.message });
     }
