@@ -33,6 +33,17 @@ class UsuarioOrganizacaoService {
         if (error) throw error;
         return { message: 'Usuário Organização removido com sucesso' };
     }
+
+    static async getUsuarioOrgByEmail(email) {
+        const { error, data } = await supabase
+            .from('organizacoes')
+            .select('*')
+            .eq('email', email)
+            .single();
+        if (error || !data) return null;
+        console.log(data)
+        return data;
+    }
 }
 
 module.exports = UsuarioOrganizacaoService;
