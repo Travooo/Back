@@ -3,8 +3,6 @@ const Usuario = require('../model/Usuario');
 const { validateUserInput } = require('../validators/usuarioValidator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
 const getUsuarios = async (req, res) => {
     try {
@@ -93,19 +91,7 @@ const createUsuario = async (req, res) => {
             admin,
             email,
             senha: senhaCriptografada,
-            nome_usuario,
-            nome_completo,
-            sobre,
-            foto_perfil,
-            data_nascimento,
-            tipo_plano
         });
-        
-        //verifica se email ja esta cadastrado
-        const data = await usuarioService.getUsuarioByEmail(email);
-        if (data) {
-            return res.status(409).json({ mensagem: 'Email já existe' });
-        }
 
         const usuarioCriado = await usuarioService.createUsuario(novoUsuario);
 
