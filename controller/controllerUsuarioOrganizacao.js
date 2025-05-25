@@ -1,6 +1,8 @@
 const usuarioOrgService = require('../services/usuarioOrganizacao_service')
 const UsuarioOrg = require('../model/UsuarioOrganizacao')
-const { validateUserOrgInput } = require('../validators/usuarioValidator');
+const { validateUserOrgInput } = require('../validators/usuarioOrgValidator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const getUsuariosOrg = async (req, res) => {
     try {
@@ -58,6 +60,9 @@ const createUsuarioOrg = async (req, res) => {
             razao_social,
             senha
         } = req.body;
+
+        const senhaCriptografada = await bcrypt.hash(senha, 10);
+
         const novoUsuarioOrg = new UsuarioOrg({
             cnpj,
             nome_fantasia,
@@ -65,8 +70,14 @@ const createUsuarioOrg = async (req, res) => {
             email,
             telefone,
             razao_social,
-            senha
+            senha: senhaCriptografada
         });
+
+        //verifica se email ja esta cadastrado
+        const data = await usuarioOrgService.getUsuarioOrgByEmail(email);
+        if (data) {
+            return res.status(409).json({ mensagem: 'Email já existe' });
+        }
         
         const result = await usuarioOrgService.createUsuarioOrg(novoUsuarioOrg);
         res.status(201).json(result);
@@ -124,5 +135,32 @@ const updateUsuarioOrg = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
+const loginUsuarioOrg = async (req, res) => {
+    try {
+        const { email, senha } = req.body;
 
-module.exports = {updateUsuarioOrg, deleteUsuarioOrg, createUsuarioOrg, getUsuarioOrgById, getUsuariosOrg};
+        const data = await usuarioOrgService.getUsuarioOrgByEmail(email)
+
+        if (!data) {
+            return res.status(401).json({ mensagem: 'Email não encontrado' });
+        }
+
+        const senhaConfere = await bcrypt.compare(senha, data.senha);
+
+        if (!senhaConfere) {
+            return res.status(401).json({ mensagem: 'Senha incorreta' });
+        }
+
+        const token = jwt.sign(
+            { id: data.id, email: data.email},
+            process.env.JWT_SECRET,
+            { expiresIn: process.env.JWT_EXPIRES_IN }
+        );
+
+        res.status(200).json({ mensagem: 'Login bem-sucedido', token });
+    } catch (error) {
+        res.status(500).json({ mensagem: 'Erro no login', erro: error.message });
+    }
+};
+
+module.exports = {updateUsuarioOrg, deleteUsuarioOrg, createUsuarioOrg, getUsuarioOrgById, getUsuariosOrg, loginUsuarioOrg};

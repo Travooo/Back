@@ -3,6 +3,8 @@ const Usuario = require('../model/Usuario');
 const { validateUserInput } = require('../validators/usuarioValidator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const getUsuarios = async (req, res) => {
     try {
@@ -50,6 +52,7 @@ const getUsuarioById = async (req, res) => {
         });
 
 
+
         res.status(200).json(usuario);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -73,30 +76,42 @@ const createUsuario = async (req, res) => {
         if (validationErrors.length > 0) {
             return res.status(400).json({ errors: validationErrors });
         }
-
-        const emailExiste = await usuarioService.getUsuarioByEmail(userData.email);
-        if (emailExiste) {
-            return res.status(401).json({ mensagem: 'Email já possui cadastro.' });
-        }
-
-        const senhaCriptografada = await bcrypt.hash(userData.senha, 10);
+        const {
+            admin,
+            email,
+            senha,
+            nome_usuario,
+            nome_completo,
+            sobre,
+            foto_perfil,
+            data_nascimento,
+            tipo_plano,
+        } = req.body;
+        const senhaCriptografada = await bcrypt.hash(senha, 10);
 
         const novoUsuario = new Usuario({
-            ...userData,
+            admin,
+            email,
             senha: senhaCriptografada,
+            nome_usuario,
+            nome_completo,
+            sobre,
+            foto_perfil,
+            data_nascimento,
+            tipo_plano
         });
+        
+        //verifica se email ja esta cadastrado
+        const data = await usuarioService.getUsuarioByEmail(email);
+        if (data) {
+            return res.status(409).json({ mensagem: 'Email já existe' });
+        }
 
-        const usuarioCriado = await usuarioService.createUsuario(novoUsuario);
-
-        const token = jwt.sign({
-                id: usuarioCriado.id, 
-                email: usuarioCriado.email, 
-                admin: usuarioCriado.admin 
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN }
-        );
-        res.status(201).json({ mensagem: 'Registro bem-sucedido', usuarioCriado, token});
+        const result = await usuarioService.createUsuario(novoUsuario);
+        res.status(201).json({
+            mensagem: "Usuário criado com sucesso!",
+            usuario: result,
+        });
     } catch (error) {
         res.status(500).json({ mensagem: 'Erro no registro', erro: error.message });
     }
@@ -174,7 +189,7 @@ const loginUsuario = async (req, res) => {
         }
 
         const senhaConfere = await bcrypt.compare(senha, data.senha);
-        
+
         if (!senhaConfere) {
             return res.status(401).json({ mensagem: 'Senha incorreta' });
         }
@@ -185,7 +200,7 @@ const loginUsuario = async (req, res) => {
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
 
-        res.status(200).json({ mensagem: 'Login bem-sucedido', token});
+        res.status(200).json({ mensagem: 'Login bem-sucedido', token });
     } catch (error) {
         res.status(500).json({ mensagem: 'Erro no login', erro: error.message });
     }
