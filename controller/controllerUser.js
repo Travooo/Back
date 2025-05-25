@@ -107,11 +107,9 @@ const createUsuario = async (req, res) => {
             return res.status(409).json({ mensagem: 'Email já existe' });
         }
 
-        const result = await usuarioService.createUsuario(novoUsuario);
-        res.status(201).json({
-            mensagem: "Usuário criado com sucesso!",
-            usuario: result,
-        });
+        const usuarioCriado = await usuarioService.createUsuario(novoUsuario);
+
+        res.status(201).json({ mensagem: 'Registro bem-sucedido', usuarioCriado });
     } catch (error) {
         res.status(500).json({ mensagem: 'Erro no registro', erro: error.message });
     }
