@@ -152,7 +152,7 @@ const loginUsuarioOrg = async (req, res) => {
         }
 
         const token = jwt.sign(
-            { id: data.id, email: data.email, admin: data.admin },
+            { id: data.id, email: data.email},
             process.env.JWT_SECRET,
             { expiresIn: process.env.JWT_EXPIRES_IN }
         );
