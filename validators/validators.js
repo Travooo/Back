@@ -2,7 +2,16 @@
 
 const supabase = require("../config/db");
 
-function validateNumber(value, atributo, erroCustomizado, options = {}) {
+function validateNumber(value, atributo = null, erroCustomizado = null, options = {}) {
+  // Suporte ao uso simples: validateNumber(value)
+  if (atributo === null && erroCustomizado === null && Object.keys(options).length === 0) {
+    const parsedSimple = parseFloat(value);
+    if (isNaN(parsedSimple)) {
+      throw new Error(`Valor numérico inválido.`);
+    }
+    return parsedSimple;
+  }
+
   if (value === null || value === undefined || value === '') {
     throw new Error(
       erroCustomizado || `Atributo '${atributo}' é obrigatório e não pode ser vazio.`
@@ -18,14 +27,13 @@ function validateNumber(value, atributo, erroCustomizado, options = {}) {
     );
   }
 
-  if (typeof options.minimo === 'number' && parsed < options.minimo) {
-    throw new Error(`Atributo '${atributo}' deve ser no mínimo ${options.minimo}.`);
+  if (typeof options.min === 'number' && parsed < options.min) {
+    throw new Error(`Atributo '${atributo}' deve ser no mínimo ${options.min}.`);
   }
 
-  if (typeof options.maximo === 'number' && parsed > options.maximo) {
-    throw new Error(`Atributo '${atributo}' deve ser no máximo ${options.maximo}.`);
+  if (typeof options.max === 'number' && parsed > options.max) {
+    throw new Error(`Atributo '${atributo}' deve ser no máximo ${options.max}.`);
   }
-
 
   if (typeof options.casasDecimais === 'number') {
     const partes = parsed.toString().split('.');
@@ -86,7 +94,7 @@ function validateString(
   return parsed;
 }
 
-// Implementar verificação do atributo para definir se o formato deve ser data ou data/hora
+// Possibilidade de implementar verificação do atributo para definir se o formato deve ser data ou data/hora
 function validateDate(date, atributo) {
   if (!date || typeof date !== "string") {
     throw new Error(
@@ -140,6 +148,8 @@ function validateOption(value, atributo) {
     status: ["pendente", "pago", "cancelado", "estornado"],
     tipo_anexo: ["pendente", "pago", "cancelado", "estornado"],
     entidade_tipo: ["usuarios", "servicos"],
+    mimetype: ["image/jpeg", "image/png", "image/jpg"],
+    categoria_arquivo: ["galeria", "anexo"]
   };
   if (!(atributo in listas))
     throw new Error(`Atributo '${atributo}' não reconhecido.`);
