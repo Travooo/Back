@@ -13,8 +13,8 @@ class Servico extends ModeloBase {
       tipo: "string",
       required: true,
       atributo: "nome",
-      min: 4,
-      max: 30,
+      min: 1,
+      max: 255,
       formato: regexNome,
       erro: "O nome do serviço pode conter apenas letras, números e underline.",
     },
@@ -23,26 +23,7 @@ class Servico extends ModeloBase {
       required: true,
       atributo: "sobre",
       min: 10,
-      max: 300,
-    },
-    endereco: {
-      tipo: "string",
-      atributo: "endereco",
-      min: 10,
-      max: 150,
-    },
-    horarios: {
-      tipo: "string",
-      required: true,
-      atributo: "horarios",
-      min: 10,
-      max: 100,
-    },
-    foto: {
-      tipo: "foto",
-      atributo: "foto_perfil",
-      tiposPermitidos: ["image/jpeg", "image/png"],
-      tamanhoMaxMB: 3,
+      max: 255,
     },
     tipo: {
       tipo: "string",
@@ -51,29 +32,37 @@ class Servico extends ModeloBase {
       min: 1,
       max: 20,
     },
+    cep: { // 24/05/2025: Definido como CEP, verificar renomeação
+      tipo: "string",
+      required: true,
+      atributo: "endereco",
+      min: 8,
+      max: 8,
+    },
     lat: {
       tipo: "number",
       required: false,
       atributo: "lat",
-      minimo: -90,
-      maximo: 90,
+      min: -90,
+      max: 90,
       casasDecimais: 8,
     },
     lng: {
       tipo: "number",
       required: false,
       atributo: "lng",
-      minimo: -180,
-      maximo: 180,
+      min: -180,
+      max: 180,
       casasDecimais: 8,
     },
-
-    anexo_id: {
-      tipo: "number",
-      required: false,
-      atributo: "usuario_organizacao_id",
+    horarios: {
+      tipo: "string",
+      required: true, 
+      atributo: "horarios",
+      min: 5,
+      max: 255,
     },
-  };
+  };  
   static getSchema() {
     return this.#schema;
   }

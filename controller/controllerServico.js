@@ -1,24 +1,24 @@
-const ServicoService = require("../services/ServicoService");
+const ServicoService = require("../services/servico-service");
 const axios = require("axios")
 
-class ServicoController {
- static async create(req, res) {
+class controllerServico {
+  static async create(req, res) {
     try {
-      const { endereco, ...resto } = req.body;
+      const { cep, numero, ...resto } = req.body;
 
-      if (!endereco) {
-        return res.status(400).json({ error: "Endereço é obrigatório" });
+      if (!cep || !numero) {
+        return res.status(400).json({ error: "CEP e número são obrigatórios" });
       }
 
       //tranformar cep em endereço
-      const cepUrl = `https://viacep.com.br/ws/${endereco}/json/`;
-      const datacep = await axios.get(cepUrl);
+      const cepUrl = `https://viacep.com.br/ws/${cep}/json/`;
+      const endereco = await axios.get(cepUrl);
       if (datacep.status !== 200) {
         return res.status(400).json({ error: "CEP inválido" });
       }
-      const rua = datacep.data.logradouro
-      const bairro = datacep.data.bairro
-      const enderecoFinal =  bairro + "," + rua;
+      const rua = endereco.data.logradouro
+      const bairro = endereco.data.bairro
+      const enderecoFinal = numero ? `${rua}, ${numero} - ${bairro}` : `${rua} - ${bairro}`;
 
       //Transformar endereço em lat, lng com google API
       const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
@@ -32,6 +32,7 @@ class ServicoController {
       const location = data.results[0].geometry.location;
       const dadosFinal = {
         ...resto,
+        cep: cep,
         endereco: enderecoFinal,
         lat: location.lat,
         lng: location.lng,
@@ -67,6 +68,21 @@ class ServicoController {
     }
   }
 
+  static async getByTipo(req, res) {
+    try {
+      const { tipo } = req.params;
+      if (!tipo) {
+        return res.status(400).json({ error: "Parâmetro 'tipo' é obrigatório." });
+      }
+      const data = await ServicoService.getByTipo(tipo);
+      return res.status(200).json(data);
+    } catch (error) {
+      console.error("Erro ao buscar serviços por tipo:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+
   static async update(req, res) {
     try {
       const data = await ServicoService.update(req.params.id, req.body);
@@ -88,4 +104,4 @@ class ServicoController {
   }
 }
 
-module.exports = ServicoController;
+module.exports = controllerServico;

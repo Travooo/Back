@@ -3,7 +3,6 @@ const supabase = require("../config/db");
 const { validateNumber, cleanObject } = require("../validators/validators");
 const UsuarioOrganizacaoService = require("./usuarioOrganizacao_service");
 
-
 class ServicoService {
   static async create(servico) {
     if (!servico || typeof servico !== "object") {
@@ -42,6 +41,16 @@ class ServicoService {
 
   static async getAll() {
     const { data, error } = await supabase.from("servicos").select("*");
+    if (error) throw error;
+    if (!data) throw new Error("Resposta do banco de dados não retornada.");
+    return data;
+  }
+
+  static async getByTipo(tipo) {
+    const { data, error } = await supabase
+      .from("servicos")
+      .select("*")
+      .eq("tipo", tipo);
     if (error) throw error;
     if (!data) throw new Error("Resposta do banco de dados não retornada.");
     return data;
