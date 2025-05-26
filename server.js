@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 
 const rotas = [
-  require('./routes/rota_auth'),
   require('./routes/rota_usuario'),
   require('./routes/rota_usuario_organizacao'),
   require('./routes/rota_conexao'),
@@ -11,12 +10,12 @@ const rotas = [
   require('./routes/rota_favorito'),
   require('./routes/rota_evento'),
   require('./routes/rota_notificacao'),
-  require('./routes/pagamentoRouter'),
-  require('./routes/servicoRouter'),
-  require('./routes/localVisitadoRouter'),
-  require('./routes/avaliacaoRouter'),
+  require('./routes/rota_servico'),
   require('./routes/anexoRouter'),
   require('./routes/agendamentoRouter'),
+  require('./routes/avaliacaoRouter'),
+  require('./routes/pagamentoRouter'),
+  require('./routes/localVisitadoRouter'),
 ];
 
 const port = process.env.PORT;
