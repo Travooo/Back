@@ -1,6 +1,6 @@
 const Avaliacao = require("../model/Avaliacao");
 const UsuarioService = require("./usuario_service");
-const ServicoService = require("./ServicoService");
+const ServicoService = require("./servico-service");
 const supabase = require("../config/db");
 const { validateNumber, cleanObject } = require("../validators/validators");
 
