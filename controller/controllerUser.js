@@ -58,11 +58,11 @@ const getUsuarioById = async (req, res) => {
 };
 
 const createUsuario = async (req, res) => {
-    try {    
-        if (req.body.data_nascimento?.includes('/')) {
+    try {
+        if (typeof req.body.data_nascimento === 'string' && req.body.data_nascimento.includes('/')) {
             const [dia, mes, ano] = req.body.data_nascimento.split('/');
             req.body.data_nascimento = `${ano}-${mes}-${dia}`;
-        }   
+        }
 
         const userData = {
             ...req.body,
@@ -74,23 +74,26 @@ const createUsuario = async (req, res) => {
         if (validationErrors.length > 0) {
             return res.status(400).json({ errors: validationErrors });
         }
-        const {
-            admin,
-            email,
-            senha,
-            nome_usuario,
-            nome_completo,
-            sobre,
-            foto_perfil,
-            data_nascimento,
-            tipo_plano,
-        } = req.body;
+
+        const { admin, email, senha, nome_usuario, nome_completo, sobre, foto_perfil, data_nascimento, tipo_plano } = userData;
+
+        const emailExiste = await usuarioService.getUsuarioByEmail(email);
+        if (emailExiste) {
+            return res.status(400).json({ mensagem: 'E-mail já está em uso.' });
+        }
+
         const senhaCriptografada = await bcrypt.hash(senha, 10);
 
         const novoUsuario = new Usuario({
             admin,
             email,
             senha: senhaCriptografada,
+            nome_usuario,
+            nome_completo,
+            sobre,
+            foto_perfil,
+            data_nascimento,
+            tipo_plano,
         });
 
         const usuarioCriado = await usuarioService.createUsuario(novoUsuario);
@@ -100,6 +103,7 @@ const createUsuario = async (req, res) => {
         res.status(500).json({ mensagem: 'Erro no registro', erro: error.message });
     }
 };
+
 
 const deleteUsuario = async (req, res) => {
     try {
