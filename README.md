@@ -25,16 +25,16 @@ npm init -y
 ### 3. Instale as dependências:
 
 ```bash
-npm install express dotenv bcrypt jsonwebtoken cors superagent @supabase/supabase-js zod multer
+npm install @supabase/supabase-js axios bcrypt cors dotenv express jsonwebtoken multer superagent zod
 ```
 
 ### 4. Crie o arquivo `.env` com suas variáveis de ambiente
 
 ```bash
 PORT=3000
-SUPABASE_URL=https://xxxx.supabase.co
-SUPABASE_KEY=your_supabase_key
-JWT_SECRET=uma_senha_segura_e_complexa
+URL=https://xxxx.supabase.co
+APIKEY=your_supabase_key
+JWT_SECRET=uma_senha_segura
 JWT_EXPIRES_IN=2h
 ```
 
