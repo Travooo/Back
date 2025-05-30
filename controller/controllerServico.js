@@ -5,7 +5,6 @@ class controllerServico {
   static async create(req, res) {
     try {
       const { cep, numero, ...resto } = req.body;
-       console.log(cep)
       if (!cep || !numero) {
         return res.status(400).json({ error: "CEP e número são obrigatórios" });
       }

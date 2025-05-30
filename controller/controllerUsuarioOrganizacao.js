@@ -140,8 +140,6 @@ const loginUsuarioOrg = async (req, res) => {
         const { email, senha } = req.body;
 
         const data = await usuarioOrgService.getUsuarioOrgByEmail(email)
-        console.log(data)
-        console.log(email)
         if (!data) {
             return res.status(401).json({ mensagem: 'Email não encontrado' });
         }
