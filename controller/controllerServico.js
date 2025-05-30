@@ -5,15 +5,14 @@ class controllerServico {
   static async create(req, res) {
     try {
       const { cep, numero, ...resto } = req.body;
-
+       console.log(cep)
       if (!cep || !numero) {
         return res.status(400).json({ error: "CEP e número são obrigatórios" });
       }
-
       //tranformar cep em endereço
       const cepUrl = `https://viacep.com.br/ws/${cep}/json/`;
       const endereco = await axios.get(cepUrl);
-      if (datacep.status !== 200) {
+      if (endereco.status !== 200) {
         return res.status(400).json({ error: "CEP inválido" });
       }
       const rua = endereco.data.logradouro
@@ -25,7 +24,6 @@ class controllerServico {
       const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(enderecoFinal)}&key=${GOOGLE_API_KEY}`;
       const response = await axios.get(geocodeUrl);
       const data = response.data;
-      console.log(data)
       if (data.status !== 'OK' || data.results.length === 0) {
         return res.status(400).json({ error: "Endereço inválido ou não encontrado" });
       }

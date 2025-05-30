@@ -43,7 +43,6 @@ class UsuarioService {
             .eq('email', email)
             .single();
         if (error || !data) return null;
-        console.log(data)
         return data;
     }
 }
