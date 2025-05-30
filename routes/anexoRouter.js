@@ -2,6 +2,7 @@ const express = require("express");
 const upload = require('../middlewares/upload');
 const AnexoController = require("../controller/AnexoController");
 const anexoRouter = express.Router();
+const verificaToken = require('../middlewares/verificaToken');
 
 anexoRouter.post("/anexo", upload.single('arquivo'), AnexoController.upload);
 anexoRouter.get("/anexo/:id", AnexoController.getById);
