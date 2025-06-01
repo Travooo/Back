@@ -1,20 +1,19 @@
 const ModeloBase = require("./ModeloBase");
 
+
 class Anexo extends ModeloBase {
   static #schema = {
-    // #: Privado
     entidade_id: {
       tipo: "number",
       required: true,
       atributo: "entidade_id",
-      erro: "'entidade_id' deve ser um número válido.",
     },
     entidade_tipo: {
-      tipo: "option",
+      tipo: "string",
       required: true,
       atributo: "entidade_tipo",
       min: 1,
-      max: 63,
+      max: 255,
     },
     nome_arquivo: {
       tipo: "string",
@@ -28,16 +27,26 @@ class Anexo extends ModeloBase {
       required: true,
       atributo: "path",
       min: 1,
-      max: 500,
+      max: 255,
+    },
+    mimetype: {
+      tipo: "option",
+      required: true,
+      atributo: "mimetype",
+    },
+    tamanho: {
+      tipo: "number",
+      required: true,
+      atributo: "tamanho",
     },
     url_publica: {
       tipo: "string",
-      required: true,
       atributo: "url_publica",
       min: 1,
-      max: 500,
+      max: 255,
     },
   };
+
   static getSchema() {
     return this.#schema;
   }

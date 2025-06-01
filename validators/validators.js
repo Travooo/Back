@@ -144,6 +144,7 @@ function validateOption(value, atributo) {
     metodo_pagamento: ["credito", "debito", "pix", "boleto"],
     status: ["pendente", "pago", "cancelado", "estornado"],
     mimetype: ["image/jpeg", "image/png", "image/jpg"],
+    entidade_tipo: ["servicos", "usuarios", "organizacoes"],
     tipo: ["restaurant", "shopping", "park", "store"],
   };
   if (!(atributo in listas))
