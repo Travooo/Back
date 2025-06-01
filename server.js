@@ -11,7 +11,6 @@ const rotas = [
   require('./routes/rota_evento'),
   require('./routes/rota_notificacao'),
   require('./routes/rota_servico'),
-  require('./routes/anexoRouter'),
   require('./routes/agendamentoRouter'),
   require('./routes/avaliacaoRouter'),
   require('./routes/pagamentoRouter'),

@@ -1,9 +1,6 @@
-// Last modifications: included "entidade_tipo: ["usuarios", "servicos"]" in validateOption;
-
 const supabase = require("../config/db");
 
 function validateNumber(value, atributo = null, erroCustomizado = null, options = {}) {
-  // Suporte ao uso simples: validateNumber(value)
   if (atributo === null && erroCustomizado === null && Object.keys(options).length === 0) {
     const parsedSimple = parseFloat(value);
     if (isNaN(parsedSimple)) {
@@ -146,10 +143,8 @@ function validateOption(value, atributo) {
     tipo_plano: [1, 2, 3],
     metodo_pagamento: ["credito", "debito", "pix", "boleto"],
     status: ["pendente", "pago", "cancelado", "estornado"],
-    tipo_anexo: ["pendente", "pago", "cancelado", "estornado"],
-    entidade_tipo: ["usuarios", "servicos"],
     mimetype: ["image/jpeg", "image/png", "image/jpg"],
-    categoria_arquivo: ["galeria", "anexo"]
+    tipo: ["restaurant", "shopping", "park", "store"],
   };
   if (!(atributo in listas))
     throw new Error(`Atributo '${atributo}' não reconhecido.`);

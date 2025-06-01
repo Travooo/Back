@@ -32,7 +32,7 @@ class Servico extends ModeloBase {
       min: 1,
       max: 20,
     },
-    cep: { // 24/05/2025: Definido como CEP, verificar renomeação
+    cep: {
       tipo: "string",
       required: true,
       atributo: "endereco",

@@ -1,6 +1,6 @@
 const Agendamento = require("../model/Agendamento");
 const UsuarioService = require("./usuario_service");
-const ServicoService = require("./servico-service");
+const ServicoService = require("./servico_service");
 const supabase = require("../config/db");
 const { validateNumber, cleanObject } = require("../validators/validators");
 
