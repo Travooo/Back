@@ -52,26 +52,22 @@ const createUsuarioOrg = async (req, res) => {
         }
 
         const {
-            cnpj,
             nome_fantasia,
             created_at,
             email,
             telefone,
-            razao_social,
             senha
-        } = req.body;
+          } = req.body;
 
         const senhaCriptografada = await bcrypt.hash(senha, 10);
 
         const novoUsuarioOrg = new UsuarioOrg({
-            cnpj,
             nome_fantasia,
             created_at,
             email,
             telefone,
-            razao_social,
             senha: senhaCriptografada
-        });
+          });
 
         //verifica se email ja esta cadastrado
         const data = await usuarioOrgService.getUsuarioOrgByEmail(email);
