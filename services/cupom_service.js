@@ -6,9 +6,9 @@ class CupomService {
         if (data.created_at === undefined || data.created_at === null) {
             delete data.created_at;
         }
-        const { error, data: result } = await supabase.from('cupons').insert([data]);
+        const { error, data: result } = await supabase.from('cupons').insert([data]).select();
         if (error) throw error;
-        return result;
+        return result[0];
     }
 
     static async getCupomById(id) {
@@ -34,5 +34,25 @@ class CupomService {
         if (error) throw error;
         return { message: 'Cupom removido com sucesso' };
     }
+    static async getCuponsByOrganizacao(organizacaoId) {
+        const { data: estabelecimentos, error: estError } = await supabase
+            .from('servicos')
+            .select('id')
+            .eq('usuario_organizacao_id', organizacaoId);
+        if (estError) throw estError;
+        if (!estabelecimentos || estabelecimentos.length === 0) return [];
+
+        const ids = estabelecimentos.map(e => e.id);
+
+        const { data, error } = await supabase
+            .from('cupons')
+            .select('*')
+            .in('estabelecimento_id', ids);
+
+        if (error) throw error;
+        return data ?? [];
+    }
+
+
 }
 module.exports = CupomService;
