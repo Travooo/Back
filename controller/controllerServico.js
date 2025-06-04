@@ -8,28 +8,14 @@ const { cleanObject } = require('../validators/validators.js')
 class controllerServico {
   static async create(req, res) {
     try {
-      const { cep, numero, usuario_organizacao_id, ...resto } = req.body;
-      if (!cep || !numero || !usuario_organizacao_id) return res.status(400).json({ error: 'Parâmetros obrigatórios ausentes.' });
+      const { usuario_organizacao_id } = req.body;
+      if (!usuario_organizacao_id) return res.status(400).json({ error: 'Parâmetros obrigatórios ausentes.' });
 
       const organizacaoValida = await OrganizacaoService.getUsuarioOrgById(Number(usuario_organizacao_id));
       if (!organizacaoValida) return res.status(404).json({ error: `Organização #${usuario_organizacao_id} não encontrada.` });
 
-      // 1. Buscar endereço pelo CEP
-      const { data: dataCep } = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-      if (!dataCep || dataCep.status !== 200 || dataCep.erro) return res.status(400).json({ error: 'CEP inválido' });
-      const endereco = `${dataCep.logradouro}, ${numero} - ${dataCep.bairro}`;
-
-      // 2. Buscar coordenadas no Google Maps
-      const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-      const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(endereco)}&key=${GOOGLE_API_KEY}`;
-      const geoResponse = await axios.get(geocodeUrl);
-
-      const data = geoResponse.data;
-      if (data.status !== 'OK' || data.results.length === 0) return res.status(400).json({ error: 'Endereço inválido ou não localizado no mapa' });
-      const location = data.results[0].geometry.location;
-
-      // 3. Montar dados finais
-      const validated = Servico.validateBySchema({ ...resto, cep, endereco: endereco, lat: location.lat, lng: location.lng });
+      // Montar dados finais:
+      const validated = Servico.validateBySchema(req.body);
       const servico = await ServicoService.create(validated);
       return res.status(201).json(servico);
     } catch (error) {

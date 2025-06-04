@@ -23,7 +23,14 @@ class Servico extends ModeloBase {
       required: true,
       atributo: "sobre",
       min: 10,
-      max: 255,
+      max: 475,
+    },
+    endereco: {
+      tipo: "string",
+      required: true,
+      atributo: "endereco",
+      min: 3,
+      max: 65,
     },
     tipo: {
       tipo: "string",
@@ -35,7 +42,7 @@ class Servico extends ModeloBase {
     cep: {
       tipo: "string",
       required: true,
-      atributo: "endereco",
+      atributo: "cep",
       min: 8,
       max: 8,
     },
