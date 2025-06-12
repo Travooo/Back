@@ -59,6 +59,7 @@ class controllerServico {
   } 
 
   static async getAllByOrg(req, res) {
+    let organizacao_id;
     try {
       const { organizacao_id } = req.params;
       if (!organizacao_id) return res.status(400).json({ error: 'Parâmetro obrigatório não recebido: organizacao_id.' });
