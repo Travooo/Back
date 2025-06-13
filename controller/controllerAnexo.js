@@ -27,7 +27,7 @@ class controllerAnexo {
       if (!entidadeValida) return res.status(404).json({ error: `Entidade ${entidade_tipo} não encontrada.` });
 
       const ext = path.extname(file.originalname);
-      const nome_arquivo = path.basename(file.originalname, ext);
+      const nome_arquivo = `${Date.now()}${ext}`;
       const caminho = `${entidade_tipo}/${folder}/${nome_arquivo}`;
       
       const anexo = Anexo.validateBySchema({ entidade_id: Number(entidade_id), entidade_tipo, nome_arquivo, path: caminho, mimetype: file.mimetype, tamanho: file.size })

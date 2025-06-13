@@ -143,7 +143,7 @@ function validateOption(value, atributo) {
     tipo_plano: [1, 2, 3],
     metodo_pagamento: ["credito", "debito", "pix", "boleto"],
     status: ["pendente", "pago", "cancelado", "estornado"],
-    mimetype: ["image/jpeg", "image/png", "image/jpg"],
+    mimetype: ["image/jpeg", "image/png", "image/jpg", "application/pdf"],
     entidade_tipo: ["servicos", "usuarios", "organizacoes"],
     tipo: ["restaurant", "shopping", "park", "store"],
   };

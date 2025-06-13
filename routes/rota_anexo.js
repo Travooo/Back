@@ -5,7 +5,7 @@ const verificaToken = require('../middlewares/verificaToken');
 const rota_anexo = express.Router();
 
 // Upload de anexo
-rota_anexo.post('/anexos', verificaToken, upload.single('arquivo'), controllerAnexo.upload);
+rota_anexo.post('/anexos', verificaToken, upload.single('file'), controllerAnexo.upload);
 
 // Obter anexo por ID
 rota_anexo.get('/anexos/:anexo_id', verificaToken, controllerAnexo.getById);
@@ -17,7 +17,7 @@ rota_anexo.get('/anexos/galeria/:entidade_tipo/:entidade_id', verificaToken, con
 rota_anexo.get('/anexos/perfil/:entidade_tipo/:entidade_id', verificaToken, controllerAnexo.getProfilePic);
 
 // Definir nova foto de perfil ao local
-rota_anexo.post('/anexos/perfil/:entidade_tipo/:entidade_id', verificaToken, upload.single('arquivo'), controllerAnexo.setProfilePic);
+rota_anexo.post('/anexos/perfil/:entidade_tipo/:entidade_id', verificaToken, upload.single('file'), controllerAnexo.setProfilePic);
 
 // Remover anexo por ID
 rota_anexo.delete('/anexos/:anexo_id', verificaToken, controllerAnexo.deleteById);
