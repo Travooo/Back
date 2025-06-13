@@ -1,4 +1,5 @@
 const ModeloBase = require("./ModeloBase");
+
 class Avaliacao extends ModeloBase {
   static #schema = {
     servico_id: {
@@ -8,8 +9,13 @@ class Avaliacao extends ModeloBase {
     },
     usuario_id: {
       tipo: "number",
-      required: true,
+      required: false, // ← agora opcional
       atributo: "usuario_id",
+    },
+    organizacao_id: {
+      tipo: "number",
+      required: true, // ← agora obrigatório
+      atributo: "organizacao_id",
     },
     comentario: {
       tipo: "string",
@@ -29,8 +35,10 @@ class Avaliacao extends ModeloBase {
       atributo: "data_comentario",
     },
   };
+
   static getSchema() {
     return this.#schema;
   }
 }
+
 module.exports = Avaliacao;

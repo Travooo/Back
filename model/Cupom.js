@@ -4,6 +4,7 @@ class Cupom {
             this.id = id;
           }
         this.estabelecimento_id = estabelecimento_id;
+        this.organizacao_id = organizacao_id;  
         this.descricao = descricao;
         this.created_at = created_at;
         this.expiration = expiration;

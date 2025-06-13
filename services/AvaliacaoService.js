@@ -40,7 +40,9 @@ class AvaliacaoService {
   }
 
   static async getAll() {
-    const { data, error } = await supabase.from("avaliacoes").select("*");
+    const { data, error } = await supabase
+    .from("avaliacoes").select(`*,servico_id( nome )`);
+  
     if (error) throw error;
     if (!data) throw new Error("Resposta do banco de dados não retornada.");
     return data;

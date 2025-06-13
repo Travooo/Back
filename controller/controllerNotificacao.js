@@ -10,6 +10,7 @@ const getNotificacoes = async (req, res) => {
             titulo: u.titulo,
             descricao: u.descricao,
             usuario_id: u.usuario_id,
+            organizacao_id: u.organizacao_id,
             created_at: u.created_at
         }))
         res.status(200).json(notificacao);
@@ -27,6 +28,7 @@ const getNotificacaoById = async (req, res) => {
             id: data.id,
             titulo: data.titulo,
             descricao: data.descricao,
+            organizacao_id: data.organizacao_id,
             usuario_id: data.usuario_id,
             created_at: data.created_at
         })
