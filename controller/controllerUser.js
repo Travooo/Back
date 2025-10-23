@@ -18,6 +18,7 @@ const getUsuarios = async (req, res) => {
             foto_perfil: u.foto_perfil,
             data_nascimento: u.data_nascimento,
             tipo_plano: u.tipo_plano,
+            telefone: u.telefone,
             created_at: u.created_at
         }));
         res.status(200).json(usuarios);
@@ -46,6 +47,7 @@ const getUsuarioById = async (req, res) => {
             foto_perfil: data.foto_perfil,
             data_nascimento: data.data_nascimento,
             tipo_plano: data.tipo_plano,
+            telefone: data.telefone,
             created_at: data.created_at
         });
 
@@ -75,7 +77,7 @@ const createUsuario = async (req, res) => {
             return res.status(400).json({ errors: validationErrors });
         }
 
-        const { admin, email, senha, nome_usuario, nome_completo, sobre, foto_perfil, data_nascimento, tipo_plano } = userData;
+        const { admin, email, senha, nome_usuario, nome_completo, sobre, foto_perfil, data_nascimento, tipo_plano, telefone } = userData;
 
         const emailExiste = await usuarioService.getUsuarioByEmail(email);
         if (emailExiste) {
@@ -94,6 +96,7 @@ const createUsuario = async (req, res) => {
             foto_perfil,
             data_nascimento,
             tipo_plano,
+            telefone,
         });
 
         const usuarioCriado = await usuarioService.createUsuario(novoUsuario);
@@ -137,7 +140,8 @@ const updateUsuario = async (req, res) => {
             sobre,
             foto_perfil,
             data_nascimento,
-            tipo_plano
+            tipo_plano,
+            telefone
         } = req.body;
 
         const usuarioAtualizado = new Usuario({
@@ -150,7 +154,8 @@ const updateUsuario = async (req, res) => {
             sobre,
             foto_perfil,
             data_nascimento,
-            tipo_plano
+            tipo_plano,
+            telefone
         });
 
 
@@ -194,6 +199,62 @@ const loginUsuario = async (req, res) => {
     }
 };
 
+const changePassword = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { senhaAtual, novaSenha } = req.body;
+
+        // Validações básicas
+        if (!senhaAtual || !novaSenha) {
+            return res.status(400).json({ mensagem: 'Senha atual e nova senha são obrigatórias' });
+        }
+
+        if (novaSenha.length < 6) {
+            return res.status(400).json({ mensagem: 'Nova senha deve ter pelo menos 6 caracteres' });
+        }
+
+        // Buscar usuário
+        const data = await usuarioService.getUsuarioById(id);
+        if (!data) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
+
+        // Verificar senha atual
+        const senhaAtualConfere = await bcrypt.compare(senhaAtual, data.senha);
+        if (!senhaAtualConfere) {
+            return res.status(401).json({ mensagem: 'Senha atual incorreta' });
+        }
+
+        // Criptografar nova senha
+        const novaSenhaCriptografada = await bcrypt.hash(novaSenha, 10);
+
+        // Atualizar senha
+        const usuarioAtualizado = new Usuario({
+            id,
+            admin: data.admin,
+            email: data.email,
+            senha: novaSenhaCriptografada,
+            nome_usuario: data.nome_usuario,
+            nome_completo: data.nome_completo,
+            sobre: data.sobre,
+            foto_perfil: data.foto_perfil,
+            data_nascimento: data.data_nascimento,
+            tipo_plano: data.tipo_plano,
+            telefone: data.telefone
+        });
+
+        const result = await usuarioService.updateUsuario(id, usuarioAtualizado);
+
+        if (!result) {
+            return res.status(404).json({ mensagem: 'Usuário não encontrado' });
+        }
+
+        res.status(200).json({ mensagem: 'Senha alterada com sucesso' });
+    } catch (error) {
+        res.status(500).json({ mensagem: 'Erro ao alterar senha', erro: error.message });
+    }
+};
+
 
 
 module.exports = {
@@ -203,4 +264,5 @@ module.exports = {
     deleteUsuario,
     updateUsuario,
     loginUsuario,
+    changePassword,
 };

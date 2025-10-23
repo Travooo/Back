@@ -10,6 +10,7 @@ class Usuario {
     foto_perfil,
     data_nascimento,
     tipo_plano,
+    telefone,
     created_at
   }) {
     if (id !== undefined) {
@@ -24,6 +25,7 @@ class Usuario {
     this.foto_perfil = foto_perfil;
     this.data_nascimento = data_nascimento;
     this.tipo_plano = tipo_plano;
+    this.telefone = telefone;
     this.created_at = created_at;
   }
 }

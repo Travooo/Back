@@ -22,6 +22,10 @@ const userSchema = z.object({
 
   sobre: z.string().max(1000, "O campo 'sobre' deve ter no máximo 1000 caracteres.").optional(),
 
+  telefone: z.string({
+    invalid_type_error: "Telefone deve ser uma string.",
+  }).optional(),
+
   data_nascimento: z.string({
     invalid_type_error: "A data deve ser tipo DATE"
   }).refine((val) => {
