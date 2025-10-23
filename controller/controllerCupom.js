@@ -4,6 +4,25 @@ const { validateCupom } = require('../validators/cupomValidator');
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = process.env.JWT_SECRET;
 
+const getAllCupons = async (req, res) => {
+    try {
+        const data = await cupomService.getAllCupons();
+
+        const cupons = data.map(u => new Cupom({
+            id: u.id,
+            estabelecimento_id: u.estabelecimento_id,
+            descricao: u.descricao,
+            expiration: u.expiration,
+            created_at: u.created_at,
+            nome: u.nome
+        }));
+
+        res.status(200).json(cupons);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 const getCupons = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
@@ -113,4 +132,4 @@ const updateCupom = async (req, res) => {
     }
 }
 
-module.exports = { getCupons, getCupomById, createCupom, deleteCupom, updateCupom };
+module.exports = { getAllCupons, getCupons, getCupomById, createCupom, deleteCupom, updateCupom };
