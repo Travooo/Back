@@ -1,20 +1,40 @@
 const cupomService = require('../services/cupom_service');
+const CupomCliente = require('../model/CupomCliente');
 const Cupom = require('../model/Cupom');
 const { validateCupom } = require('../validators/cupomValidator');
 const jwt = require("jsonwebtoken");
 const SECRET_KEY = process.env.JWT_SECRET;
 
-const getAllCupons = async (req, res) => {
+const getCuponsAll = async (req, res) => {//esse é um endpoint para pegar todos os cupons da tabela cupons
     try {
         const data = await cupomService.getAllCupons();
 
         const cupons = data.map(u => new Cupom({
             id: u.id,
             estabelecimento_id: u.estabelecimento_id,
+            organizacao_id: u.organizacao_id,
             descricao: u.descricao,
             expiration: u.expiration,
             created_at: u.created_at,
             nome: u.nome
+        }));
+
+        res.status(200).json(cupons);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+const getAllCupons = async (req, res) => { //esse é um endpoint para pegar todos os cupons da tabela cupom_cliente
+    try {
+        const data = await cupomService.getAllCuponsClient();
+
+        const cupons = data.map(u => new CupomCliente({
+            id: u.id,
+            resgatado: u.resgatado,
+            cupom_id: u.cupom_id,
+            usuario_id: u.usuario_id,
+            status_ativo: u.status_ativo
         }));
 
         res.status(200).json(cupons);
@@ -132,4 +152,4 @@ const updateCupom = async (req, res) => {
     }
 }
 
-module.exports = { getAllCupons, getCupons, getCupomById, createCupom, deleteCupom, updateCupom };
+module.exports = { getAllCupons, getCupons, getCupomById, createCupom, deleteCupom, updateCupom, getCuponsAll };

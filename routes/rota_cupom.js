@@ -3,7 +3,8 @@ const router = express.Router();
 const controllerCupom = require('../controller/controllerCupom');
 const verificaToken = require('../middlewares/verificaToken');
 
-router.get('/cuponsall', verificaToken, controllerCupom.getAllCupons);
+router.get('/cuponsclientall', verificaToken, controllerCupom.getAllCupons);
+router.get('/cuponsall', verificaToken, controllerCupom.getCuponsAll);
 router.get('/cupons', verificaToken, controllerCupom.getCupons);
 router.get('/cupons/:id', verificaToken, controllerCupom.getCupomById);
 router.post('/cupons', verificaToken, controllerCupom.createCupom);

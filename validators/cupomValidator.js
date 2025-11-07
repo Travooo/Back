@@ -27,4 +27,25 @@ function validateCupom(data) {
     }
 }
 
-module.exports = { validateCupom };
+const cupomClienteSchema = z.object({
+    cliente_id: z.number({ required_error: "cliente_id é obrigatório" }),
+    cupom_id: z.number({ required_error: "cupom_id é obrigatório" }),
+    usado: z.boolean().optional(),
+    data_resgate: z.string().optional().refine((val) => {
+        if (!val) return true;
+        const d = new Date(val);
+        const agora = new Date();
+        return !isNaN(d) && d <= agora; // resgate não pode ser uma data no futuro
+    }, { message: "data_resgate deve ser uma data válida (não no futuro)." })
+});
+
+function validateCupomCliente(data) {
+    try {
+        cupomClienteSchema.parse(data);
+        return [];
+    } catch (err) {
+        return err.errors.map(e => e.message);
+    }
+}
+
+module.exports = { validateCupom, validateCupomCliente };

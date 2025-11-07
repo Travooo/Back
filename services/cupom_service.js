@@ -1,4 +1,3 @@
-const Cupom = require('../model/Cupom');
 const supabase = require('../config/db');
 
 class CupomService {
@@ -13,6 +12,12 @@ class CupomService {
 
     static async getCupomById(id) {
         const { error, data } = await supabase.from('cupons').select("*").eq('id', id).single();
+        if (error) throw error;
+        return data;
+    }
+
+    static async getAllCuponsClient() {
+        const { error, data } = await supabase.from('cupom_cliente').select('*');
         if (error) throw error;
         return data;
     }
