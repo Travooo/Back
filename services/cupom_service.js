@@ -1,6 +1,10 @@
 const supabase = require('../config/db');
+function gerarCodigoCupom() {
+  return Math.random().toString(36).substring(2, 10).toUpperCase();
+}
 
 class CupomService {
+    
     static async createCupom(data) {
         if (data.created_at === undefined || data.created_at === null) {
             delete data.created_at;
@@ -57,6 +61,120 @@ class CupomService {
         if (error) throw error;
         return data ?? [];
     }
+    static async claimCupomForUser(cupomId, usuarioId) {
+    const { data: cupom, error: cupomError } = await supabase
+        .from('cupons')
+        .select('*')
+        .eq('id', cupomId)
+        .single();
+
+    if (cupomError || !cupom) {
+        throw new Error('Cupom não encontrado.');
+    }
+
+    if (cupom.expiration) {
+        const exp = new Date(cupom.expiration);
+        if (!isNaN(exp) && exp < new Date()) {
+            throw new Error('Cupom expirado.');
+        }
+    }
+
+    const { data: existentes, error: buscaError } = await supabase
+        .from('cupom_cliente')
+        .select('*')
+        .eq('cupom_id', cupomId)
+        .eq('usuario_id', usuarioId)
+        .eq('status_ativo', true)
+        .limit(1);
+
+    if (buscaError) throw buscaError;
+
+    if (existentes && existentes.length > 0) {
+        return existentes[0];
+    }
+
+    const codigo = gerarCodigoCupom();
+
+    const { data, error } = await supabase
+        .from('cupom_cliente')
+        .insert({
+            cupom_id: cupomId,
+            usuario_id: usuarioId,
+            codigo: codigo,
+            status_ativo: true,
+            resgatado_em: null
+        })
+        .select()
+        .single();
+
+    if (error) throw error;
+
+    return data;
+}
+static async validarCupomPorCodigo(codigo, organizacaoId) {
+    const { data: registros, error: buscaError } = await supabase
+        .from('cupom_cliente')
+        .select('*')
+        .eq('codigo', codigo)
+        .eq('status_ativo', true)
+        .limit(1);
+
+    if (buscaError) throw buscaError;
+
+    const cupomCliente = registros && registros[0];
+    if (!cupomCliente) {
+        throw new Error('Cupom inválido ou já utilizado.');
+    }
+
+    const { data: cupom, error: cupomError } = await supabase
+        .from('cupons')
+        .select('*')
+        .eq('id', cupomCliente.cupom_id)
+        .single();
+
+    if (cupomError || !cupom) {
+        throw new Error('Cupom não encontrado.');
+    }
+
+    const { data: servico, error: servError } = await supabase
+        .from('servicos')
+        .select('usuario_organizacao_id')
+        .eq('id', cupom.estabelecimento_id)
+        .single();
+
+    if (servError || !servico) {
+        throw new Error('Estabelecimento não encontrado para este cupom.');
+    }
+
+    if (servico.usuario_organizacao_id !== organizacaoId) {
+        throw new Error('Este cupom não pertence a este estabelecimento.');
+    }
+
+    if (cupom.expiration) {
+        const exp = new Date(cupom.expiration);
+        if (!isNaN(exp) && exp < new Date()) {
+            throw new Error('Cupom expirado.');
+        }
+    }
+
+    const { data: atualizado, error: updateError } = await supabase
+        .from('cupom_cliente')
+        .update({
+            status_ativo: false,
+            resgatado_em: new Date().toISOString()
+        })
+        .eq('id', cupomCliente.id)
+        .select()
+        .single();
+
+    if (updateError) throw updateError;
+
+    return {
+        cupom,
+        cupomCliente: atualizado
+    };
+}
+
 
 
 }

@@ -31,10 +31,11 @@ const getAllCupons = async (req, res) => { //esse é um endpoint para pegar todo
 
         const cupons = data.map(u => new CupomCliente({
             id: u.id,
-            resgatado: u.resgatado,
+            resgatado_em: u.resgatado_em,
             cupom_id: u.cupom_id,
             usuario_id: u.usuario_id,
-            status_ativo: u.status_ativo
+            status_ativo: u.status_ativo,
+            codigo: u.codigo
         }));
 
         res.status(200).json(cupons);
@@ -151,5 +152,82 @@ const updateCupom = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
+const claimCupom = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ message: "Token não fornecido." });
+        }
 
-module.exports = { getAllCupons, getCupons, getCupomById, createCupom, deleteCupom, updateCupom, getCuponsAll };
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, SECRET_KEY);
+
+        const usuarioId = decoded.id;
+        const { id } = req.params;
+
+        const data = await cupomService.claimCupomForUser(id, usuarioId);
+
+        const cupomCliente = new CupomCliente({
+            id: data.id,
+            resgatado_em: data.resgatado_em,
+            cupom_id: data.cupom_id,
+            usuario_id: data.usuario_id,
+            status_ativo: data.status_ativo,
+            codigo: data.codigo
+        });
+
+        return res.status(201).json(cupomCliente);
+    } catch (error) {
+        return res.status(400).json({ error: error.message });
+    }
+};
+
+const validarCupom = async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ message: "Token não fornecido." });
+        }
+
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, SECRET_KEY);
+
+        const organizacaoId = decoded.id;
+        const { codigo } = req.body;
+
+        if (!codigo) {
+            return res.status(400).json({ message: "Código do cupom é obrigatório." });
+        }
+
+        const { cupom, cupomCliente } = await cupomService.validarCupomPorCodigo(
+            codigo,
+            organizacaoId
+        );
+
+        return res.status(200).json({
+            valido: true,
+            mensagem: 'Cupom aplicado com sucesso',
+            cupom: {
+                id: cupom.id,
+                estabelecimento_id: cupom.estabelecimento_id,
+                descricao: cupom.descricao,
+                nome: cupom.nome,
+                expiration: cupom.expiration
+            },
+            uso: {
+                id: cupomCliente.id,
+                resgatado_em: cupomCliente.resgatado_em,
+                status_ativo: cupomCliente.status_ativo,
+                codigo: cupomCliente.codigo
+            }
+        });
+    } catch (error) {
+        return res.status(400).json({
+            valido: false,
+            mensagem: error.message
+        });
+    }
+};
+
+
+module.exports = { getAllCupons, getCupons, getCupomById, createCupom, deleteCupom, updateCupom, getCuponsAll, claimCupom, validarCupom };
