@@ -107,7 +107,7 @@ class CupomService {
             usuario_id: usuarioId,
             codigo: codigo,
             status_ativo: true,
-            resgatado: null
+            resgatado_em: null
         })
         .select()
         .single();
