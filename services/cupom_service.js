@@ -61,7 +61,7 @@ class CupomService {
         if (error) throw error;
         return data ?? [];
     }
-    static async claimCupomForUser(cupomId, usuarioId) {
+  static async claimCupomForUser(cupomId, usuarioId) {
     const { data: cupom, error: cupomError } = await supabase
         .from('cupons')
         .select('*')
@@ -84,13 +84,18 @@ class CupomService {
         .select('*')
         .eq('cupom_id', cupomId)
         .eq('usuario_id', usuarioId)
-        .eq('status_ativo', true)
         .limit(1);
 
     if (buscaError) throw buscaError;
 
-    if (existentes && existentes.length > 0) {
-        return existentes[0];
+    const existente = existentes && existentes[0];
+
+    if (existente) {
+        if (existente.status_ativo) {
+            return existente;
+        } else {
+            throw new Error('Você já utilizou este cupom e não pode usá-lo novamente.');
+        }
     }
 
     const codigo = gerarCodigoCupom();
@@ -102,7 +107,7 @@ class CupomService {
             usuario_id: usuarioId,
             codigo: codigo,
             status_ativo: true,
-            resgatado_em: null
+            resgatado: null
         })
         .select()
         .single();
@@ -111,6 +116,8 @@ class CupomService {
 
     return data;
 }
+
+
 static async validarCupomPorCodigo(codigo, organizacaoId) {
     const { data: registros, error: buscaError } = await supabase
         .from('cupom_cliente')
