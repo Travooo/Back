@@ -39,13 +39,13 @@ class Servico extends ModeloBase {
       min: 1,
       max: 20,
     },
-    cep: {
+    /*cep: {
       tipo: "string",
       required: true,
       atributo: "cep",
       min: 8,
       max: 8,
-    },
+    },*/
     lat: {
       tipo: "number",
       required: false,
